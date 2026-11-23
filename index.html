@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>rJournal - Ramadhan Jurnal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4F3FC9">
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22rJournal%20-%20Ramadhan%20Jurnal%22%2C%22short_name%22%3A%22rJournal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%234F3FC9%22%7D">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0}
+    button,input,select,textarea{font-family:inherit}
+    :root{
+      --p:#4F3FC9;
+      --pl:rgba(79,63,201,.12);
+      --h:#17143A;
+      --b:#4A4768;
+      --m:#7D7A9A;
+      --bd:rgba(255,255,255,.65);
+      --bd-s:rgba(79,63,201,.14);
+      --bg:#F4F2FA;
+      --g:rgba(255,255,255,.58);
+      --card-g:rgba(255,255,255,.68);
+      --input-g:rgba(255,255,255,.78);
+      --s:rgba(255,255,255,.45);
+      --pink:#EC4899;
+      --pink-l:rgba(236,72,153,.14);
+      --orange:#F58E7E;
+      --gold:#E5A124;
+      --ok:#1D9A64;
+      --er:#E5484D;
+      --sh:0 12px 36px rgba(42,32,115,.08),inset 0 1px 0 rgba(255,255,255,.8);
+      --card-sh:0 6px 24px rgba(42,32,115,.05),inset 0 1px 0 rgba(255,255,255,.85);
+    }
+    @media (prefers-color-scheme:dark){
+      :root:not([data-theme=light]){
+        --bg:#0E0C1D;--g:rgba(26,23,50,.62);--card-g:rgba(32,28,62,.62);--input-g:rgba(22,19,44,.65);
+        --h:#F3F1FF;--b:#B8B4D4;--m:#8581A6;--bd:rgba(255,255,255,.11);--bd-s:rgba(255,255,255,.08);
+        --s:rgba(255,255,255,.06);--pl:rgba(123,108,246,.22);--p:#7B6CF6;--pink:#F472B6;--pink-l:rgba(244,114,182,.18);
+        --sh:0 16px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.1);
+        --card-sh:0 8px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);
+      }
+    }
+    :root[data-theme=dark]{
+      --bg:#0E0C1D;--g:rgba(26,23,50,.62);--card-g:rgba(32,28,62,.62);--input-g:rgba(22,19,44,.65);
+      --h:#F3F1FF;--b:#B8B4D4;--m:#8581A6;--bd:rgba(255,255,255,.11);--bd-s:rgba(255,255,255,.08);
+      --s:rgba(255,255,255,.06);--pl:rgba(123,108,246,.22);--p:#7B6CF6;--pink:#F472B6;--pink-l:rgba(244,114,182,.18);
+      --sh:0 16px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.1);
+      --card-sh:0 8px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    html,body{height:100%;background:var(--bg)}
+    #app{position:fixed;inset:0;z-index:999999;overflow:auto;background:var(--bg);color:var(--b);font:14px/1.55 'Plus Jakarta Sans',system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);-webkit-font-smoothing:antialiased}
+    .orb{position:fixed;border-radius:50%;filter:blur(85px);pointer-events:none;z-index:0}
+    .o1{width:380px;height:380px;left:-110px;top:52%;background:linear-gradient(135deg,#F9A8D4,#EC4899);opacity:.48}
+    .o2{width:420px;height:420px;right:-120px;top:4%;background:linear-gradient(135deg,#BFAFF8,#8E78F2);opacity:.58}
+    .o3{width:280px;height:280px;left:38%;top:18%;background:#FBCFE8;opacity:.38}
+    .shell{position:relative;z-index:1;display:flex;margin:26px auto;max-width:1240px;min-height:calc(100% - 52px);border-radius:32px;background:var(--g);backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%);border:1px solid var(--bd);box-shadow:var(--sh)}
+    .side{width:256px;flex:none;position:sticky;top:0;align-self:flex-start;padding:24px 16px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--bd-s);min-height:100%}
+    .brand{display:flex;gap:12px;align-items:center;padding:0 8px 20px;color:var(--h);border-bottom:1px solid var(--bd-s);margin-bottom:8px}
+    .brand b{font-size:16px;font-weight:800;letter-spacing:-.01em}
+    .brand small{display:block;color:var(--m);font-size:12px}
+    .lg{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,var(--p),#7D6DF2);color:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(79,63,201,.3)}
+    .nv{display:flex;gap:12px;align-items:center;padding:11px 14px;border-radius:16px;font-weight:600;color:var(--b);cursor:pointer;white-space:nowrap;transition:all .2s ease;border:1px solid transparent}
+    .nv svg{width:19px;height:19px;stroke-width:2.1;flex:none}
+    .nv.on{background:var(--pl);color:var(--p);border-color:rgba(79,63,201,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+    .nv:hover:not(.on){background:var(--s);color:var(--h)}
+    .main{flex:1;min-width:0;padding:28px 34px 44px}
+    .hd{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+    .hd h1{font-size:22px;color:var(--h);font-weight:800;letter-spacing:-.02em}
+    .hd p{color:var(--m);font-size:13px;margin-top:2px}
+    .hd .r{display:flex;gap:10px;align-items:center}
+    .chip{display:inline-flex;align-items:center;gap:7px;background:var(--card-g);backdrop-filter:blur(12px);border:1px solid var(--bd);border-radius:99px;padding:7px 14px;font-weight:600;font-size:13px;color:var(--h);box-shadow:var(--card-sh)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(135deg,var(--p),#6453E0);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:10px 18px;font:600 13.5px 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(79,63,201,.28);transition:all .2s ease}
+    .btn:hover{transform:translateY(-1.5px);box-shadow:0 8px 22px rgba(79,63,201,.36)}
+    .btn:active{transform:translateY(0)}
+    .btn.s{background:var(--card-g);backdrop-filter:blur(12px);color:var(--p);border:1px solid var(--bd);box-shadow:var(--card-sh)}
+    .btn.s:hover{background:var(--pl);border-color:rgba(79,63,201,.25)}
+    .btn.w{width:100%;padding:14px;border-radius:16px;margin-top:16px;font-size:14.5px}
+    .card{background:var(--card-g);backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%);border:1px solid var(--bd);border-radius:22px;padding:18px 20px;box-shadow:var(--card-sh);margin-bottom:16px}
+    .card>b{color:var(--h);display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:15px;font-weight:700;flex-wrap:wrap}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .st small{color:var(--m);font-weight:500}
+    .st b{font-size:32px;color:var(--p);font-weight:800;margin-top:4px}
+    .ok{color:var(--ok)!important}
+    .hero{text-align:center;padding:12px 0 8px}
+    .orbh{width:116px;height:116px;margin:0 auto 18px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.95),rgba(217,208,250,.85) 55%,rgba(145,126,242,.9));border:1px solid rgba(255,255,255,.8);box-shadow:0 14px 40px rgba(79,63,201,.28),inset 0 -6px 16px rgba(79,63,201,.2);display:grid;place-items:center;color:var(--p)}
+    .hero h2{font-size:36px;line-height:1.18;font-weight:800;color:var(--h);letter-spacing:-.025em}
+    .hero h2 em{font-style:normal;color:var(--p)}
+    .hero p{max-width:520px;margin:12px auto;color:var(--b);font-size:14.5px}
+    .pill{max-width:680px;margin:20px auto 24px;background:var(--card-g);backdrop-filter:blur(20px);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--sh);padding:14px 16px 14px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;color:var(--h);font-weight:500;transition:all .2s ease}
+    .pill:hover{transform:translateY(-2px);border-color:rgba(79,63,201,.3)}
+    .sendb{width:44px;height:44px;flex:none;border:0;border-radius:50%;background:linear-gradient(135deg,var(--p),#7D6DF2);color:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(79,63,201,.3)}
+    .fc{display:flex;gap:14px;align-items:center;cursor:pointer;transition:all .2s ease;margin-bottom:0}
+    .fc:hover{transform:translateY(-2px);background:var(--input-g);border-color:rgba(79,63,201,.25)}
+    .fc .ico{width:46px;height:46px;flex:none;border-radius:16px;background:var(--pl);color:var(--p);border:1px solid rgba(79,63,201,.15);display:grid;place-items:center}
+    .fc b{margin:0 0 2px;font-size:14.5px;display:block}
+    .fc small{color:var(--b);font-size:12.5px;line-height:1.4;display:block}
+    .fc>span{margin-left:auto;color:var(--m);display:grid;place-items:center}
+    .row{display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap}
+    .row>input,.row>select{flex:1;min-width:120px}
+    input,select,textarea{font:inherit;color:var(--h);background:var(--input-g);backdrop-filter:blur(10px);border:1px solid var(--bd-s);border-radius:14px;padding:11px 14px;outline:0;width:100%;transition:all .2s}
+    input:focus,textarea:focus,select:focus{border-color:var(--p);background:var(--bg);box-shadow:0 0 0 3px var(--pl)}
+    textarea{min-height:84px;resize:vertical}
+    input[type=checkbox],input[type=radio]{width:auto}
+
+    /* Sembunyikan Scrollbar / Slider untuk tampilan lebih clean */
+    *{scrollbar-width:none;-ms-overflow-style:none}
+    *::-webkit-scrollbar{display:none;width:0;height:0}
+    .drag-scroll{cursor:grab;user-select:none}
+    .drag-scroll.dragging{cursor:grabbing}
+
+    .strip{display:flex;gap:8px;overflow-x:auto;padding:8px 8px 12px;background:var(--s);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);border-radius:20px;margin-bottom:14px;box-shadow:var(--card-sh)}
+    .dc{flex:none;width:52px;border:1px solid var(--bd);background:var(--card-g);backdrop-filter:blur(10px);border-radius:15px;padding:7px 0;font:700 15px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--h);cursor:pointer;transition:all .18s}
+    .dc small{display:block;font:500 10px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--m);margin-top:1px}
+    .dc:hover:not(.on){background:var(--input-g);transform:translateY(-1px)}
+    .dc.on{background:linear-gradient(135deg,var(--p),#6A59E8);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(79,63,201,.3)}
+    .dc.on small{color:rgba(255,255,255,.82)}
+    .it{display:flex;gap:12px;align-items:center;padding:12px 6px;border-bottom:1px solid var(--bd-s);cursor:pointer;color:var(--h);font-weight:500;transition:background .15s}
+    .it:last-of-type{border-bottom:none}
+    .it:hover{background:var(--s);border-radius:12px}
+    .it input{accent-color:var(--p);width:19px;height:19px;cursor:pointer}
+    .it span{flex:1;display:flex;align-items:center;gap:8px}
+    .x{border:0;background:none;color:var(--m);cursor:pointer;padding:4px;border-radius:8px;display:grid;place-items:center;transition:.15s}
+    .x:hover{color:var(--er);background:rgba(229,72,77,.1)}
+    .bar{flex:1;min-width:80px;height:10px;border-radius:9px;background:var(--pl);overflow:hidden;border:1px solid var(--bd-s)}
+    .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--pink));border-radius:9px;transition:.4s ease}
+    .ring{width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--p) 0%,var(--pink) calc(var(--v)*1%),var(--pl) 0);display:grid;place-items:center;flex:none;box-shadow:inset 0 2px 6px rgba(0,0,0,.06)}
+    .ring b{width:74px;height:74px;border-radius:50%;background:var(--bg);display:grid;place-items:center;margin:0;font-size:20px;color:var(--h)}
+    .wl{stroke-dasharray:2000;stroke-dashoffset:2000;animation:dr 1.6s forwards}
+    @keyframes dr{to{stroke-dashoffset:0}}
+    .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+    .cal>i{font-style:normal;font-weight:700;color:var(--m);font-size:12px;padding-bottom:4px}
+    .cd{border-radius:14px;padding:9px 2px;border:1px solid var(--bd);background:var(--input-g);transition:.15s}
+    .cd b{display:block;color:var(--h);font-size:14px}
+    .cd small{color:var(--m);font-size:10.5px;display:block;line-height:1.2;margin-top:2px}
+    .cd.rm{background:var(--pl);border-color:rgba(79,63,201,.2)}
+    .cd.td{outline:2px solid var(--p);outline-offset:-1px}
+    .cd.eid{background:linear-gradient(135deg,#F6C358,#E5A124);border-color:transparent}
+    .cd.eid *{color:#332200}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;text-align:center;white-space:nowrap}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--bd-s)}
+    th{color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+    tr.hl td{background:linear-gradient(135deg,rgba(79,63,201,.16),rgba(236,72,153,.14));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-weight:700;color:var(--h);border-top:1px solid rgba(255,255,255,.75);border-bottom:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.65)}
+    td.hl-orange{background:linear-gradient(135deg,rgba(245,142,126,.28),rgba(251,182,158,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#9A2B18;font-weight:800;border-left:1px solid rgba(255,255,255,.6);border-right:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+    :root[data-theme=dark] td.hl-orange{color:#FFD1C9}
+    .moods{display:flex;gap:10px;margin:10px 0 14px;flex-wrap:wrap}
+    .mo{padding:10px 14px;border-radius:15px;border:1.5px solid var(--bd);background:var(--input-g);color:var(--b);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;transition:all .18s}
+    .mo:hover{border-color:var(--p);color:var(--h)}
+    .mo:has(input:checked){background:var(--pl);border-color:var(--p);color:var(--p);box-shadow:0 4px 12px rgba(79,63,201,.15)}
+    .mo input{display:none}
+    .em{color:var(--m);text-align:center;padding:16px;font-size:13.5px}
+    .note{color:var(--m);font-size:12px;text-align:center}
+    .lk{color:var(--p);font-weight:600;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:5px}
+    .lk:hover{text-decoration:underline}
+    .blk{display:flex;padding:8px 10px;border-radius:10px;background:var(--s);margin-top:6px}
+    .c{display:flex;justify-content:center;text-align:center;margin-top:14px}
+    .mb{position:fixed;inset:0;background:rgba(15,12,38,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:grid;place-items:center;z-index:10;padding:16px;overflow:auto}
+    .mc{position:relative;width:100%;max-width:410px;background:var(--card-g);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);border:1px solid var(--bd);border-radius:28px;padding:54px 26px 26px;margin-top:36px;box-shadow:0 24px 64px rgba(18,14,52,.3),inset 0 1px 0 rgba(255,255,255,.7)}
+    .mc h2{text-align:center;color:var(--h);font-size:21px;font-weight:800}
+    .sub{text-align:center;color:var(--b);margin:4px 0 16px;font-size:13.5px}
+    .av{position:absolute;left:50%;top:-38px;transform:translateX(-50%);width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,var(--p),#7D6DF2);color:#fff;border:3px solid rgba(255,255,255,.8);box-shadow:0 10px 25px rgba(79,63,201,.35);display:grid;place-items:center}
+    .mc>label{display:block;font-weight:700;color:var(--h);margin:12px 0 6px;font-size:13px}
+    .in{position:relative}
+    .in>span{position:absolute;left:14px;top:12px;color:var(--m);display:grid;place-items:center;pointer-events:none}
+    .in input{padding-left:42px;border-radius:15px}
+    .eye{position:absolute;right:12px;top:10px;border:0;background:none;cursor:pointer;color:var(--m);display:grid;place-items:center;padding:2px}
+    .ck{display:flex;gap:8px;align-items:center;font-weight:600;color:var(--h);font-size:13px;cursor:pointer}
+    .pv{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd-s)}
+    .pv .btn{flex:1;padding:9px 6px;font-size:12px}
+    .bar2{position:relative;z-index:2;display:flex;justify-content:center;gap:10px;align-items:center;padding:9px 14px;background:var(--card-g);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);color:var(--h);font-size:13px;flex-wrap:wrap}
+    .bar2 .btn{padding:6px 12px;font-size:12.5px}
+    #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--h);color:var(--bg);padding:11px 20px;border-radius:14px;z-index:1000000;display:none;max-width:90%;font-weight:600;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600}
+    .badge.on{background:rgba(29,154,100,.14);color:var(--ok)}
+    .badge.off{background:var(--s);color:var(--m)}
+    .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+    .word-wrap{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:2px;margin-right:.24em}
+    .word-inner{display:inline-block;will-change:transform,opacity}
+    .kt-table th{background:var(--pl);color:var(--p);font-weight:700;padding:10px;border-radius:8px}
+    .kt-table tr.active-target td{background:var(--pink-l);font-weight:700;color:var(--h)}
+    .slot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+    .slot-box{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:14px;border:1.5px solid var(--bd);background:var(--input-g);cursor:pointer;transition:all .18s ease;text-align:center}
+    .slot-box:hover{border-color:var(--p)}
+    .slot-box.done{background:var(--pl);border-color:var(--p)}
+    .slot-box.done .pg-range{text-decoration:line-through;opacity:.7}
+    .slot-box small{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase}
+    .slot-box .pg-range{font-size:12.5px;font-weight:700;color:var(--h)}
+    .slot-box input[type=checkbox]{width:18px;height:18px;accent-color:var(--p);cursor:pointer}
+    .cd-box{max-width:680px;margin:14px auto 0;padding:14px 20px;border-radius:22px;background:var(--card-g);backdrop-filter:blur(20px);border:1px solid var(--bd);box-shadow:var(--card-sh);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .cd-timer{font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--p);letter-spacing:.02em}
+    .uzur-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-radius:16px;background:var(--pink-l);border:1px solid rgba(236,72,153,.32);margin-bottom:14px;color:var(--h);flex-wrap:wrap}
+    .recap-poster{position:relative;overflow:hidden;border-radius:26px;padding:28px 24px;background:linear-gradient(145deg,#211B4B,#4A2C7A 55%,#9D2B6B);color:#fff;box-shadow:0 20px 50px rgba(33,27,75,.35);border:1px solid rgba(255,255,255,.25)}
+    .recap-poster::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:#EC4899;filter:blur(65px);opacity:.48;top:-60px;right:-50px;pointer-events:none}
+    .recap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0;position:relative;z-index:1}
+    .recap-stat{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:14px}
+    .recap-stat small{display:block;color:rgba(255,255,255,.78);font-size:11.5px}
+    .recap-stat b{display:block;font-size:22px;font-weight:800;margin-top:2px;color:#fff}
+    .bn{display:none}
+    @media (max-width:800px){
+      .side{display:none}
+      .shell{margin:0;border-radius:0;border:0;min-height:100%}
+      .main{padding:20px 16px 115px}
+      .grid{grid-template-columns:1fr}
+      .hero h2{font-size:28px}
+      .slot-grid{grid-template-columns:repeat(2,1fr)}
+      .bn{display:flex;gap:4px;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:4;overflow-x:auto;background:var(--card-g);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border:1px solid var(--bd);border-radius:24px;padding:7px;box-shadow:0 12px 36px rgba(24,19,66,.22)}
+      .bn a{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--b);padding:7px 12px;border-radius:16px;transition:.18s}
+      .bn a.on{background:var(--pl);color:var(--p)}
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // KONFIGURASI APLIKASI
+  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "URL_SUPABASE_ANDA";
+  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
+
+  const $ = s => document.querySelector(s);
+  const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
+  const iso = d => {
+    const x = new Date(d);
+    return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+  };
+  const addD = (s, n) => {
+    const d = new Date(s + 'T00:00:00');
+    d.setDate(d.getDate() + n);
+    return iso(d);
+  };
+  const diff = (a, b) => Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 864e5);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const today = () => iso(new Date());
+  const same = (a, b) => String(a) === String(b);
+
+  const DEF = {
+    id: 1,
+    hijri_year: 1448,
+    ramadan_start: '2027-02-08',
+    ramadan_end: '2027-03-09',
+    eid_date: '2027-03-10',
+    source_note: 'Ikuti ketetapan Pemerintah (Sidang Isbat Kemenag)'
+  };
+
+  let S = {
+    page: 'home',
+    user: null,
+    admin: false,
+    set: { ...DEF },
+    prefs: {},
+    day: null,
+    cal: null,
+    modal: null,
+    items: [],
+    checks: [],
+    til: [],
+    haf: [],
+    jr: [],
+    users: [],
+    imsak: null,
+    cities: [],
+    allCities: null,
+    hafSurah: '',
+    pwa: null,
+    cdText: null
+  };
+
+  let sb = null, TOKEN = null, uid = 0, beatT = null, cdT = null;
+  const nid = () => 'p' + (++uid);
+
+  // ===== Lapisan data (Preview = memori lokal, Produksi = Supabase) =====
+  const mem = { app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
+
+  if (IS_PREVIEW) {
+    mem.app_settings.push({ ...DEF });
+    mem.users.push({ id: 'u1', username: 'demo', full_name: 'Pengguna Demo', last_seen: new Date().toISOString(), created_at: new Date().toISOString() });
+    mem.items.push(
+      { id: nid(), kind: 'ibadah', name: 'Shalat 5 waktu berjamaah', user_id: null },
+      { id: nid(), kind: 'ibadah', name: 'Tarawih', user_id: null },
+      { id: nid(), kind: 'daily', name: 'Membantu orang tua', user_id: null },
+      { id: nid(), kind: 'daily', name: 'Olahraga ringan', user_id: null }
+    );
+  }
+
+  const T = {
+    async sel(t, f = {}, c = '*') {
+      if (IS_PREVIEW) return mem[t].filter(r => Object.keys(f).every(k => same(r[k], f[k]))).map(r => ({ ...r }));
+      let q = sb.from(t).select(c);
+      for (const k in f) q = q.eq(k, f[k]);
+      const { data, error } = await q;
+      if (error) throw error;
+      return data || [];
+    },
+    async ins(t, r) {
+      if (IS_PREVIEW) {
+        const x = { id: nid(), ...r };
+        mem[t].push(x);
+        return { ...x };
+      }
+      const { data, error } = await sb.from(t).insert(r).select().single();
+      if (error) throw error;
+      return data;
+    },
+    async del(t, id) {
+      if (IS_PREVIEW) {
+        mem[t] = mem[t].filter(r => !same(r.id, id));
+        return;
+      }
+      const { error } = await sb.from(t).delete().eq('id', id);
+      if (error) throw error;
+    },
+    async up(t, r, key) {
+      if (IS_PREVIEW) {
+        const i = mem[t].findIndex(x => key.split(',').every(k => same(x[k], r[k])));
+        if (i < 0) mem[t].push({ id: nid(), ...r });
+        else Object.assign(mem[t][i], r);
+        return;
+      }
+      const { error } = await sb.from(t).upsert(r, { onConflict: key });
+      if (error) throw error;
+    }
+  };
+
+  // ===== Helper tampilan =====
+  const days = () => {
+    const n = diff(S.set.ramadan_start, S.set.ramadan_end) + 1;
+    return Array.from({ length: Math.max(n, 1) }, (_, i) => addD(S.set.ramadan_start, i));
+  };
+  const curDay = () => {
+    if (!S.day) {
+      const d = days(), t = today();
+      S.day = d.includes(t) ? t : d[0];
+    }
+    return S.day;
+  };
+  const hdInfo = d => {
+    const s = S.set, i = diff(s.ramadan_start, d);
+    if (i >= 0 && d <= s.ramadan_end) return { day: i + 1, month: 'Ramadhan' };
+    if (i < 0 && i >= -29) return { day: 30 + i, month: 'Sya\'ban' };
+    const e = diff(s.eid_date, d);
+    if (e >= 0 && e <= 29) return { day: e + 1, month: 'Syawal' };
+    return { day: '', month: '' };
+  };
+  const its = k => S.items.filter(i => i.kind === k);
+  const isDone = (id, d) => S.checks.find(c => same(c.item_id, id) && c.day === d);
+  const getUzurDays = () => Array.isArray(S.prefs.uzur_days) ? S.prefs.uzur_days : [];
+  const isUzur = d => getUzurDays().includes(d);
+  const pct = (k, d) => {
+    if (k === 'ibadah' && isUzur(d)) return 100;
+    const a = its(k);
+    return a.length ? Math.round(a.filter(i => isDone(i.id, d)).length / a.length * 100) : 0;
+  };
+  const overall = k => {
+    const D = days();
+    return Math.round(D.reduce((s, d) => s + pct(k, d), 0) / D.length);
+  };
+  const strip = () => `<div class="strip drag-scroll" data-lenis-prevent>${days().map((d, i) => `<button class="dc ${d === S.day ? 'on' : ''}" onclick="setDay('${d}')">${i + 1}<small>${d.slice(8)}/${d.slice(5, 7)}</small></button>`).join('')}</div>`;
+  const msg = t => {
+    const e = $('#toast');
+    if (!e) return;
+    e.textContent = t;
+    e.style.display = 'block';
+    clearTimeout(msg.t);
+    msg.t = setTimeout(() => { e.style.display = 'none'; }, 2800);
+  };
+
+  const cityLink = c => `<a class="lk blk" data-id="${esc(c.id)}" data-name="${esc(c.lokasi)}" onclick="pickCity(this.dataset.id,this.dataset.name)">${ic('navigation', 14)} ${esc(c.lokasi)}</a>`;
+
+  function wave(k) {
+    const D = days(), W = 600, H = 130, P = D.map((d, i) => [i * W / Math.max(D.length - 1, 1), H - pct(k, d) * H / 100 + 10]);
+    let p = 'M' + P[0];
+    for (let i = 1; i < P.length; i++) {
+      const a = P[i - 1], b = P[i], mx = (a[0] + b[0]) / 2;
+      p += `C${mx},${a[1]} ${mx},${b[1]} ${b[0]},${b[1]}`;
+    }
+    return `
+      <svg viewBox="0 0 ${W} ${H + 20}" width="100%" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EC4899" stop-opacity=".35"/><stop offset="1" stop-color="#4F3FC9" stop-opacity="0"/></linearGradient>
+          <linearGradient id="ws" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4F3FC9"/><stop offset="100%" stop-color="#EC4899"/></linearGradient>
+        </defs>
+        <path d="${p}L${W},${H + 10}L0,${H + 10}Z" fill="url(#wg)"/>
+        <path class="wl" d="${p}" fill="none" stroke="url(#ws)" stroke-width="3" stroke-linecap="round"/>
+      </svg>`;
+  }
+
+  function CL(k) {
+    const d = curDay(), a = its(k), p = pct(k, d), uz = k === 'ibadah' && isUzur(d);
+    return `
+      ${strip()}
+      ${k === 'ibadah' ? `
+        <div class="uzur-bar">
+          <div style="display:flex;align-items:center;gap:9px">
+            ${ic('heart-handshake', 18)}
+            <div>
+              <b style="font-size:13.5px;display:block">Mode Uzur Syar'i (Haid / Nifas)</b>
+              <small style="color:var(--b)">${uz ? 'Hari ini ditandai uzur & otomatis tercatat di daftar Qadha puasa.' : 'Aktifkan jika sedang berhalangan agar grafik ibadah tetap terjaga.'}</small>
+            </div>
+          </div>
+          <label class="ck"><input type="checkbox" ${uz ? 'checked' : ''} onchange="togUzur('${d}')"> Uzur hari ini</label>
+        </div>` : ''}
+      <div class="card">
+        <div class="row">
+          <b style="margin:0">Hari ke-${days().indexOf(d) + 1} · ${uz ? 'Uzur Syar\'i (100%)' : p + '%'}</b>
+          <div class="bar"><i style="width:${p}%"></i></div>
+        </div>
+        ${uz ? `<p class="em" style="padding:12px 0">Sedang dalam masa uzur syar'i. Semoga Allah menerima niat dan amal kebaikanmu.</p>` : ''}
+        ${a.length ? a.map(i => `
+          <label class="it" style="${uz ? 'opacity:.55' : ''}">
+            <input type="checkbox" ${isDone(i.id, d) ? 'checked' : ''} onchange="tog('${i.id}','${d}')">
+            <span>${esc(i.name)}</span>
+            ${i.user_id ? `<button class="x" onclick="delItem(event,'${i.id}')" title="Hapus">${ic('x', 16)}</button>` : ''}
+          </label>`).join('') : '<p class="em">Belum ada data</p>'}
+        <div class="row" style="margin-top:12px">
+          <input id="ni" placeholder="Tambah ${k === 'ibadah' ? 'ibadah' : 'kegiatan'} sendiri (tekan Enter)" onkeydown="if(event.key==='Enter'){event.preventDefault();addItem('${k}')}">
+          <button class="btn s" onclick="addItem('${k}')">${ic('plus', 16)} Tambah</button>
+        </div>
+      </div>`;
+  }
+
+  // ===== Halaman =====
+  const N = [
+    ['home', 'Beranda', 'home'],
+    ['cal', 'Kalender', 'calendar-days'],
+    ['imsak', 'Imsakiyyah', 'clock'],
+    ['ibadah', 'Ibadah', 'sparkles'],
+    ['tilawah', 'Tilawah', 'book-open'],
+    ['hafalan', 'Hafalan', 'brain'],
+    ['daily', 'Daily Jurnal', 'check-circle-2'],
+    ['jurnal', 'Jurnaling', 'pen-line'],
+    ['recap', 'Recap', 'award']
+  ];
+
+  const SURAH_LIST = [
+    [1,'Al-Fatihah',7],[2,'Al-Baqarah',286],[3,'Ali \'Imran',200],[4,'An-Nisa\'',176],[5,'Al-Ma\'idah',120],[6,'Al-An\'am',165],[7,'Al-A\'raf',206],[8,'Al-Anfal',75],
+    [9,'At-Taubah',129],[10,'Yunus',109],[11,'Hud',123],[12,'Yusuf',111],[13,'Ar-Ra\'d',43],[14,'Ibrahim',52],[15,'Al-Hijr',99],[16,'An-Nahl',128],
+    [17,'Al-Isra\'',111],[18,'Al-Kahf',110],[19,'Maryam',98],[20,'Taha',135],[21,'Al-Anbiya\'',112],[22,'Al-Hajj',78],[23,'Al-Mu\'minun',118],[24,'An-Nur',64],
+    [25,'Al-Furqan',77],[26,'Asy-Syu\'ara\'',227],[27,'An-Naml',93],[28,'Al-Qasas',88],[29,'Al-\'Ankabut',69],[30,'Ar-Rum',60],[31,'Luqman',34],[32,'As-Sajdah',30],
+    [33,'Al-Ahzab',73],[34,'Saba\'',54],[35,'Fatir',45],[36,'Yasin',83],[37,'As-Saffat',182],[38,'Sad',88],[39,'Az-Zumar',75],[40,'Ghafir',85],
+    [41,'Fussilat',54],[42,'Asy-Syura',53],[43,'Az-Zukhruf',89],[44,'Ad-Dukhan',59],[45,'Al-Jasiyah',37],[46,'Al-Ahqaf',35],[47,'Muhammad',38],[48,'Al-Fath',29],
+    [49,'Al-Hujurat',18],[50,'Qaf',45],[51,'Az-Zariyat',60],[52,'At-Tur',49],[53,'An-Najm',62],[54,'Al-Qamar',55],[55,'Ar-Rahman',78],[56,'Al-Waqi\'ah',96],
+    [57,'Al-Hadid',29],[58,'Al-Mujadalah',22],[59,'Al-Hasyr',24],[60,'Al-Mumtahanah',13],[61,'As-Saff',14],[62,'Al-Jumu\'ah',11],[63,'Al-Munafiqun',11],[64,'At-Tagabun',18],
+    [65,'At-Talaq',12],[66,'At-Tahrim',12],[67,'Al-Mulk',30],[68,'Al-Qalam',52],[69,'Al-Haqqah',52],[70,'Al-Ma\'arij',44],[71,'Nuh',28],[72,'Al-Jinn',28],
+    [73,'Al-Muzzammil',20],[74,'Al-Muddassir',56],[75,'Al-Qiyamah',40],[76,'Al-Insan',31],[77,'Al-Mursalat',50],[78,'An-Naba\'',40],[79,'An-Nazi\'at',46],[80,'\'Abasa',42],
+    [81,'At-Takwir',29],[82,'Al-Infitar',19],[83,'Al-Mutaffifin',36],[84,'Al-Insyiqaq',25],[85,'Al-Buruj',22],[86,'At-Tariq',17],[87,'Al-A\'la',19],[88,'Al-Ghasyiyah',26],
+    [89,'Al-Fajr',30],[90,'Al-Balad',20],[91,'Asy-Syams',15],[92,'Al-Lail',21],[93,'Ad-Duha',11],[94,'Asy-Syarh',8],[95,'At-Tin',8],[96,'Al-\'Alaq',19],
+    [97,'Al-Qadr',5],[98,'Al-Bayyinah',8],[99,'Az-Zalzalah',8],[100,'Al-\'Adiyat',11],[101,'Al-Qari\'ah',11],[102,'At-Takasur',8],[103,'Al-\'Asr',3],[104,'Al-Humazah',9],
+    [105,'Al-Fil',5],[106,'Quraisy',4],[107,'Al-Ma\'un',7],[108,'Al-Kausar',3],[109,'Al-Kafirun',6],[110,'An-Nasr',3],[111,'Al-Lahab',5],[112,'Al-Ikhlas',4],
+    [113,'Al-Falaq',5],[114,'An-Nas',6]
+  ];
+
+  const TT = {
+    home: ['rJournal', 'Ramadhan Jurnal · Teman ibadah dan refleksi harianmu'],
+    cal: ['Kalender Ramadhan', 'Masehi dan Hijriah'],
+    imsak: ['Jadwal Imsakiyyah', 'Seluruh wilayah Indonesia'],
+    ibadah: ['Ibadah Tracker', 'Ceklis, mode uzur, dan persentase harian'],
+    tilawah: ['Tilawah Tracker', 'Tabel khatam 1-4x dan catatan manual'],
+    hafalan: ['Ziyadah & Muroja’ah', 'Sesuai jumlah hafalanmu'],
+    daily: ['Daily Jurnal', 'Kegiatan baik harian'],
+    jurnal: ['Jurnaling', 'Refleksi dan catatan hari ini'],
+    recap: ['Ramadhan Recap', 'Kartu ringkasan pencapaian ibadahmu'],
+    admin: ['Panel Admin', 'Pengaturan dan pengguna']
+  };
+
+  const F = [
+    ['cal', 'calendar-days', 'Kalender Ramadhan', 'Masehi + Hijriah, awal dan akhir sesuai ketetapan pemerintah.'],
+    ['imsak', 'clock', 'Jadwal Imsakiyyah', 'Imsak hingga isya untuk seluruh kota/kabupaten di Indonesia.'],
+    ['ibadah', 'sparkles', 'Ibadah Tracker', 'Ceklis harian, mode uzur syar\'i, dan grafik gelombang capaian.'],
+    ['tilawah', 'book-open', 'Tilawah Tracker', 'Tabel khatam 1-4x per waktu shalat atau catat manual.'],
+    ['hafalan', 'brain', 'Ziyadah & Muroja’ah', 'Rencana sesuai jumlah hafalan.'],
+    ['daily', 'check-circle-2', 'Daily Jurnal', 'Ceklis kegiatan baik harianmu.'],
+    ['jurnal', 'pen-line', 'Jurnaling', 'Refleksi, syukur, dan catatan.'],
+    ['recap', 'award', 'Ramadhan Recap', 'Kartu ringkasan ibadah estetik yang siap diunduh dan dibagikan.']
+  ];
+
+  const MOODS = [
+    ['sedih', 'frown', 'Sedih'],
+    ['datar', 'meh', 'Biasa'],
+    ['tenang', 'smile', 'Tenang'],
+    ['bahagia', 'laugh', 'Bahagia'],
+    ['semangat', 'sparkles', 'Semangat']
+  ];
+
+  const V = {};
+
+  V.home = () => {
+    const s = S.set, t = today(), i = diff(s.ramadan_start, t), h = new Date().getHours();
+    const g = h < 11 ? 'pagi' : h < 15 ? 'siang' : h < 18 ? 'sore' : 'malam';
+    const st = i < 0
+      ? `${-i} hari lagi menuju Ramadhan ${s.hijri_year} H · ${fmt(s.ramadan_start)}`
+      : t <= s.ramadan_end
+        ? `Hari ke-${i + 1} Ramadhan ${s.hijri_year} H · ${fmt(t)}`
+        : `Ramadhan ${s.hijri_year} H telah usai. Taqabbalallahu minna wa minkum.`;
+    const cd = computeCountdown();
+    return `
+      <div class="hero">
+        <div class="orbh">${ic('moon', 48)}</div>
+        <h2>Selamat ${g}.<br>Siap jurnaling <em>Ramadhan</em>?</h2>
+        <p>${st}</p>
+      </div>
+      ${S.user ? `
+        <div class="cd-box">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="ico" style="width:40px;height:40px;border-radius:13px;background:var(--pl);color:var(--p);display:grid;place-items:center">${ic('timer', 20)}</div>
+            <div style="text-align:left">
+              <b style="font-size:13.5px;color:var(--h);display:block">${cd.label}</b>
+              <small style="color:var(--m)">${S.prefs.city_name ? esc(S.prefs.city_name) : '<a class="lk" onclick="go(\'imsak\')">Pilih kota di Imsakiyyah</a>'}</small>
+            </div>
+          </div>
+          <div id="live-cd" class="cd-timer">${cd.timer}</div>
+        </div>` : ''}
+      <div class="pill" onclick="${S.user ? "go('ibadah')" : "openM('login')"}">
+        <span>${S.user ? `Ibadah hari ini: ${pct('ibadah', curDay())}% · lanjutkan ceklis` : 'Masuk atau daftar untuk mulai jurnaling di rJournal'}</span>
+        <button class="sendb">${ic('arrow-right', 20)}</button>
+      </div>
+      <div class="grid">
+        ${F.map(f => `
+          <div class="card fc" onclick="go('${f[0]}')">
+            <div class="ico">${ic(f[1], 22)}</div>
+            <div><b>${f[2]}</b><small>${f[3]}</small></div>
+            <span>${ic('chevron-right', 18)}</span>
+          </div>`).join('')}
+      </div>`;
+  };
+
+  V.cal = () => {
+    const c = S.cal || (S.cal = { y: +S.set.ramadan_start.slice(0, 4), m: +S.set.ramadan_start.slice(5, 7) - 1 });
+    const s = S.set, pad = (new Date(c.y, c.m, 1).getDay() + 6) % 7, dim = new Date(c.y, c.m + 1, 0).getDate();
+    let cells = '<span></span>'.repeat(pad);
+    for (let i = 1; i <= dim; i++) {
+      const d = iso(new Date(c.y, c.m, i));
+      const hInfo = hdInfo(d);
+      const hijriLabel = hInfo.day ? `${hInfo.day} ${hInfo.month}` : '';
+      cells += `<div class="cd ${d >= s.ramadan_start && d <= s.ramadan_end ? 'rm' : ''} ${d === today() ? 'td' : ''} ${d === s.eid_date ? 'eid' : ''}"><b>${i}</b><small>${hijriLabel}</small></div>`;
+    }
+    return `
+      <div class="card">
+        <div class="row">
+          <button class="btn s" onclick="calNav(-1)">${ic('chevron-left', 18)}</button>
+          <b style="flex:1;text-align:center;justify-content:center;margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em">${new Date(c.y, c.m, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</b>
+          <button class="btn s" onclick="calNav(1)">${ic('chevron-right', 18)}</button>
+        </div>
+        <div class="cal">${['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => `<i>${x}</i>`).join('')}${cells}</div>
+        <p class="note" style="margin-top:12px">Angka besar = Masehi, keterangan bawah = Tanggal & Bulan Hijriah. Area ungu = Ramadhan.</p>
+      </div>
+      <div class="card">
+        <b>${ic('info', 17)} Keterangan Ramadhan ${s.hijri_year} H</b>
+        <p style="display:flex;align-items:center;gap:8px;margin:4px 0">${ic('moon', 15)} Awal Ramadhan: <b>${fmt(s.ramadan_start)}</b></p>
+        <p style="display:flex;align-items:center;gap:8px;margin:4px 0">${ic('moon-star', 15)} Akhir Ramadhan: <b>${fmt(s.ramadan_end)}</b></p>
+        <p style="display:flex;align-items:center;gap:8px;margin:4px 0">${ic('sparkles', 15)} 1 Syawal: <b>${fmt(s.eid_date)}</b></p>
+        <p class="note" style="text-align:left;margin-top:8px">${esc(s.source_note)}</p>
+      </div>`;
+  };
+
+  V.imsak = () => {
+    const p = S.prefs, r = S.imsak, t = today();
+    const activeDate = (r && r.some(x => x.date === t)) ? t : (IS_PREVIEW && r && r.length ? r[0].date : t);
+    const K = ['imsak', 'subuh', 'terbit', 'dzuhur', 'ashar', 'maghrib', 'isya'];
+    const cityList = S.cities || [];
+    return `
+      <div class="card">
+        <b>${ic('map-pin', 17)} Wilayah: ${esc(p.city_name || 'Belum dipilih')}</b>
+        <div class="row">
+          <input id="cq" placeholder="Cari seluruh kota / kabupaten di Indonesia (contoh: Jakarta, Bandung, Surabaya...)" oninput="filterCity(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();findCity()}">
+          <button class="btn s" onclick="findCity()">${ic('search', 16)} Cari</button>
+        </div>
+        <div id="city-results" class="drag-scroll" data-lenis-prevent style="max-height:210px;overflow-y:auto;${cityList.length ? 'margin-top:6px' : ''}">
+          ${cityList.map(cityLink).join('')}
+        </div>
+        <p class="note" style="text-align:left;margin-top:10px">Sumber data: Direktorat Jenderal Bimbingan Masyarakat Islam (Bimas Islam) Kementerian Agama Republik Indonesia melalui layanan terbuka API MyQuran.</p>
+      </div>
+      <div class="card scroll drag-scroll" data-lenis-prevent>
+        ${r && r.length ? `
+          <table>
+            <tr><th>Hari</th><th>Tgl</th>${K.map(k => `<th>${k}</th>`).join('')}</tr>
+            ${r.map(x => `
+              <tr class="${x.date === activeDate ? 'hl' : ''}">
+                <td>${days().indexOf(x.date) + 1}</td>
+                <td>${x.date.slice(8)}/${x.date.slice(5, 7)}</td>
+                ${K.map(k => `<td class="${k === 'imsak' || k === 'maghrib' ? 'hl-orange' : ''}">${esc(x[k])}</td>`).join('')}
+              </tr>`).join('')}
+          </table>` : `<p class="em">${p.city_id ? (r ? 'Jadwal belum tersedia' : 'Memuat jadwal…') : 'Pilih kota atau kabupaten di atas untuk melihat jadwal imsakiyyah'}</p>`}
+      </div>`;
+  };
+
+  V.ibadah = () => {
+    const o = overall('ibadah');
+    const uzurList = [...getUzurDays()].sort();
+    return CL('ibadah') + `
+      <div class="card">
+        <b>${ic('trending-up', 17)} Persentase keseluruhan Ramadhan</b>
+        <div class="row">
+          <div class="ring" style="--v:${o}"><b>${o}%</b></div>
+          <p style="flex:1">Rata-rata capaian ibadah harian selama ${days().length} hari.</p>
+        </div>
+        ${wave('ibadah')}
+      </div>
+      ${uzurList.length ? `
+        <div class="card">
+          <b>${ic('calendar-off', 17)} Catatan Utang Puasa (Qadha) · ${uzurList.length} Hari</b>
+          <p style="font-size:13px;margin-bottom:8px">Daftar hari Ramadhan yang ditandai uzur syar'i dan perlu di-qadha setelah bulan Ramadhan:</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${uzurList.map(ud => `<span class="chip" style="font-size:12px">Hari ke-${days().indexOf(ud) + 1} (${ud.slice(8)}/${ud.slice(5, 7)})</span>`).join('')}
+          </div>
+        </div>` : ''}`;
+  };
+
+  V.daily = () => CL('daily') + `<p class="note">Capaian keseluruhan: ${overall('daily')}%</p>`;
+
+  V.tilawah = () => {
+    const D = days();
+    const t = Math.min(4, Math.max(1, S.prefs.target_khatam || 1));
+    const d = curDay();
+    const dayIdx = Math.max(0, D.indexOf(d));
+    const pagesPerPrayer = 4 * t;
+    const pagesPerDay = pagesPerPrayer * 5;
+    const startPageBase = dayIdx * pagesPerDay + 1;
+    const WAKTU = ['Shubuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+    const slotLogs = S.til.filter(r => r.mode && r.mode.startsWith('slot_'));
+    const totalTargetPagesRead = slotLogs.reduce((sum, r) => sum + (+r.pages || 0), 0);
+    const totalGoalPages = 604 * t;
+    const kp = Math.min(100, Math.round(totalTargetPagesRead / totalGoalPages * 100));
+    const man = S.til.filter(r => r.mode === 'manual').sort((a, b) => b.day.localeCompare(a.day));
+    return `
+      ${strip()}
+      <div class="card scroll drag-scroll" data-lenis-prevent>
+        <b>${ic('table', 17)} Tabel Khatam Membaca Al-Qur'an</b>
+        <table class="kt-table">
+          <tr><th>Target</th>${WAKTU.map(w => `<th>${w}</th>`).join('')}</tr>
+          ${[1, 2, 3, 4].map(n => `
+            <tr class="${n === t ? 'active-target' : ''}">
+              <td><b>${n}x Khatam</b></td>
+              ${WAKTU.map(() => `<td>${4 * n} Halaman</td>`).join('')}
+            </tr>`).join('')}
+        </table>
+      </div>
+      <div class="card">
+        <div class="row">
+          <b style="margin:0">${ic('book-open', 17)} Sesuai Target Khatam</b>
+          <select style="max-width:155px" onchange="savePref({target_khatam:+this.value})">
+            ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === t ? 'selected' : ''}>${n}x Khatam</option>`).join('')}
+          </select>
+        </div>
+        <p style="margin:6px 0 10px">Hari ke-${dayIdx + 1} · Target <b>${pagesPerPrayer} halaman</b> per waktu shalat (${pagesPerDay} hal/hari) · Progres total <b>${kp}%</b></p>
+        <div class="bar"><i style="width:${kp}%"></i></div>
+        <div class="slot-grid">
+          ${WAKTU.map((w, idx) => {
+            const pFrom = startPageBase + idx * pagesPerPrayer;
+            const pTo = Math.min(604 * t, pFrom + pagesPerPrayer - 1);
+            const dispFrom = ((pFrom - 1) % 604) + 1;
+            const dispTo = ((pTo - 1) % 604) + 1;
+            const slotKey = 'slot_' + idx;
+            const checked = S.til.some(r => r.day === d && r.mode === slotKey);
+            return `
+              <label class="slot-box ${checked ? 'done' : ''}">
+                <small>${w}</small>
+                <input type="checkbox" ${checked ? 'checked' : ''} onchange="togTilSlot('${d}','${slotKey}','${w}',${pagesPerPrayer})">
+                <span class="pg-range">Hal ${dispFrom}–${dispTo}</span>
+              </label>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <b>${ic('bookmark', 17)} Catatan tilawah manual (tanpa target)</b>
+        <div class="row">
+          <input id="ts" placeholder="Surah / juz" onkeydown="if(event.key==='Enter'){event.preventDefault();addTil()}">
+          <input id="tp" type="number" min="1" placeholder="Halaman" onkeydown="if(event.key==='Enter'){event.preventDefault();addTil()}">
+        </div>
+        <div class="row">
+          <input id="tn" placeholder="Catatan (opsional)" onkeydown="if(event.key==='Enter'){event.preventDefault();addTil()}">
+          <button class="btn s" onclick="addTil()">${ic('check', 16)} Simpan</button>
+        </div>
+        ${man.length ? man.map(r => `
+          <div class="it">
+            <span>${r.day.slice(8)}/${r.day.slice(5, 7)} · ${esc(r.surah)} · ${r.pages || 0} hal ${r.note ? '· ' + esc(r.note) : ''}</span>
+            <button class="x" onclick="delRow('tilawah_log','${r.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada data</p>'}
+      </div>`;
+  };
+
+  V.hafalan = () => {
+    const D = days(), d = curDay(), hj = +S.prefs.hafal_juz || 0, zt = +S.prefs.zi_target || 5;
+    const L = S.haf.filter(r => r.day === d);
+    const ziList = L.filter(r => r.type === 'ziyadah');
+    const muList = L.filter(r => r.type === 'murojaah');
+    const zi = ziList.reduce((s, r) => s + (r.ayat_to - r.ayat_from + 1), 0);
+    const muAyat = muList.reduce((s, r) => s + (r.ayat_to - r.ayat_from + 1), 0);
+    const zp = Math.min(100, Math.round(zi / zt * 100));
+    const murojaahTargetHal = hj ? Math.ceil(hj * 20 / D.length) : 0;
+    const selSurahObj = SURAH_LIST.find(([no, nm]) => `${no}. ${nm}` === S.hafSurah);
+    const maxAyatHint = selSurahObj ? `Maks ${selSurahObj[2]} ayat` : 'Ayat sampai';
+    return `
+      ${strip()}
+      <div class="card">
+        <b>${ic('user-check', 17)} Target Ziyadah & Muroja’ah</b>
+        <div class="row">
+          <div style="flex:1;min-width:140px">
+            <small style="color:var(--m);display:block;margin-bottom:4px">Total Hafalan Dimiliki (Juz)</small>
+            <input id="hj" type="number" min="0" max="30" step="0.5" value="${hj}" placeholder="Contoh: 3">
+          </div>
+          <div style="flex:1;min-width:140px">
+            <small style="color:var(--m);display:block;margin-bottom:4px">Target Ziyadah (Ayat/Hari)</small>
+            <input id="hz" type="number" min="1" value="${zt}" placeholder="Contoh: 5">
+          </div>
+          <button class="btn s" style="align-self:flex-end" onclick="saveHaf()">${ic('check', 16)} Simpan Target</button>
+        </div>
+        <p style="margin-top:6px">
+          Rencana muroja’ah harian: <b>${hj ? `${murojaahTargetHal} halaman/hari (±${(murojaahTargetHal / 20).toFixed(2)} juz)` : 'isi jumlah hafalan (juz) di atas'}</b> agar khatam muroja’ah 1x selama Ramadhan.
+        </p>
+      </div>
+      <div class="card">
+        <div class="row" style="margin-bottom:10px">
+          <b style="margin:0">${ic('book-open-check', 17)} Catat Setoran Hari ke-${days().indexOf(d) + 1}</b>
+          <span class="chip" style="font-size:12px">Ziyadah: ${zi}/${zt} ayat · Muroja’ah: ${muAyat} ayat</span>
+        </div>
+        <div class="bar" style="margin-bottom:14px"><i style="width:${zp}%"></i></div>
+        <div class="row">
+          <select id="ht" style="max-width:210px">
+            <option value="ziyadah">Ziyadah (Hafalan Baru)</option>
+            <option value="murojaah">Muroja’ah (Mengulang)</option>
+          </select>
+          <select id="hs" onchange="onSelectSurah(this.value)">
+            <option value="">-- Pilih Surah Al-Qur'an (1–114) --</option>
+            ${SURAH_LIST.map(([no, nm, ay]) => {
+              const val = `${no}. ${nm}`;
+              return `<option value="${esc(val)}" ${S.hafSurah === val ? 'selected' : ''}>${no}. ${esc(nm)} (${ay} ayat)</option>`;
+            }).join('')}
+          </select>
+        </div>
+        <div class="row">
+          <input id="hf" type="number" min="1" max="${selSurahObj ? selSurahObj[2] : 286}" placeholder="Dari ayat ke-">
+          <input id="hto" type="number" min="1" max="${selSurahObj ? selSurahObj[2] : 286}" placeholder="${maxAyatHint}">
+          <select id="hq">
+            <option value="Mutqin / Sangat Lancar">Mutqin / Sangat Lancar</option>
+            <option value="Lancar">Lancar</option>
+            <option value="Ragu-ragu">Ragu-ragu</option>
+            <option value="Perlu Diulang">Perlu Diulang</option>
+          </select>
+        </div>
+        <input id="hnote" placeholder="Catatan tajwid / ayat yang sering keliru (opsional)" style="margin:8px 0 12px">
+        <button class="btn" onclick="addHaf()">${ic('plus', 16)} Simpan Catatan Hafalan</button>
+      </div>
+      <div class="card">
+        <b>${ic('history', 17)} Riwayat Ziyadah & Muroja’ah Hari Ini</b>
+        ${L.length ? L.map(r => `
+          <div class="it">
+            <span>
+              ${ic(r.type === 'ziyadah' ? 'plus-circle' : 'repeat', 16)}
+              <b>${r.type === 'ziyadah' ? 'Ziyadah' : 'Muroja’ah'}</b> · ${esc(r.surah)} (Ayat ${r.ayat_from}–${r.ayat_to}) · <small style="color:var(--p);font-weight:700">${esc(r.quality)}</small>
+            </span>
+            <button class="x" onclick="delRow('hafalan_log','${r.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada setoran ziyadah atau muroja’ah hari ini</p>'}
+      </div>`;
+  };
+
+  V.jurnal = () => {
+    const d = curDay(), r = S.jr.find(x => x.day === d) || {}, h = [...S.jr].sort((a, b) => b.day.localeCompare(a.day));
+    const moodLabel = m => (MOODS.find(x => x[0] === m) || ['', 'smile', ''])[1];
+    return `
+      ${strip()}
+      <div class="card">
+        <b>${ic('pen-line', 17)} Refleksi hari ke-${days().indexOf(d) + 1}</b>
+        <div class="moods">
+          ${MOODS.map(m => `
+            <label class="mo">
+              <input type="radio" name="mood" value="${m[0]}" ${r.mood === m[0] ? 'checked' : ''}>
+              ${ic(m[1], 18)} ${m[2]}
+            </label>`).join('')}
+        </div>
+        <input id="jg" placeholder="Hari ini aku bersyukur atas…" value="${esc(r.gratitude)}" style="margin-bottom:8px">
+        <textarea id="jr" placeholder="Refleksi hari ini">${esc(r.reflection)}</textarea>
+        <textarea id="jn" placeholder="Catatan bebas" style="margin-top:8px">${esc(r.note)}</textarea>
+        <button class="btn" style="margin-top:12px" onclick="saveJr()">${ic('save', 16)} Simpan jurnal</button>
+      </div>
+      <div class="card">
+        <b>${ic('book-marked', 17)} Riwayat</b>
+        ${h.length ? h.map(x => `
+          <div class="it" onclick="setDay('${x.day}')">
+            <span>${x.mood ? ic(moodLabel(x.mood), 16) : ''} ${x.day.slice(8)}/${x.day.slice(5, 7)} · ${esc((x.reflection || x.note || x.gratitude || '').slice(0, 70))}</span>
+          </div>`).join('') : '<p class="em">Belum ada data</p>'}
+      </div>`;
+  };
+
+  V.recap = () => {
+    const ibPct = overall('ibadah'), dlPct = overall('daily');
+    const totalTilawahPages = S.til.reduce((sum, r) => sum + (+r.pages || 0), 0);
+    const khatamEst = (totalTilawahPages / 604).toFixed(2);
+    const totalZiyadahAyat = S.haf.filter(r => r.type === 'ziyadah').reduce((sum, r) => sum + Math.max(0, r.ayat_to - r.ayat_from + 1), 0);
+    const totalMurojaahAyat = S.haf.filter(r => r.type === 'murojaah').reduce((sum, r) => sum + Math.max(0, r.ayat_to - r.ayat_from + 1), 0);
+    const uzurCount = getUzurDays().length;
+    const puasaHari = Math.max(0, days().length - uzurCount);
+    const userName = S.user ? (S.user.full_name || S.user.username) : 'Peserta Ramadhan';
+    return `
+      <div class="card">
+        <b>${ic('sparkles', 17)} Kartu Ringkasan Ramadhan ${S.set.hijri_year} H</b>
+        <p style="margin-bottom:16px">Bagikan perjalanan ibadah dan refleksi Ramadhanmu kepada keluarga atau sahabat.</p>
+        <div id="recap-card" class="recap-poster">
+          <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
+            <div>
+              <span style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.8">rJournal · Ramadhan ${S.set.hijri_year} H</span>
+              <h3 style="font-size:22px;font-weight:800;margin-top:2px">${esc(userName)}</h3>
+            </div>
+            <div style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.16);display:grid;place-items:center">${ic('moon', 22)}</div>
+          </div>
+          <div class="recap-grid">
+            <div class="recap-stat"><small>Capaian Ibadah</small><b>${ibPct}%</b></div>
+            <div class="recap-stat"><small>Total Tilawah</small><b>${totalTilawahPages} Hal <span style="font-size:12px;font-weight:500;opacity:.85">(${khatamEst}x)</span></b></div>
+            <div class="recap-stat"><small>Ziyadah / Muroja'ah</small><b>${totalZiyadahAyat} / ${totalMurojaahAyat} <span style="font-size:12px;font-weight:500">Ayat</span></b></div>
+            <div class="recap-stat"><small>Daily Jurnal & Refleksi</small><b>${dlPct}% · ${S.jr.length} Hari</b></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;opacity:.88;position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.16);padding-top:12px">
+            <span>Puasa: ${puasaHari} hari ${uzurCount ? `(Qadha: ${uzurCount} hari)` : ''}</span>
+            <span>Taqabbalallahu minna wa minkum</span>
+          </div>
+        </div>
+        <div class="row" style="margin-top:16px">
+          <button class="btn" onclick="downloadRecap()">${ic('download', 16)} Unduh Gambar Kartu</button>
+          <button class="btn s" onclick="copyRecapText()">${ic('copy', 16)} Salin Teks Ringkasan</button>
+        </div>
+      </div>`;
+  };
+
+  V.admin = () => {
+    const s = S.set, U = S.users, now = Date.now(), act = U.filter(u => u.last_seen && now - new Date(u.last_seen) < 12e4);
+    return `
+      <div class="grid">
+        <div class="card st"><small>Total pengguna</small><br><b>${U.length}</b></div>
+        <div class="card st"><small>Sedang membuka aplikasi</small><br><b class="ok">${act.length}</b></div>
+      </div>
+      <div class="card">
+        <b>${ic('settings', 17)} Pengaturan Ramadhan (sesuai ketetapan pemerintah)</b>
+        <div class="row"><label>Tahun H</label><input id="sy" type="number" value="${s.hijri_year}"></div>
+        <div class="row">
+          <label>Awal</label><input id="s1" type="date" value="${s.ramadan_start}">
+          <label>Akhir</label><input id="s2" type="date" value="${s.ramadan_end}">
+          <label>1 Syawal</label><input id="s3" type="date" value="${s.eid_date}">
+        </div>
+        <div class="row">
+          <input id="s4" placeholder="Keterangan sumber" value="${esc(s.source_note)}">
+          <button class="btn" onclick="saveSet()">${ic('save', 16)} Simpan</button>
+        </div>
+      </div>
+      <div class="card scroll drag-scroll" data-lenis-prevent>
+        <b>${ic('users', 17)} Daftar pengguna</b>
+        ${U.length ? `
+          <table>
+            <tr><th>Username</th><th>Nama</th><th>Terdaftar</th><th>Status</th></tr>
+            ${U.map(u => {
+              const on = u.last_seen && now - new Date(u.last_seen) < 12e4;
+              return `<tr><td>${esc(u.username)}</td><td>${esc(u.full_name)}</td><td>${esc((u.created_at || '').slice(0, 10))}</td><td><span class="badge ${on ? 'on' : 'off'}"><i class="dot"></i>${on ? 'Aktif' : 'Offline'}</span></td></tr>`;
+            }).join('')}
+          </table>` : '<p class="em">Belum ada data</p>'}
+      </div>
+      <p class="note" style="display:flex;align-items:center;justify-content:center;gap:6px">${ic('lock', 14)} Data ibadah, tilawah, hafalan, dan jurnal pengguna dilindungi: admin tidak dapat membacanya.</p>`;
+  };
+
+  function modalH() {
+    const m = S.modal;
+    if (!m) return '';
+    const reg = m === 'register', adm = m === 'admin';
+    return `
+      <div class="mb" data-lenis-prevent onclick="if(event.target===this)openM(null)">
+        <div class="mc">
+          <div class="av">${ic(adm ? 'shield' : reg ? 'user-plus' : 'user', 34)}</div>
+          <h2>${reg ? 'Buat akun rJournal' : adm ? 'Masuk Admin' : 'Selamat datang kembali'}</h2>
+          <p class="sub">${reg ? 'Daftar untuk mulai Ramadhan Jurnal.' : adm ? 'Khusus pengelola aplikasi.' : 'Masuk untuk melanjutkan ibadah harianmu.'}</p>
+          ${reg ? `<label>Nama lengkap</label><div class="in"><span>${ic('smile', 17)}</span><input id="rn" placeholder="Nama lengkap"></div>` : ''}
+          <label>${adm ? 'Email admin' : 'Username'}</label>
+          <div class="in"><span>${ic(adm ? 'mail' : 'user', 17)}</span><input id="lu" placeholder="${adm ? 'Masukkan email' : 'Masukkan username'}" autocomplete="username"></div>
+          <label>Password</label>
+          <div class="in"><span>${ic('lock', 17)}</span><input id="lp" type="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter'){event.preventDefault();${reg ? 'doReg()' : `doLogin(${adm})`}}"><button class="eye" onclick="eye()" title="Lihat password">${ic('eye', 17)}</button></div>
+          <div class="row" style="justify-content:space-between;margin-top:12px">
+            <label class="ck"><input type="checkbox" id="rm" checked> Ingat saya</label>
+            <a class="lk" onclick="openM('${reg ? 'login' : 'register'}')">${reg ? 'Sudah punya akun?' : 'Daftar akun'}</a>
+          </div>
+          <button class="btn w" onclick="${reg ? 'doReg()' : `doLogin(${adm})`}">${reg ? 'Daftar' : 'Masuk'} ${ic('arrow-right', 17)}</button>
+          <a class="lk c" onclick="openM('${adm ? 'login' : 'admin'}')">${adm ? 'Masuk sebagai peserta' : 'Masuk sebagai admin'}</a>
+          ${IS_PREVIEW ? `<div class="pv"><button class="btn s" onclick="quick(false)">Quick Login User</button><button class="btn s" onclick="quick(true)">Quick Login Admin</button></div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  let lenisInstance = null;
+  let lenisRafId = null;
+
+  function initSmoothScrollAndAnimations() {
+    try {
+      const appEl = $('#app');
+      if (!appEl) return;
+
+      if (window.Lenis) {
+        if (lenisInstance) {
+          if (lenisRafId) cancelAnimationFrame(lenisRafId);
+          lenisInstance.destroy();
+          lenisInstance = null;
+        }
+        const shellEl = appEl.querySelector('.shell');
+        if (shellEl) {
+          lenisInstance = new Lenis({
+            wrapper: appEl,
+            content: shellEl,
+            duration: 1.15,
+            easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true
+          });
+          if (window.ScrollTrigger) lenisInstance.on('scroll', ScrollTrigger.update);
+          const raf = time => {
+            if (lenisInstance) {
+              lenisInstance.raf(time);
+              lenisRafId = requestAnimationFrame(raf);
+            }
+          };
+          lenisRafId = requestAnimationFrame(raf);
+        }
+      }
+
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.getAll().forEach(st => st.kill());
+        const targets = appEl.querySelectorAll('.hd h1, .hero h2, .card > b, .fc b');
+        targets.forEach(el => {
+          if (el.dataset.wordsSplit) return;
+          el.dataset.wordsSplit = '1';
+          const walkAndWrap = node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              const text = node.textContent;
+              if (!text.trim()) return;
+              const frag = document.createDocumentFragment();
+              text.split(/(\s+)/).forEach(part => {
+                if (!part) return;
+                if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+                else {
+                  const wrap = document.createElement('span');
+                  wrap.className = 'word-wrap';
+                  const inner = document.createElement('span');
+                  inner.className = 'word-inner';
+                  inner.textContent = part;
+                  wrap.appendChild(inner);
+                  frag.appendChild(wrap);
+                }
+              });
+              node.parentNode.replaceChild(frag, node);
+            } else if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute('data-lucide') && node.tagName.toLowerCase() !== 'svg') {
+              Array.from(node.childNodes).forEach(walkAndWrap);
+            }
+          };
+          walkAndWrap(el);
+          const words = el.querySelectorAll('.word-inner');
+          if (words.length) {
+            gsap.fromTo(words, { yPercent: 110, opacity: 0 }, {
+              yPercent: 0,
+              opacity: 1,
+              duration: 0.65,
+              ease: 'power3.out',
+              stagger: 0.045,
+              scrollTrigger: { trigger: el, scroller: appEl, start: 'top 94%', once: true }
+            });
+          }
+        });
+        requestAnimationFrame(() => { if (window.ScrollTrigger) ScrollTrigger.refresh(); });
+      }
+    } catch (err) {
+      console.warn('Animation init skipped:', err);
+    }
+  }
+
+  function render() {
+    const appEl = $('#app');
+    if (!appEl) return;
+    const A = S.admin;
+    const nav = N.filter(n => !A || ['home', 'cal'].includes(n[0])).concat(A ? [['admin', 'Admin', 'shield']] : []);
+    const y = appEl.scrollTop;
+    const t = TT[S.page] || TT.home;
+    if (S.page === 'home') curDay();
+
+    appEl.innerHTML = `
+      ${IS_PREVIEW ? `<div class="bar2">${ic('flask-conical', 16)} <b>Mode Preview Aktif</b> · data hanya di memori browser <button class="btn s" onclick="quick(false)">Quick User</button><button class="btn s" onclick="quick(true)">Quick Admin</button></div>` : ''}
+      ${S.pwa ? `<div class="bar2">Pasang aplikasi rJournal di layar utama <button class="btn" onclick="install()">Pasang</button><a class="lk" onclick="dismissPwa()">Nanti</a></div>` : ''}
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="shell">
+        <aside class="side">
+          <div class="brand">
+            <div class="lg">${ic('moon', 22)}</div>
+            <div><b>rJournal</b><small>Ramadhan Jurnal</small></div>
+          </div>
+          ${nav.map(n => `<a class="nv ${S.page === n[0] ? 'on' : ''}" onclick="go('${n[0]}')">${ic(n[2], 19)}<span>${n[1]}</span></a>`).join('')}
+        </aside>
+        <main class="main">
+          <header class="hd">
+            <div><h1>${t[0]}</h1><p>${t[1]}</p></div>
+            <div class="r">
+              ${S.user ? `<span class="chip">${ic('user', 15)} ${esc(S.user.full_name || S.user.username)}</span><button class="btn s" onclick="logout()">${ic('log-out', 15)} Keluar</button>` : `<button class="btn" onclick="openM('login')">${ic('log-in', 16)} Masuk</button>`}
+            </div>
+          </header>
+          ${(V[S.page] || V.home)()}
+        </main>
+      </div>
+      <nav class="bn" data-lenis-prevent>
+        ${nav.map(n => `<a class="${S.page === n[0] ? 'on' : ''}" onclick="go('${n[0]}')">${ic(n[2], 20)}<span>${n[1]}</span></a>`).join('')}
+      </nav>
+      ${modalH()}`;
+
+    if (window.lucide) lucide.createIcons();
+    appEl.scrollTop = y;
+    initDragScroll();
+    initSmoothScrollAndAnimations();
+  }
+
+  function initDragScroll() {
+    document.querySelectorAll('.drag-scroll').forEach(el => {
+      if (el.dataset.dragBound) return;
+      el.dataset.dragBound = '1';
+      let isDown = false, moved = false, startX = 0, startY = 0, scrollL = 0, scrollT = 0;
+      el.addEventListener('mousedown', e => {
+        if (e.button !== 0 || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+        isDown = true;
+        moved = false;
+        startX = e.pageX - el.offsetLeft;
+        startY = e.pageY - el.offsetTop;
+        scrollL = el.scrollLeft;
+        scrollT = el.scrollTop;
+      });
+      window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        el.classList.remove('dragging');
+      });
+      el.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        const x = e.pageX - el.offsetLeft;
+        const y = e.pageY - el.offsetTop;
+        const dx = x - startX;
+        const dy = y - startY;
+        if (!moved && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+          moved = true;
+          el.classList.add('dragging');
+        }
+        if (moved) {
+          e.preventDefault();
+          el.scrollLeft = scrollL - dx;
+          el.scrollTop = scrollT - dy;
+        }
+      });
+      el.addEventListener('click', e => {
+        if (moved) {
+          e.preventDefault();
+          e.stopPropagation();
+          moved = false;
+        }
+      }, true);
+    });
+  }
+
+  // ===== Aksi =====
+  async function loadData() {
+    const f = { user_id: S.user.id };
+    [S.items, S.checks, S.til, S.haf, S.jr] = await Promise.all([
+      T.sel('items'),
+      T.sel('checks', f),
+      T.sel('tilawah_log', f),
+      T.sel('hafalan_log', f),
+      T.sel('journal', f)
+    ]);
+  }
+
+  async function loadUsers() {
+    S.users = await T.sel('users', {}, 'id,username,full_name,last_seen,created_at');
+  }
+
+  async function loadAllIndonesianCities() {
+    if (S.allCities && S.allCities.length) return S.allCities;
+    try {
+      const res = await fetch('https://api.myquran.com/v2/sholat/kota/semua');
+      const json = await res.json();
+      if (json && json.data && json.data.length) {
+        S.allCities = json.data;
+        return S.allCities;
+      }
+    } catch (e) {}
+    S.allCities = [
+      { id: '1101', lokasi: 'KOTA BANDA ACEH' }, { id: '0228', lokasi: 'KOTA MEDAN' },
+      { id: '0314', lokasi: 'KOTA PADANG' }, { id: '0412', lokasi: 'KOTA PEKANBARU' },
+      { id: '0509', lokasi: 'KOTA JAMBI' }, { id: '0616', lokasi: 'KOTA PALEMBANG' },
+      { id: '0709', lokasi: 'KOTA BENGKULU' }, { id: '0814', lokasi: 'KOTA BANDAR LAMPUNG' },
+      { id: '0906', lokasi: 'KOTA PANGKAL PINANG' }, { id: '1006', lokasi: 'KOTA TANJUNG PINANG' },
+      { id: '1301', lokasi: 'KOTA JAKARTA' }, { id: '1201', lokasi: 'KAB. BANDUNG' },
+      { id: '1219', lokasi: 'KOTA BANDUNG' }, { id: '1204', lokasi: 'KAB. BOGOR' },
+      { id: '1221', lokasi: 'KOTA BOGOR' }, { id: '1220', lokasi: 'KOTA BEKASI' },
+      { id: '1223', lokasi: 'KOTA DEPOK' }, { id: '1109', lokasi: 'KOTA TANGERANG' },
+      { id: '1110', lokasi: 'KOTA TANGERANG SELATAN' }, { id: '1108', lokasi: 'KOTA SERANG' },
+      { id: '1433', lokasi: 'KOTA SEMARANG' }, { id: '1434', lokasi: 'KOTA SURAKARTA' },
+      { id: '1505', lokasi: 'KOTA YOGYAKARTA' }, { id: '1638', lokasi: 'KOTA SURABAYA' },
+      { id: '1633', lokasi: 'KOTA MALANG' }, { id: '1709', lokasi: 'KOTA DENPASAR' },
+      { id: '1810', lokasi: 'KOTA MATARAM' }, { id: '1922', lokasi: 'KOTA KUPANG' },
+      { id: '2014', lokasi: 'KOTA PONTIANAK' }, { id: '2114', lokasi: 'KOTA PALANGKARAYA' },
+      { id: '2212', lokasi: 'KOTA BANJARMASIN' }, { id: '2309', lokasi: 'KOTA SAMARINDA' },
+      { id: '2405', lokasi: 'KOTA TARAKAN' }, { id: '2515', lokasi: 'KOTA MANADO' },
+      { id: '2613', lokasi: 'KOTA PALU' }, { id: '2722', lokasi: 'KOTA MAKASSAR' },
+      { id: '2816', lokasi: 'KOTA KENDARI' }, { id: '2906', lokasi: 'KOTA GORONTALO' },
+      { id: '3006', lokasi: 'KAB. MAMUJU' }, { id: '3110', lokasi: 'KOTA AMBON' },
+      { id: '3209', lokasi: 'KOTA TERNATE' }, { id: '3313', lokasi: 'KOTA MANOKWARI' },
+      { id: '3429', lokasi: 'KOTA JAYAPURA' }
+    ];
+    return S.allCities;
+  }
+
+  async function boot() {
+    const st = await T.sel('app_settings');
+    if (st[0]) S.set = st[0];
+    if (S.user && S.admin) await loadUsers();
+    else if (S.user) {
+      const id = S.user.id;
+      S.prefs = (await T.sel('prefs', { user_id: id }))[0] || { user_id: id, target_khatam: 1, hafal_juz: 0, zi_target: 5 };
+      try {
+        const savedUzur = JSON.parse(localStorage.getItem('rj_uzur_' + id) || 'null');
+        if (Array.isArray(savedUzur) && !Array.isArray(S.prefs.uzur_days)) S.prefs.uzur_days = savedUzur;
+      } catch (e) {}
+      await loadData();
+      if (IS_PREVIEW && !S.prefs.city_id) {
+        S.prefs.city_id = '1301';
+        S.prefs.city_name = 'KOTA JAKARTA';
+      }
+      if (S.prefs.city_id && !S.imsak) await fetchJ();
+      startCountdownTimer();
+      beat();
+    }
+    render();
+  }
+
+  function computeCountdown() {
+    const now = new Date();
+    const t = iso(now);
+    const list = S.imsak || [];
+    const rowToday = list.find(x => x.date === t) || list[0];
+    if (!rowToday) return { label: 'Hitung Mundur Imsak & Berbuka', timer: S.prefs.city_id ? 'Memuat waktu...' : '-- : -- : --' };
+    const parseTime = (dateStr, hm) => {
+      const [H, M] = (hm || '00:00').split(':').map(Number);
+      const d = new Date(dateStr + 'T00:00:00');
+      d.setHours(H, M, 0, 0);
+      return d;
+    };
+    const imsakTime = parseTime(t, rowToday.imsak);
+    const maghribTime = parseTime(t, rowToday.maghrib);
+    let targetTime, label;
+    if (now < imsakTime) {
+      targetTime = imsakTime;
+      label = `Menuju Imsak (${rowToday.imsak})`;
+    } else if (now < maghribTime) {
+      targetTime = maghribTime;
+      label = `Menuju Berbuka / Maghrib (${rowToday.maghrib})`;
+    } else {
+      const tomorrow = addD(t, 1);
+      const rowNext = list.find(x => x.date === tomorrow) || rowToday;
+      targetTime = parseTime(tomorrow, rowNext.imsak);
+      label = `Menuju Imsak Esok (${rowNext.imsak})`;
+    }
+    const diffSec = Math.max(0, Math.floor((targetTime - now) / 1000));
+    const hh = String(Math.floor(diffSec / 3600)).padStart(2, '0');
+    const mm = String(Math.floor((diffSec % 3600) / 60)).padStart(2, '0');
+    const ss = String(diffSec % 60).padStart(2, '0');
+    return { label, timer: `${hh} : ${mm} : ${ss}` };
+  }
+
+  function startCountdownTimer() {
+    clearInterval(cdT);
+    cdT = setInterval(() => {
+      const el = $('#live-cd');
+      if (el && S.page === 'home' && S.user) {
+        const cd = computeCountdown();
+        el.textContent = cd.timer;
+        const lbl = el.previousElementSibling?.querySelector('b');
+        if (lbl) lbl.textContent = cd.label;
+      }
+    }, 1000);
+  }
+
+  function beat() {
+    clearInterval(beatT);
+    if (IS_PREVIEW) return;
+    const f = async () => { try { await sb.rpc('heartbeat'); } catch (e) {} };
+    f();
+    beatT = setInterval(f, 60000);
+  }
+
+  async function enter() {
+    S.modal = null;
+    S.day = null;
+    S.page = S.admin ? 'admin' : 'home';
+    await boot();
+  }
+
+  const A = {
+    async go(p) {
+      if (!S.user && !['home', 'cal'].includes(p)) {
+        S.modal = 'login';
+        return render();
+      }
+      S.page = p;
+      S.cities = [];
+      render();
+      if (p === 'imsak') {
+        loadAllIndonesianCities();
+        if (S.prefs.city_id && !S.imsak) await fetchJ();
+        render();
+      }
+      if (p === 'admin') {
+        await loadUsers();
+        render();
+      }
+    },
+    setDay(d) { S.day = d; render(); },
+    calNav(n) {
+      const c = S.cal;
+      c.m += n;
+      if (c.m < 0) { c.m = 11; c.y--; }
+      if (c.m > 11) { c.m = 0; c.y++; }
+      render();
+    },
+    openM(m) { S.modal = m; render(); },
+    eye() { const e = $('#lp'); if (e) e.type = e.type === 'password' ? 'text' : 'password'; },
+    async quick(adm) {
+      S.admin = adm;
+      S.user = adm ? { username: 'admin@preview', full_name: 'Admin' } : mem.users[0];
+      await enter();
+    },
+    async doLogin(adm) {
+      const u = $('#lu').value.trim(), p = $('#lp').value;
+      if (!u || !p) return msg('Isi username dan password');
+      if (IS_PREVIEW) {
+        S.admin = !!adm;
+        if (adm) {
+          S.user = { username: u, full_name: 'Admin' };
+        } else {
+          let found = mem.users.find(x => x.username.toLowerCase() === u.toLowerCase());
+          if (!found) {
+            found = { id: nid(), username: u.toLowerCase(), full_name: u, last_seen: new Date().toISOString(), created_at: new Date().toISOString() };
+            mem.users.push(found);
+          }
+          S.user = found;
+        }
+        return enter();
+      }
+      if (adm) {
+        const { error } = await sb.auth.signInWithPassword({ email: u, password: p });
+        if (error) throw error;
+        S.admin = true;
+        S.user = { username: u, full_name: 'Admin' };
+      } else {
+        const { data, error } = await sb.rpc('login_user', { p_username: u, p_password: p });
+        if (error) throw error;
+        TOKEN = data.token;
+        S.admin = false;
+        S.user = data.user;
+        try { if ($('#rm').checked) localStorage.setItem('rj_t', TOKEN); } catch (e) {}
+      }
+      await enter();
+    },
+    async doReg() {
+      const n = $('#rn').value.trim(), u = $('#lu').value.trim(), p = $('#lp').value;
+      if (!n || !u || p.length < 6) return msg('Lengkapi data, password minimal 6 karakter');
+      if (IS_PREVIEW) {
+        const x = { id: nid(), username: u.toLowerCase(), full_name: n, last_seen: new Date().toISOString(), created_at: new Date().toISOString() };
+        mem.users.push(x);
+        S.user = x;
+        S.admin = false;
+        return enter();
+      }
+      const { data, error } = await sb.rpc('register_user', { p_username: u, p_password: p, p_name: n });
+      if (error) throw error;
+      TOKEN = data.token;
+      S.admin = false;
+      S.user = data.user;
+      try { if ($('#rm').checked) localStorage.setItem('rj_t', TOKEN); } catch (e) {}
+      await enter();
+    },
+    async logout() {
+      if (!IS_PREVIEW) {
+        try { if (S.admin) await sb.auth.signOut(); else await sb.rpc('logout_user'); } catch (e) {}
+        try { localStorage.removeItem('rj_t'); } catch (e) {}
+        TOKEN = null;
+        clearInterval(beatT);
+      }
+      clearInterval(cdT);
+      Object.assign(S, { user: null, admin: false, page: 'home', day: null, prefs: {}, items: [], checks: [], til: [], haf: [], jr: [], imsak: null, cities: [] });
+      render();
+    },
+    async togUzur(d) {
+      const cur = new Set(getUzurDays());
+      if (cur.has(d)) cur.delete(d); else cur.add(d);
+      const arr = [...cur];
+      try { localStorage.setItem('rj_uzur_' + S.user.id, JSON.stringify(arr)); } catch (e) {}
+      await A.savePref({ uzur_days: arr });
+      msg(cur.has(d) ? 'Hari ditandai uzur syar\'i & masuk daftar Qadha' : 'Status uzur hari ini dihapus');
+    },
+    async downloadRecap() {
+      const node = $('#recap-card');
+      if (!node || !window.html2canvas) return msg('Gagal menyiapkan gambar');
+      const canvas = await html2canvas(node, { scale: 2, backgroundColor: null, useCORS: true, logging: false });
+      const link = document.createElement('a');
+      link.download = `rJournal-Recap-${S.set.hijri_year}H.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      msg('Kartu ringkasan berhasil diunduh');
+    },
+    async copyRecapText() {
+      const ibPct = overall('ibadah');
+      const totalTilawahPages = S.til.reduce((sum, r) => sum + (+r.pages || 0), 0);
+      const totalZiyadahAyat = S.haf.filter(r => r.type === 'ziyadah').reduce((sum, r) => sum + Math.max(0, r.ayat_to - r.ayat_from + 1), 0);
+      const txt = `Ringkasan Ramadhan ${S.set.hijri_year} H (rJournal)\n• Capaian Ibadah: ${ibPct}%\n• Total Tilawah: ${totalTilawahPages} halaman\n• Ziyadah Hafalan: ${totalZiyadahAyat} ayat\n• Refleksi Jurnal: ${S.jr.length} hari\nTaqabbalallahu minna wa minkum.`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(txt);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      msg('Teks ringkasan disalin ke papan klip');
+    },
+    async tog(id, d) {
+      const c = isDone(id, d);
+      if (c) {
+        await T.del('checks', c.id);
+        S.checks = S.checks.filter(x => !same(x.id, c.id));
+      } else {
+        S.checks.push(await T.ins('checks', { user_id: S.user.id, item_id: id, day: d }));
+      }
+      render();
+    },
+    async addItem(k) {
+      const el = $('#ni');
+      const n = el ? el.value.trim() : '';
+      if (!n) return;
+      S.items.push(await T.ins('items', { kind: k, name: n, user_id: S.user.id }));
+      render();
+      const nextEl = $('#ni');
+      if (nextEl) nextEl.focus();
+    },
+    async delItem(e, id) {
+      e.preventDefault();
+      await T.del('items', id);
+      S.items = S.items.filter(i => !same(i.id, id));
+      S.checks = S.checks.filter(c => !same(c.item_id, id));
+      render();
+    },
+    async savePref(p) {
+      S.prefs = { ...S.prefs, ...p, user_id: S.user.id };
+      try {
+        await T.up('prefs', S.prefs, 'user_id');
+      } catch (err) {
+        const { uzur_days, ...corePrefs } = S.prefs;
+        await T.up('prefs', corePrefs, 'user_id');
+      }
+      render();
+    },
+    async togTilSlot(d, slotKey, waktu, pages) {
+      const r = S.til.find(x => x.day === d && x.mode === slotKey);
+      if (r) await T.del('tilawah_log', r.id);
+      else await T.ins('tilawah_log', { user_id: S.user.id, day: d, mode: slotKey, surah: `Target ${waktu}`, pages });
+      await loadData();
+      render();
+    },
+    async addTil() {
+      const s = $('#ts').value.trim();
+      if (!s) return msg('Isi surah / juz');
+      await T.ins('tilawah_log', { user_id: S.user.id, day: curDay(), mode: 'manual', surah: s, pages: +$('#tp').value || 0, note: $('#tn').value.trim() });
+      await loadData();
+      render();
+      msg('Tersimpan');
+    },
+    async delRow(t, id) {
+      await T.del(t, id);
+      await loadData();
+      render();
+    },
+    async saveHaf() {
+      await A.savePref({ hafal_juz: +$('#hj').value || 0, zi_target: +$('#hz').value || 5 });
+      msg('Profil hafalan tersimpan');
+    },
+    onSelectSurah(val) {
+      S.hafSurah = val;
+      const found = SURAH_LIST.find(([no, nm]) => `${no}. ${nm}` === val);
+      const toEl = $('#hto');
+      if (toEl && found) {
+        toEl.max = found[2];
+        toEl.placeholder = `Maks ${found[2]} ayat`;
+      }
+    },
+    async addHaf() {
+      const s = $('#hs').value.trim(), a = +$('#hf').value, b = +$('#hto').value;
+      if (!s || !a || b < a) return msg('Isi surah dan rentang ayat dengan benar');
+      const noteTxt = ($('#hnote')?.value || '').trim();
+      const qualTxt = $('#hq').value + (noteTxt ? ` (${noteTxt})` : '');
+      await T.ins('hafalan_log', { user_id: S.user.id, day: curDay(), type: $('#ht').value, surah: s, ayat_from: a, ayat_to: b, quality: qualTxt });
+      S.hafSurah = '';
+      await loadData();
+      render();
+      msg('Catatan hafalan tersimpan');
+    },
+    async saveJr() {
+      const m = document.querySelector('input[name=mood]:checked');
+      await T.up('journal', { user_id: S.user.id, day: curDay(), mood: m ? m.value : null, gratitude: $('#jg').value, reflection: $('#jr').value, note: $('#jn').value }, 'user_id,day');
+      await loadData();
+      render();
+      msg('Jurnal tersimpan');
+    },
+    async filterCity(q) {
+      const term = q.trim().toUpperCase();
+      if (!term) {
+        S.cities = [];
+        const listContainer = $('#city-results');
+        if (listContainer) {
+          listContainer.style.marginTop = '0';
+          listContainer.innerHTML = '';
+        }
+        return;
+      }
+      const all = await loadAllIndonesianCities();
+      S.cities = all.filter(c => c.lokasi.toUpperCase().includes(term)).slice(0, 35);
+      const listContainer = $('#city-results');
+      if (listContainer) {
+        listContainer.style.marginTop = '6px';
+        listContainer.innerHTML = S.cities.length
+          ? S.cities.map(cityLink).join('')
+          : '<p class="em" style="padding:8px">Kota / Kabupaten tidak ditemukan</p>';
+        if (window.lucide) lucide.createIcons();
+      }
+    },
+    async findCity() {
+      const q = $('#cq').value.trim();
+      if (!q) {
+        S.cities = [];
+        return render();
+      }
+      const all = await loadAllIndonesianCities();
+      const term = q.toUpperCase();
+      S.cities = all.filter(c => c.lokasi.toUpperCase().includes(term));
+      if (!S.cities.length) msg('Kota / Kabupaten tidak ditemukan');
+      render();
+    },
+    async pickCity(id, name) {
+      S.cities = [];
+      S.imsak = null;
+      await A.savePref({ city_id: id, city_name: name });
+      await fetchJ();
+      render();
+    },
+    async saveSet() {
+      const v = i => $('#' + i).value;
+      const s = { id: 1, hijri_year: +v('sy'), ramadan_start: v('s1'), ramadan_end: v('s2'), eid_date: v('s3'), source_note: v('s4') };
+      if (!s.ramadan_start || !s.ramadan_end || s.ramadan_end < s.ramadan_start) return msg('Tanggal tidak valid');
+      await T.up('app_settings', s, 'id');
+      S.set = s;
+      S.cal = null;
+      S.day = null;
+      render();
+      msg('Pengaturan disimpan');
+    },
+    dismissPwa() { S.pwa = null; render(); },
+    async install() {
+      if (S.pwa) {
+        S.pwa.prompt();
+        S.pwa = null;
+        render();
+      }
+    }
+  };
+
+  for (const k in A) {
+    window[k] = async (...a) => {
+      try { return await A[k](...a); }
+      catch (e) { msg(e && e.message ? e.message : String(e)); }
+    };
+  }
+
+  async function fetchJ() {
+    const c = S.prefs.city_id;
+    if (!c) return;
+    try {
+      const set = new Set(days());
+      let all = [];
+      for (const m of [...new Set(days().map(d => d.slice(0, 7)))]) {
+        const [y, mo] = m.split('-');
+        const r = await (await fetch(`https://api.myquran.com/v2/sholat/jadwal/${c}/${y}/${mo}`)).json();
+        all = all.concat((r.data && r.data.jadwal) || []);
+      }
+      const filtered = all.filter(r => set.has(r.date));
+      if (filtered.length) {
+        S.imsak = filtered;
+        return;
+      }
+    } catch (e) {}
+
+    if (IS_PREVIEW) {
+      S.imsak = days().map(d => ({
+        date: d,
+        imsak: '04:30',
+        subuh: '04:40',
+        terbit: '05:55',
+        dzuhur: '12:00',
+        ashar: '15:15',
+        maghrib: '18:05',
+        isya: '19:15'
+      }));
+    } else {
+      S.imsak = [];
+      msg('Gagal memuat jadwal');
+    }
+  }
+
+  // ===== PWA =====
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    S.pwa = e;
+    render();
+  });
+
+  // ===== Inisialisasi =====
+  (async () => {
+    try {
+      if (!IS_PREVIEW) {
+        sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          global: {
+            fetch: (u, o = {}) => {
+              const h = new Headers(o.headers);
+              if (TOKEN) h.set('x-client-info', 'supabase-js/2 rjtok=' + TOKEN);
+              return fetch(u, { ...o, headers: h });
+            }
+          }
+        });
+        const { data } = await sb.auth.getSession();
+        if (data.session) {
+          S.admin = true;
+          S.user = { username: data.session.user.email, full_name: 'Admin' };
+        } else {
+          try { TOKEN = localStorage.getItem('rj_t'); } catch (e) {}
+          if (TOKEN) {
+            const { data: u, error } = await sb.rpc('me');
+            if (error || !u) {
+              TOKEN = null;
+              try { localStorage.removeItem('rj_t'); } catch (e) {}
+            } else S.user = u;
+          }
+        }
+        if (S.admin) S.page = 'admin';
+      }
+      await boot();
+    } catch (e) {
+      render();
+      msg('Gagal terhubung: ' + (e.message || e));
+    }
+  })();
+})();
+</script>
+</body>
+</html>
