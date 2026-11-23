@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <title>rJournal - Ramadhan Jurnal</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234F3FC9'%3E%3Cpath d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/%3E%3C/svg%3E">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#4F3FC9">
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22rJournal%20-%20Ramadhan%20Jurnal%22%2C%22short_name%22%3A%22rJournal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%234F3FC9%22%7D">
@@ -206,15 +205,42 @@
     .recap-stat small{display:block;color:rgba(255,255,255,.78);font-size:11.5px}
     .recap-stat b{display:block;font-size:22px;font-weight:800;margin-top:2px;color:#fff}
     .bn{display:none}
+    .doa-card{background:var(--input-g);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:12px;transition:.2s}
+    .doa-card:hover{border-color:rgba(79,63,201,.3)}
+    .arab{font-size:21px;line-height:1.85;text-align:right;color:var(--h);font-weight:700;margin:10px 0;direction:rtl}
+    .latin{font-size:13px;font-style:italic;color:var(--p);margin-bottom:6px}
+    .vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .vid-card{background:var(--input-g);border:1px solid var(--bd);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+    .vid-card:hover{transform:translateY(-2px);border-color:rgba(79,63,201,.3)}
+    .vid-thumb{position:relative;aspect-ratio:16/9;background:#17143A;cursor:pointer;overflow:hidden}
+    .vid-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.3s}
+    .vid-thumb:hover img{transform:scale(1.04)}
+    .vid-play{position:absolute;inset:0;display:grid;place-items:center;background:rgba(23,20,58,.32);color:#fff}
+    .vid-play span{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pink));display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+    .vid-body{padding:13px 15px;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+    .vid-player{aspect-ratio:16/9;width:100%;border-radius:18px;overflow:hidden;border:1px solid var(--bd);background:#000;margin-bottom:14px}
+    .vid-player iframe{width:100%;height:100%;border:0;display:block}
+    .cat-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px}
+    .cpill{flex:none;padding:7px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--input-g);color:var(--b);font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
+    .cpill.on{background:var(--pl);color:var(--p);border-color:rgba(79,63,201,.25)}
     @media (max-width:800px){
       .side{display:none}
-      .shell{margin:0;border-radius:0;border:0;min-height:100%}
-      .main{padding:20px 16px 115px}
-      .grid{grid-template-columns:1fr}
-      .hero h2{font-size:28px}
+      .shell{margin:0;border-radius:0;border:0;min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
+      .main{padding:16px 14px 108px;width:100%;max-width:100%}
+      .hd{gap:10px;margin-bottom:16px}
+      .hd h1{font-size:19px}
+      .hd .r{width:100%;justify-content:space-between}
+      .grid,.vid-grid{grid-template-columns:1fr}
+      .hero h2{font-size:26px}
+      .pill{padding:12px 14px 12px 18px;font-size:13.5px}
       .slot-grid{grid-template-columns:repeat(2,1fr)}
-      .bn{display:flex;gap:4px;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:4;overflow-x:auto;background:var(--card-g);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border:1px solid var(--bd);border-radius:24px;padding:7px;box-shadow:0 12px 36px rgba(24,19,66,.22)}
-      .bn a{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--b);padding:7px 12px;border-radius:16px;transition:.18s}
+      .cal{gap:4px}
+      .cd{padding:6px 2px;border-radius:11px;min-width:0}
+      .cd b{font-size:13px}
+      .cd small{font-size:9px;word-break:break-word}
+      .recap-grid{grid-template-columns:1fr}
+      .bn{display:flex;gap:6px;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;overflow-x:auto;background:var(--card-g);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border:1px solid var(--bd);border-radius:22px;padding:7px 10px;box-shadow:0 12px 36px rgba(24,19,66,.22);-webkit-overflow-scrolling:touch}
+      .bn a{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--b);padding:7px 12px;border-radius:15px;transition:.18s}
       .bn a.on{background:var(--pl);color:var(--p)}
     }
   </style>
@@ -277,6 +303,10 @@
     cities: [],
     allCities: null,
     hafSurah: '',
+    doaCat: 'Semua',
+    doaQ: '',
+    kajianCat: 'Semua',
+    activeVid: null,
     pwa: null,
     cdText: null
   };
@@ -442,9 +472,123 @@
     ['ibadah', 'Ibadah', 'sparkles'],
     ['tilawah', 'Tilawah', 'book-open'],
     ['hafalan', 'Hafalan', 'brain'],
+    ['doa', 'Doa', 'heart'],
+    ['kajian', 'Kajian', 'play-circle'],
     ['daily', 'Daily Jurnal', 'check-circle-2'],
     ['jurnal', 'Jurnaling', 'pen-line'],
     ['recap', 'Recap', 'award']
+  ];
+
+  const DOA_LIST = [
+    {
+      cat: 'Puasa & Berbuka',
+      title: 'Niat Puasa Ramadhan (Harian)',
+      arab: 'نَوَيْتُ صَوْمَ غَدٍ عَنْ أَدَاءِ فَرْضِ شَهْرِ رَمَضَانَ هٰذِهِ السَّنَةِ لِلّٰهِ تَعَالَى',
+      latin: 'Nawaitu shauma ghadin ‘an adā’i fardhi syahri Ramadhāna hādzihis sanati lillāhi ta‘ālā.',
+      arti: 'Aku niat berpuasa esok hari untuk menunaikan kewajiban bulan Ramadhan tahun ini karena Allah Ta’ala.',
+      dalil: 'Ketentuan Niat Puasa Wajib'
+    },
+    {
+      cat: 'Puasa & Berbuka',
+      title: 'Doa Berbuka Puasa (Shahih)',
+      arab: 'ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ',
+      latin: 'Dzahabazh zhama’u wabtallatil ‘urūqu, wa tsabatal ajru in syā’allāh.',
+      arti: 'Telah hilang rasa haus, telah basah urat-urat, dan telah tetap pahala, insyaAllah.',
+      dalil: 'HR. Abu Dawud No. 2357'
+    },
+    {
+      cat: 'Lailatul Qadar',
+      title: 'Doa Malam Lailatul Qadar',
+      arab: 'اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي',
+      latin: 'Allāhumma innaka ‘afuwwun tuhibbul ‘afwa fa‘fu ‘annī.',
+      arti: 'Ya Allah, sesungguhnya Engkau Maha Pemaaf dan menyukai sifat pemaaf, maka maafkanlah aku.',
+      dalil: 'HR. Tirmidzi No. 3513'
+    },
+    {
+      cat: 'Ampunan & Rahmat',
+      title: 'Sayyidul Istighfar (Penghulu Istighfar)',
+      arab: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',
+      latin: 'Allāhumma anta rabbī lā ilāha illā anta, khalaqtanī wa anā ‘abduka, wa anā ‘alā ‘ahdika wa wa‘dika mastatha‘tu, a‘ūdzu bika min syarri mā shana‘tu, abū’u laka bini‘matika ‘alayya, wa abū’u bidzanbī faghfir lī fa innahū lā yaghfirudz dzunūba illā anta.',
+      arti: 'Ya Allah, Engkau adalah Tuhanku, tidak ada Tuhan selain Engkau. Engkau telah menciptakanku dan aku adalah hamba-Mu. Aku berada di atas janji-Mu semampuku. Aku berlindung kepada-Mu dari keburukan perbuatanku. Aku mengakui nikmat-Mu kepadaku dan mengakui dosaku, maka ampunilah aku, karena tiada yang mengampuni dosa selain Engkau.',
+      dalil: 'HR. Bukhari No. 6306'
+    },
+    {
+      cat: 'Ampunan & Rahmat',
+      title: 'Doa Sapu Jagat (Kebaikan Dunia & Akhirat)',
+      arab: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
+      latin: 'Rabbanā ātinā fid-dunyā hasanah wa fil-ākhirati hasanah wa qinā ‘adzāban-nār.',
+      arti: 'Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, serta lindungilah kami dari siksa neraka.',
+      dalil: 'QS. Al-Baqarah: 201'
+    },
+    {
+      cat: 'Harian & Dzikir',
+      title: 'Doa Keteguhan Hati di Atas Agama',
+      arab: 'يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ',
+      latin: 'Yā muqallibal qulūbi tsabbit qalbī ‘alā dīnik.',
+      arti: 'Wahai Dzat yang membolak-balikkan hati, teguhkanlah hatiku di atas agama-Mu.',
+      dalil: 'HR. Tirmidzi No. 2140'
+    },
+    {
+      cat: 'Harian & Dzikir',
+      title: 'Doa Memohon Ilmu, Rezeki & Amal Diterima (Pagi Hari)',
+      arab: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا',
+      latin: 'Allāhumma innī as’aluka ‘ilman nāfi‘an, wa rizqan thayyiban, wa ‘amalan mutaqabbalan.',
+      arti: 'Ya Allah, sesungguhnya aku memohon kepada-Mu ilmu yang bermanfaat, rezeki yang baik, dan amal yang diterima.',
+      dalil: 'HR. Ibnu Majah No. 925'
+    },
+    {
+      cat: 'Harian & Dzikir',
+      title: 'Doa Sebelum Tidur',
+      arab: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
+      latin: 'Bismikallāhumma amūtu wa ahyā.',
+      arti: 'Dengan nama-Mu ya Allah aku mati dan aku hidup.',
+      dalil: 'HR. Bukhari No. 6324'
+    }
+  ];
+
+  const KAJIAN_LIST = [
+    {
+      id: 'GU59no0BBrw',
+      cat: 'Keutamaan Ramadhan',
+      title: 'Empat Keistimewaan Ramadhan',
+      speaker: 'Ustadz Adi Hidayat',
+      dur: '32:47'
+    },
+    {
+      id: '0XhnspGphaM',
+      cat: 'Fiqih Puasa',
+      title: 'Amalan Spesial Ramadhan (Pembahasan Kitab Shaum)',
+      speaker: 'Ustadz Adi Hidayat',
+      dur: '1:38:50'
+    },
+    {
+      id: 'aeR14D8zPkA',
+      cat: 'Tazkiyatun Nafs',
+      title: 'Saatnya Memperbaiki Diri di Bulan Ramadhan',
+      speaker: 'Ustadz Hanan Attaki',
+      dur: '48:29'
+    },
+    {
+      id: 'nB-4Tx5ii7I',
+      cat: 'Tazkiyatun Nafs',
+      title: 'Menjaga Amarah di Bulan Ramadhan',
+      speaker: 'Ustadz Hanan Attaki',
+      dur: '18:35'
+    },
+    {
+      id: '5fmYZKAvOiU',
+      cat: 'Keutamaan Ramadhan',
+      title: 'Kajian Tematik: Ramadhan Terakhirku',
+      speaker: 'Ustadz Khalid Basalamah',
+      dur: '47:51'
+    },
+    {
+      id: 'syeiF5y-AYI',
+      cat: 'Lailatul Qadar',
+      title: 'Mutiara Hikmah: Keutamaan Lailatul Qadar',
+      speaker: 'Ustadz Dr. Syafiq Riza Basalamah, M.A.',
+      dur: '05:43'
+    }
   ];
 
   const SURAH_LIST = [
@@ -472,6 +616,8 @@
     ibadah: ['Ibadah Tracker', 'Ceklis, mode uzur, dan persentase harian'],
     tilawah: ['Tilawah Tracker', 'Tabel khatam 1-4x dan catatan manual'],
     hafalan: ['Ziyadah & Muroja’ah', 'Sesuai jumlah hafalanmu'],
+    doa: ['Doa & Dzikir', 'Doa harian & koleksi doa mustajab Ramadhan'],
+    kajian: ['Video Kajian', 'Tausiyah & ilmu seputar bulan suci Ramadhan'],
     daily: ['Daily Jurnal', 'Kegiatan baik harian'],
     jurnal: ['Jurnaling', 'Refleksi dan catatan hari ini'],
     recap: ['Ramadhan Recap', 'Kartu ringkasan pencapaian ibadahmu'],
@@ -484,6 +630,8 @@
     ['ibadah', 'sparkles', 'Ibadah Tracker', 'Ceklis harian, mode uzur syar\'i, dan grafik gelombang capaian.'],
     ['tilawah', 'book-open', 'Tilawah Tracker', 'Tabel khatam 1-4x per waktu shalat atau catat manual.'],
     ['hafalan', 'brain', 'Ziyadah & Muroja’ah', 'Rencana sesuai jumlah hafalan.'],
+    ['doa', 'heart', 'Doa Mustajab Ramadhan', 'Koleksi doa harian, niat puasa, berbuka, hingga Lailatul Qadar.'],
+    ['kajian', 'play-circle', 'Video Kajian Ramadhan', 'Kumpulan video kajian pilihan seputar puasa, fiqih & Lailatul Qadar.'],
     ['daily', 'check-circle-2', 'Daily Jurnal', 'Ceklis kegiatan baik harianmu.'],
     ['jurnal', 'pen-line', 'Jurnaling', 'Refleksi, syukur, dan catatan.'],
     ['recap', 'award', 'Ramadhan Recap', 'Kartu ringkasan ibadah estetik yang siap diunduh dan dibagikan.']
@@ -540,7 +688,12 @@
   };
 
   V.cal = () => {
-    const c = S.cal || (S.cal = { y: +S.set.ramadan_start.slice(0, 4), m: +S.set.ramadan_start.slice(5, 7) - 1 });
+    if (!S.cal) {
+      const baseDate = S.set && S.set.ramadan_start ? S.set.ramadan_start : today();
+      const [yy, mm] = baseDate.split('-').map(Number);
+      S.cal = { y: yy || new Date().getFullYear(), m: (mm ? mm - 1 : new Date().getMonth()) };
+    }
+    const c = S.cal;
     const s = S.set, pad = (new Date(c.y, c.m, 1).getDay() + 6) % 7, dim = new Date(c.y, c.m + 1, 0).getDate();
     let cells = '<span></span>'.repeat(pad);
     for (let i = 1; i <= dim; i++) {
@@ -551,10 +704,10 @@
     }
     return `
       <div class="card">
-        <div class="row">
-          <button class="btn s" onclick="calNav(-1)">${ic('chevron-left', 18)}</button>
-          <b style="flex:1;text-align:center;justify-content:center;margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em">${new Date(c.y, c.m, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</b>
-          <button class="btn s" onclick="calNav(1)">${ic('chevron-right', 18)}</button>
+        <div class="row" style="flex-wrap:nowrap">
+          <button class="btn s" style="flex:none" onclick="calNav(-1)">${ic('chevron-left', 18)}</button>
+          <b style="flex:1;text-align:center;justify-content:center;margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em">${new Date(c.y, c.m, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</b>
+          <button class="btn s" style="flex:none" onclick="calNav(1)">${ic('chevron-right', 18)}</button>
         </div>
         <div class="cal">${['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => `<i>${x}</i>`).join('')}${cells}</div>
         <p class="note" style="margin-top:12px">Angka besar = Masehi, keterangan bawah = Tanggal & Bulan Hijriah. Area ungu = Ramadhan.</p>
@@ -766,6 +919,82 @@
             </span>
             <button class="x" onclick="delRow('hafalan_log','${r.id}')" title="Hapus">${ic('x', 16)}</button>
           </div>`).join('') : '<p class="em">Belum ada setoran ziyadah atau muroja’ah hari ini</p>'}
+      </div>`;
+  };
+
+  V.doa = () => {
+    const cats = ['Semua', ...new Set(DOA_LIST.map(d => d.cat))];
+    const q = (S.doaQ || '').trim().toLowerCase();
+    const list = DOA_LIST.filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+    return `
+      <div class="card">
+        <b>${ic('heart', 17)} Koleksi Doa Harian & Mustajab Ramadhan</b>
+        <div class="row" style="margin-bottom:10px">
+          <input value="${esc(S.doaQ)}" placeholder="Cari doa (misal: berbuka, lailatul qadar, istighfar...)" oninput="searchDoa(this.value)">
+        </div>
+        <div class="cat-pills drag-scroll" data-lenis-prevent>
+          ${cats.map(c => `<button class="cpill ${S.doaCat === c ? 'on' : ''}" data-cat="${esc(c)}" onclick="setDoaCat(this.dataset.cat)">${esc(c)}</button>`).join('')}
+        </div>
+        ${list.length ? list.map((d, idx) => `
+          <div class="doa-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <b style="color:var(--h);font-size:14.5px">${esc(d.title)}</b>
+              <span class="chip" style="font-size:11px;padding:4px 10px">${esc(d.cat)}</span>
+            </div>
+            <div class="arab">${esc(d.arab)}</div>
+            <div class="latin">${esc(d.latin)}</div>
+            <p style="font-size:13px;color:var(--b);margin-bottom:10px">“${esc(d.arti)}”</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--bd-s);padding-top:8px">
+              <small style="color:var(--m)">${esc(d.dalil)}</small>
+              <div style="display:flex;gap:8px">
+                <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="copyDoa(${idx})">${ic('copy', 14)} Salin</button>
+                <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="saveDoaToJournal(${idx})">${ic('pen-line', 14)} Simpan ke Jurnal</button>
+              </div>
+            </div>
+          </div>`).join('') : '<p class="em">Doa tidak ditemukan</p>'}
+      </div>`;
+  };
+
+  V.kajian = () => {
+    const cats = ['Semua', ...new Set(KAJIAN_LIST.map(v => v.cat))];
+    const list = KAJIAN_LIST.filter(v => S.kajianCat === 'Semua' || v.cat === S.kajianCat);
+    const active = S.activeVid ? KAJIAN_LIST.find(v => v.id === S.activeVid) : null;
+    return `
+      ${active ? `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px">
+            <b style="margin:0">${ic('play-circle', 17)} ${esc(active.title)}</b>
+            <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="playKajian(null)">${ic('x', 14)} Tutup Pemutar</button>
+          </div>
+          <div class="vid-player">
+            <iframe src="https://www.youtube.com/embed/${esc(active.id)}?autoplay=1&rel=0" title="${esc(active.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <p style="font-size:13px;color:var(--m)">Pemateri: <b style="color:var(--h)">${esc(active.speaker)}</b> · Kategori: ${esc(active.cat)}</p>
+        </div>` : ''}
+      <div class="card">
+        <b>${ic('video', 17)} Video Kajian Seputar Ramadhan</b>
+        <div class="cat-pills drag-scroll" data-lenis-prevent>
+          ${cats.map(c => `<button class="cpill ${S.kajianCat === c ? 'on' : ''}" data-cat="${esc(c)}" onclick="setKajianCat(this.dataset.cat)">${esc(c)}</button>`).join('')}
+        </div>
+        <div class="vid-grid">
+          ${list.map(v => `
+            <div class="vid-card">
+              <div class="vid-thumb" onclick="playKajian('${esc(v.id)}')">
+                <img src="https://i.ytimg.com/vi/${esc(v.id)}/hqdefault.jpg" alt="${esc(v.title)}" loading="lazy">
+                <div class="vid-play"><span>${ic('play', 20)}</span></div>
+              </div>
+              <div class="vid-body">
+                <div>
+                  <span style="font-size:11px;font-weight:700;color:var(--p)">${esc(v.cat)} · ${esc(v.dur)}</span>
+                  <b style="display:block;color:var(--h);font-size:14px;margin-top:3px;line-height:1.35">${esc(v.title)}</b>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px">
+                  <small style="color:var(--m)">${esc(v.speaker)}</small>
+                  <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="playKajian('${esc(v.id)}')">Tonton</button>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>
       </div>`;
   };
 
@@ -1011,13 +1240,17 @@
           ${(V[S.page] || V.home)()}
         </main>
       </div>
-      <nav class="bn" data-lenis-prevent>
+      <nav class="bn drag-scroll" data-lenis-prevent>
         ${nav.map(n => `<a class="${S.page === n[0] ? 'on' : ''}" onclick="go('${n[0]}')">${ic(n[2], 20)}<span>${n[1]}</span></a>`).join('')}
       </nav>
       ${modalH()}`;
 
     if (window.lucide) lucide.createIcons();
     appEl.scrollTop = y;
+    const activeBn = appEl.querySelector('.bn a.on');
+    if (activeBn && activeBn.scrollIntoView) {
+      activeBn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
     initDragScroll();
     initSmoothScrollAndAnimations();
   }
@@ -1207,12 +1440,14 @@
 
   const A = {
     async go(p) {
-      if (!S.user && !['home', 'cal'].includes(p)) {
+      if (!S.user && !['home', 'cal', 'doa', 'kajian'].includes(p)) {
         S.modal = 'login';
         return render();
       }
       S.page = p;
       S.cities = [];
+      const appEl = $('#app');
+      if (appEl) appEl.scrollTop = 0;
       render();
       if (p === 'imsak') {
         loadAllIndonesianCities();
@@ -1224,8 +1459,52 @@
         render();
       }
     },
+    setDoaCat(c) { S.doaCat = c; render(); },
+    searchDoa(q) {
+      S.doaQ = q;
+      render();
+      const inp = document.querySelector('input[oninput^="searchDoa"]');
+      if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); }
+    },
+    async copyDoa(idx) {
+      const q = (S.doaQ || '').trim().toLowerCase();
+      const list = DOA_LIST.filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+      const d = list[idx];
+      if (!d) return;
+      const txt = `${d.title}\n${d.arab}\n${d.latin}\nArtinya: "${d.arti}" (${d.dalil})`;
+      if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(txt);
+      msg('Doa disalin ke papan klip');
+    },
+    async saveDoaToJournal(idx) {
+      if (!S.user) { S.modal = 'login'; return render(); }
+      const q = (S.doaQ || '').trim().toLowerCase();
+      const list = DOA_LIST.filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+      const d = list[idx];
+      if (!d) return;
+      const day = curDay();
+      const existing = S.jr.find(x => x.day === day) || {};
+      const snippet = `[${d.title}] ${d.arti}`;
+      const nextNote = existing.note ? `${existing.note}\n${snippet}` : snippet;
+      await T.up('journal', { user_id: S.user.id, day, mood: existing.mood || null, gratitude: existing.gratitude || '', reflection: existing.reflection || '', note: nextNote }, 'user_id,day');
+      await loadData();
+      msg('Doa ditambahkan ke catatan Jurnaling hari ini');
+    },
+    setKajianCat(c) { S.kajianCat = c; render(); },
+    playKajian(id) {
+      S.activeVid = id;
+      render();
+      if (id) {
+        const appEl = $('#app');
+        if (appEl) appEl.scrollTop = 0;
+      }
+    },
     setDay(d) { S.day = d; render(); },
     calNav(n) {
+      if (!S.cal) {
+        const baseDate = S.set && S.set.ramadan_start ? S.set.ramadan_start : today();
+        const [yy, mm] = baseDate.split('-').map(Number);
+        S.cal = { y: yy || new Date().getFullYear(), m: (mm ? mm - 1 : new Date().getMonth()) };
+      }
       const c = S.cal;
       c.m += n;
       if (c.m < 0) { c.m = 11; c.y--; }
