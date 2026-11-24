@@ -182,10 +182,15 @@
     table{width:100%;border-collapse:separate;border-spacing:0;text-align:center;white-space:nowrap}
     th,td{padding:10px 8px;border-bottom:1px solid var(--bd-s)}
     th{color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
-    tr.hl td,.kt-table tr.active-target td{background:linear-gradient(135deg,var(--p),#6A59E8);color:#fff;font-weight:700;border-color:transparent;box-shadow:0 6px 16px rgba(79,63,201,.32),inset 0 1px 0 rgba(255,255,255,.3)}
-    tr.hl td:first-child,.kt-table tr.active-target td:first-child{border-radius:999px 0 0 999px}
-    tr.hl td:last-child,.kt-table tr.active-target td:last-child{border-radius:0 999px 999px 0}
-    tr.hl td.hl-orange{background:rgba(255,255,255,.22);color:#fff!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent}
+    tr.hl td,.kt-table tr.active-target td{background:linear-gradient(135deg,var(--input-g),var(--pl));color:var(--p);font-weight:700;border-top:1.5px solid var(--p);border-bottom:1.5px solid var(--p);backdrop-filter:blur(10px) saturate(150%);-webkit-backdrop-filter:blur(10px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+    tr.hl td:first-child,.kt-table tr.active-target td:first-child{border-left:1.5px solid var(--p);border-radius:14px 0 0 14px}
+    tr.hl td:last-child,.kt-table tr.active-target td:last-child{border-right:1.5px solid var(--p);border-radius:0 14px 14px 0}
+    tr.hl td.hl-orange{background:var(--pl);color:var(--p)!important}
+    .wave-glass{position:relative;overflow:hidden;border-radius:22px;padding:14px 12px 6px;background:linear-gradient(135deg,var(--s),rgba(255,255,255,.06));border:1px solid var(--bd);box-shadow:var(--card-sh);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%)}
+    .wave-glass::before,.wave-glass::after{content:'';position:absolute;width:150px;height:150px;border-radius:50%;filter:blur(42px);opacity:.5;pointer-events:none}
+    .wave-glass::before{background:#BFAFF8;left:-30px;top:-45px}
+    .wave-glass::after{background:#F9B199;right:-25px;bottom:-55px}
+    .wave-glass svg{position:relative;z-index:1;display:block}
     td.hl-orange{background:linear-gradient(135deg,rgba(245,142,126,.28),rgba(251,182,158,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#9A2B18;font-weight:800;border-left:1px solid rgba(255,255,255,.6);border-right:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
     :root[data-theme=dark] td.hl-orange{color:#FFD1C9}
     .moods{display:flex;gap:10px;margin:10px 0 14px;flex-wrap:wrap}
@@ -346,6 +351,7 @@
     doaCat: 'Semua',
     doaQ: '',
     vids: [],
+    tpls: [],
     kajianCat: 'Semua',
     activeVid: null,
     pwa: null,
@@ -356,17 +362,11 @@
   const nid = () => 'p' + (++uid);
 
   // ===== Lapisan data (Preview = memori lokal, Produksi = Supabase) =====
-  const mem = { kajian_videos: [], app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
+  const mem = { templates: [], kajian_videos: [], app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
 
   if (IS_PREVIEW) {
     mem.app_settings.push({ ...DEF });
     mem.users.push({ id: 'u1', username: 'demo', full_name: 'Pengguna Demo', last_seen: new Date().toISOString(), created_at: new Date().toISOString() });
-    mem.items.push(
-      { id: nid(), kind: 'ibadah', name: 'Shalat 5 waktu berjamaah', user_id: null },
-      { id: nid(), kind: 'ibadah', name: 'Tarawih', user_id: null },
-      { id: nid(), kind: 'daily', name: 'Membantu orang tua', user_id: null },
-      { id: nid(), kind: 'daily', name: 'Olahraga ringan', user_id: null }
-    );
   }
 
   const T = {
@@ -428,7 +428,7 @@
     if (e >= 0 && e <= 29) return { day: e + 1, month: 'Syawal' };
     return { day: '', month: '' };
   };
-  const its = k => S.items.filter(i => i.kind === k);
+  const its = k => S.items.filter(i => i.kind === k && S.user && same(i.user_id, S.user.id)); // item bawaan (user_id null) tidak ditampilkan lagi
   const isDone = (id, d) => S.checks.find(c => same(c.item_id, id) && c.day === d);
   const getUzurDays = () => Array.isArray(S.prefs.uzur_days) ? S.prefs.uzur_days : [];
   const isUzur = d => getUzurDays().includes(d);
@@ -526,19 +526,24 @@
       const a = P[i - 1], b = P[i], mx = (a[0] + b[0]) / 2;
       p += `C${mx},${a[1]} ${mx},${b[1]} ${b[0]},${b[1]}`;
     }
+    const grid = [0, 50, 100].map(v => { const y = H - v * H / 100 + 10; return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--bd-s)" stroke-width="1" stroke-dasharray="4 6" vector-effect="non-scaling-stroke"/>`; }).join('');
     return `
-      <svg viewBox="0 0 ${W} ${H + 20}" width="100%" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EC4899" stop-opacity=".35"/><stop offset="1" stop-color="#4F3FC9" stop-opacity="0"/></linearGradient>
-          <linearGradient id="ws" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4F3FC9"/><stop offset="100%" stop-color="#EC4899"/></linearGradient>
-        </defs>
-        <path d="${p}L${W},${H + 10}L0,${H + 10}Z" fill="url(#wg)"/>
-        <path class="wl" d="${p}" fill="none" stroke="url(#ws)" stroke-width="3" stroke-linecap="round"/>
-      </svg>`;
+      <div class="wave-glass">
+        <svg viewBox="0 0 ${W} ${H + 20}" width="100%" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EC4899" stop-opacity=".35"/><stop offset="1" stop-color="#4F3FC9" stop-opacity="0"/></linearGradient>
+            <linearGradient id="ws" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4F3FC9"/><stop offset="100%" stop-color="#EC4899"/></linearGradient>
+          </defs>
+          ${grid}
+          <path d="${p}L${W},${H + 10}L0,${H + 10}Z" fill="url(#wg)"/>
+          <path d="${p}" fill="none" stroke="url(#ws)" stroke-width="8" stroke-linecap="round" opacity=".35" style="filter:blur(5px)"/>
+          <path class="wl" d="${p}" fill="none" stroke="url(#ws)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>`;
   }
 
   function CL(k) {
-    const d = curDay(), a = its(k), p = pct(k, d), uz = k === 'ibadah' && isUzur(d);
+    const d = curDay(), a = its(k), p = pct(k, d), uz = k === 'ibadah' && isUzur(d), tl = S.tpls.filter(t => t.kind === k);
     return `
       ${strip()}
       ${k === 'ibadah' ? `
@@ -563,7 +568,12 @@
             <input type="checkbox" ${isDone(i.id, d) ? 'checked' : ''} onchange="tog('${i.id}','${d}')">
             <span>${esc(i.name)}</span>
             ${i.user_id ? `<button class="x" onclick="delItem(event,'${i.id}')" title="Hapus">${ic('x', 16)}</button>` : ''}
-          </label>`).join('') : '<p class="em">Belum ada data</p>'}
+          </label>`).join('') : `<p class="em">Daftar masih kosong. ${tl.length ? 'Pilih template atau tambah sendiri.' : 'Tambahkan sendiri di bawah.'}</p>`}
+        ${tl.length ? `
+          <div class="row" style="margin-top:12px">
+            <select id="tplsel">${tl.map(t => `<option value="${t.id}">${esc(t.name)} (${(t.items || []).length} item)</option>`).join('')}</select>
+            <button class="btn s" onclick="applyTpl('${k}')">${ic('layout-template', 16)} Pakai template</button>
+          </div>` : ''}
         <div class="row" style="margin-top:12px">
           <input id="ni" placeholder="Tambah ${k === 'ibadah' ? 'ibadah' : 'kegiatan'} sendiri (tekan Enter)" onkeydown="if(event.key==='Enter'){event.preventDefault();addItem('${k}')}">
           <button class="btn s" onclick="addItem('${k}')">${ic('plus', 16)} Tambah</button>
@@ -799,9 +809,7 @@
 
   V.cal = () => {
     if (!S.cal) {
-      const baseDate = S.set && S.set.ramadan_start ? S.set.ramadan_start : today();
-      const [yy, mm] = baseDate.split('-').map(Number);
-      S.cal = { y: yy || new Date().getFullYear(), m: (mm ? mm - 1 : new Date().getMonth()) };
+      S.cal = { y: new Date().getFullYear(), m: new Date().getMonth() };
     }
     const c = S.cal;
     const s = S.set, pad = (new Date(c.y, c.m, 1).getDay() + 6) % 7, dim = new Date(c.y, c.m + 1, 0).getDate();
@@ -1110,6 +1118,20 @@
           ${ytOrigin ? '' : `<p class="note" style="text-align:left;margin-bottom:10px">Video YouTube butuh halaman yang dibuka lewat https:// (hosting). Dari file lokal atau pratinjau sandbox, YouTube menolak dengan Error 153.</p>`}
           <p style="font-size:13px;color:var(--m)">Pemateri: <b style="color:var(--h)">${esc(active.speaker)}</b> · Kategori: ${esc(active.cat)}</p>
         </div>` : ''}
+      <div class="card">
+        <b>${ic('layout-template', 17)} Template Ibadah & Daily Jurnal</b>
+        <div class="row">
+          <input id="tpn" placeholder="Nama template (mis. Ibadah Pemula)">
+          <select id="tpk"><option value="ibadah">Ibadah</option><option value="daily">Daily Jurnal</option></select>
+        </div>
+        <textarea id="tpi" placeholder="Satu item per baris, mis.&#10;Shalat 5 waktu berjamaah&#10;Tarawih"></textarea>
+        <button class="btn" style="margin-top:8px" onclick="addTpl()">${ic('plus', 16)} Simpan template</button>
+        ${S.tpls.length ? S.tpls.map(t => `
+          <div class="it">
+            <span>${esc(t.name)} · ${t.kind === 'ibadah' ? 'Ibadah' : 'Daily Jurnal'} · ${(t.items || []).length} item</span>
+            <button class="x" onclick="delTpl('${t.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada template</p>'}
+      </div>
       <div class="card">
         <b>${ic('video', 17)} Video Kajian Seputar Ramadhan</b>
         <div class="cat-pills drag-scroll" data-lenis-prevent>
@@ -1523,6 +1545,7 @@
   async function boot() {
     const st = await T.sel('app_settings');
     if (st[0]) S.set = st[0];
+    S.tpls = await T.sel('templates').catch(() => []); // tabel belum dibuat -> tanpa template
     S.vids = await T.sel('kajian_videos').catch(() => []); // tabel belum dibuat -> pakai daftar bawaan saja
     if (S.user && S.admin) await loadUsers();
     else if (S.user) {
@@ -1678,9 +1701,7 @@
     setCalYM(y, m) { S.cal = { y, m }; render(); },
     calNav(n) {
       if (!S.cal) {
-        const baseDate = S.set && S.set.ramadan_start ? S.set.ramadan_start : today();
-        const [yy, mm] = baseDate.split('-').map(Number);
-        S.cal = { y: yy || new Date().getFullYear(), m: (mm ? mm - 1 : new Date().getMonth()) };
+        S.cal = { y: new Date().getFullYear(), m: new Date().getMonth() };
       }
       const c = S.cal;
       c.m += n;
@@ -1930,6 +1951,28 @@
       S.day = null;
       render();
       msg('Pengaturan disimpan');
+    },
+    async addTpl() {
+      const name = $('#tpn').value.trim();
+      const items = [...new Set($('#tpi').value.split('\n').map(x => x.trim()).filter(Boolean))];
+      if (!name || !items.length) return msg('Isi nama template dan minimal satu item');
+      S.tpls.push(await T.ins('templates', { kind: $('#tpk').value, name, items }));
+      render();
+      msg('Template disimpan');
+    },
+    async delTpl(id) {
+      await T.del('templates', id);
+      S.tpls = S.tpls.filter(t => !same(t.id, id));
+      render();
+    },
+    async applyTpl(k) {
+      const t = S.tpls.find(x => same(x.id, $('#tplsel').value));
+      if (!t) return;
+      const have = new Set(its(k).map(i => i.name.toLowerCase()));
+      const add = (t.items || []).filter(n => !have.has(n.toLowerCase()));
+      for (const name of add) S.items.push(await T.ins('items', { kind: k, name, user_id: S.user.id }));
+      render();
+      msg(add.length ? add.length + ' item ditambahkan' : 'Semua item sudah ada');
     },
     async addVid() {
       const yid = ytId($('#vu').value.trim());
