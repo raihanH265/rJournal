@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#4F3FC9">
-  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22rJournal%20-%20Ramadhan%20Jurnal%22%2C%22short_name%22%3A%22rJournal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%234F3FC9%22%7D">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Scheherazade+New:wght@500;700&display=swap" rel="stylesheet">
@@ -181,9 +182,10 @@
     table{width:100%;border-collapse:separate;border-spacing:0;text-align:center;white-space:nowrap}
     th,td{padding:10px 8px;border-bottom:1px solid var(--bd-s)}
     th{color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
-    tr.hl td,.kt-table tr.active-target td{background:linear-gradient(135deg,var(--s),rgba(79,63,201,.18) 55%,rgba(236,72,153,.16));backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);font-weight:700;color:var(--h);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 16px rgba(79,63,201,.12)}
-    tr.hl td:first-child,.kt-table tr.active-target td:first-child{border-left:1px solid var(--bd);border-radius:14px 0 0 14px}
-    tr.hl td:last-child,.kt-table tr.active-target td:last-child{border-right:1px solid var(--bd);border-radius:0 14px 14px 0}
+    tr.hl td,.kt-table tr.active-target td{background:linear-gradient(135deg,var(--p),#6A59E8);color:#fff;font-weight:700;border-color:transparent;box-shadow:0 6px 16px rgba(79,63,201,.32),inset 0 1px 0 rgba(255,255,255,.3)}
+    tr.hl td:first-child,.kt-table tr.active-target td:first-child{border-radius:999px 0 0 999px}
+    tr.hl td:last-child,.kt-table tr.active-target td:last-child{border-radius:0 999px 999px 0}
+    tr.hl td.hl-orange{background:rgba(255,255,255,.22);color:#fff!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent}
     td.hl-orange{background:linear-gradient(135deg,rgba(245,142,126,.28),rgba(251,182,158,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#9A2B18;font-weight:800;border-left:1px solid rgba(255,255,255,.6);border-right:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
     :root[data-theme=dark] td.hl-orange{color:#FFD1C9}
     .moods{display:flex;gap:10px;margin:10px 0 14px;flex-wrap:wrap}
@@ -435,6 +437,72 @@
     const a = its(k);
     return a.length ? Math.round(a.filter(i => isDone(i.id, d)).length / a.length * 100) : 0;
   };
+
+  // ===== Streak, lencana & ringkasan mingguan =====
+  const dayOk = d => pct('ibadah', d) >= 70; // uzur syar'i dihitung 100% oleh pct()
+  const avgPct = ds => ds.length ? Math.round(ds.reduce((a, d) => a + pct('ibadah', d), 0) / ds.length) : null;
+  function streakInfo() {
+    const D = days(), t = today(), last = D.filter(d => d <= t).length - 1;
+    let best = 0, run = 0;
+    D.forEach(d => { if (d <= t && dayOk(d)) best = Math.max(best, ++run); else run = 0; });
+    let i = last;
+    if (i >= 0 && !dayOk(D[i])) i--; // hari ini belum selesai: jangan putus streak
+    let cur = 0;
+    while (i >= 0 && dayOk(D[i])) { cur++; i--; }
+    const week = last >= 0 ? avgPct(D.slice(Math.max(0, last - 6), last + 1)) : null;
+    const prev = last >= 7 ? avgPct(D.slice(Math.max(0, last - 13), last - 6)) : null;
+    return { cur, best, week, prev };
+  }
+  function insightCard() {
+    const { cur, best, week, prev } = streakInfo();
+    const pages = S.til.reduce((a, r) => a + (+r.pages || 0), 0);
+    const zi = S.haf.filter(r => r.type === 'ziyadah').reduce((a, r) => a + Math.max(0, r.ayat_to - r.ayat_from + 1), 0);
+    const B = [
+      ['flame', 'Konsisten 7 hari', best >= 7],
+      ['star', 'Hari sempurna 100%', its('ibadah').length > 0 && days().some(d => !isUzur(d) && pct('ibadah', d) === 100)],
+      ['book-open-check', 'Khatam 1x', pages >= 604],
+      ['brain', 'Ziyadah 100 ayat', zi >= 100],
+      ['pen-line', 'Jurnal 7 hari', S.jr.length >= 7]
+    ];
+    const delta = week != null && prev != null ? ` (${week - prev >= 0 ? '+' : ''}${week - prev}% dari minggu lalu)` : '';
+    return `
+      <div class="card">
+        <b>${ic('flame', 17)} Streak & Lencana</b>
+        <p style="margin-bottom:10px"><b style="color:var(--p);font-size:20px">${cur}</b> hari beruntun (ibadah ≥70%) · terbaik ${best} hari${week != null ? `<br>Minggu ini rata-rata <b>${week}%</b>${delta}` : ''}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${B.map(([i, n, ok]) => `<span class="chip" style="font-size:12px;${ok ? '' : 'opacity:.4'}">${ic(i, 14)} ${n}</span>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  // ===== Pengingat imsak / berbuka / isya (notifikasi lokal) =====
+  // shortcut: hanya berbunyi saat aplikasi/PWA masih berjalan; push saat tertutup butuh server push
+  let remindT = [], remindDay = null;
+  const remindOn = () => { try { return localStorage.getItem('rj_remind') === '1' && 'Notification' in window && Notification.permission === 'granted'; } catch (e) { return false; } };
+  function notify(title, body) {
+    const opt = { body, icon: 'icon-192.png', tag: title };
+    try {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.ready.then(r => r.showNotification(title, opt));
+      else new Notification(title, opt);
+    } catch (e) {}
+  }
+  function scheduleReminders() {
+    remindT.forEach(clearTimeout);
+    remindT = [];
+    remindDay = today();
+    if (!remindOn() || !S.imsak) return;
+    const now = Date.now();
+    const at = (date, hm) => { const [h, m] = (hm || '').split(':').map(Number); return new Date(date + 'T00:00:00').setHours(h, m, 0, 0); };
+    [remindDay, addD(remindDay, 1)].forEach(date => {
+      const r = S.imsak.find(x => x.date === date);
+      if (!r) return;
+      [[at(date, r.imsak) - 10 * 6e4, 'Sebentar lagi imsak', `Imsak pukul ${r.imsak}. Segera akhiri sahur.`],
+       [at(date, r.maghrib), 'Waktunya berbuka', `Adzan Maghrib ${r.maghrib}. Selamat berbuka puasa.`],
+       [at(date, r.isya), 'Waktu Isya', 'Siap tarawih? Jangan lupa ceklis ibadah hari ini.']
+      ].forEach(([t, ti, b]) => { if (t > now) remindT.push(setTimeout(() => notify(ti, b), t - now)); });
+    });
+  }
+
   const overall = k => {
     const D = days();
     return Math.round(D.reduce((s, d) => s + pct(k, d), 0) / D.length);
@@ -713,9 +781,10 @@
             </div>
           </div>
           <div id="live-cd" class="cd-timer">${cd.timer}</div>
+          <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="togRemind()">${ic(remindOn() ? 'bell-ring' : 'bell-off', 14)} Pengingat ${remindOn() ? 'aktif' : 'mati'}</button>
         </div>` : ''}
       <div class="pill" onclick="${S.user ? "go('ibadah')" : "openM('login')"}">
-        <span>${S.user ? `Ibadah hari ini: ${pct('ibadah', curDay())}% · lanjutkan ceklis` : 'Masuk atau daftar untuk mulai jurnaling di rJournal'}</span>
+        <span>${S.user ? `Ibadah hari ini: ${pct('ibadah', curDay())}%${streakInfo().cur ? ` · ${streakInfo().cur} hari beruntun` : ''} · lanjutkan ceklis` : 'Masuk atau daftar untuk mulai jurnaling di rJournal'}</span>
         <button class="sendb">${ic('arrow-right', 20)}</button>
       </div>
       <div class="grid">
@@ -828,6 +897,7 @@
         </div>
         ${wave('ibadah')}
       </div>
+      ${insightCard()}
       ${uzurList.length ? `
         <div class="card">
           <b>${ic('calendar-off', 17)} Catatan Utang Puasa (Qadha) · ${uzurList.length} Hari</b>
@@ -1468,6 +1538,7 @@
         S.prefs.city_name = 'KOTA JAKARTA';
       }
       if (S.prefs.city_id && !S.imsak) await fetchJ();
+      scheduleReminders();
       startCountdownTimer();
       beat();
     }
@@ -1511,6 +1582,7 @@
   function startCountdownTimer() {
     clearInterval(cdT);
     cdT = setInterval(() => {
+      if (remindDay !== today()) scheduleReminders();
       const el = $('#live-cd');
       if (el && S.page === 'home' && S.user) {
         const cd = computeCountdown();
@@ -1845,6 +1917,7 @@
       S.imsak = null;
       await A.savePref({ city_id: id, city_name: name });
       await fetchJ();
+      scheduleReminders();
       render();
     },
     async saveSet() {
@@ -1878,6 +1951,19 @@
       await T.del('kajian_videos', id);
       S.vids = S.vids.filter(v => !same(v.id, id));
       render();
+    },
+    async togRemind() {
+      if (remindOn()) {
+        try { localStorage.setItem('rj_remind', '0'); } catch (e) {}
+        scheduleReminders(); render();
+        return msg('Pengingat dimatikan');
+      }
+      if (!S.imsak) return msg('Pilih kota di Imsakiyyah dulu');
+      if (!('Notification' in window)) return msg('Browser tidak mendukung notifikasi');
+      if (await Notification.requestPermission() !== 'granted') return msg('Izin notifikasi ditolak');
+      try { localStorage.setItem('rj_remind', '1'); } catch (e) {}
+      scheduleReminders(); render();
+      msg('Pengingat aktif: imsak, berbuka, isya');
     },
     dismissPwa() { S.pwa = null; render(); },
     async install() {
@@ -1932,6 +2018,7 @@
   }
 
   // ===== PWA =====
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     S.pwa = e;
