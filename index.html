@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>rJournal - Ramadhan Jurnal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#4F3FC9">
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22rJournal%20-%20Ramadhan%20Jurnal%22%2C%22short_name%22%3A%22rJournal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%234F3FC9%22%7D">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,12 +118,16 @@
     .drag-scroll{cursor:grab;user-select:none}
     .drag-scroll.dragging{cursor:grabbing}
 
-    .strip{display:flex;gap:8px;overflow-x:auto;padding:8px 8px 12px;background:var(--s);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);border-radius:20px;margin-bottom:14px;box-shadow:var(--card-sh)}
-    .dc{flex:none;width:52px;border:1px solid var(--bd);background:var(--card-g);backdrop-filter:blur(10px);border-radius:15px;padding:7px 0;font:700 15px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--h);cursor:pointer;transition:all .18s}
-    .dc small{display:block;font:500 10px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--m);margin-top:1px}
-    .dc:hover:not(.on){background:var(--input-g);transform:translateY(-1px)}
-    .dc.on{background:linear-gradient(135deg,var(--p),#6A59E8);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(79,63,201,.3)}
-    .dc.on small{color:rgba(255,255,255,.82)}
+    /* Day Strip Pill-in-Groove (Referensi Gambar 2) */
+    .strip{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:6px;background:var(--s);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);border-radius:99px;margin-bottom:16px;box-shadow:inset 0 2px 7px rgba(42,32,115,.08),0 2px 10px rgba(42,32,115,.03)}
+    .dc{flex:none;display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:99px;padding:8px 16px;font:700 13px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--b);cursor:pointer;transition:all .2s ease;white-space:nowrap}
+    .dc small{display:inline;font:500 11px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--m);opacity:.85}
+    .dc:hover:not(.on){color:var(--h);background:rgba(255,255,255,.35)}
+    .dc.on{background:linear-gradient(135deg,#7B6CF6,var(--p));color:#fff;box-shadow:0 4px 14px rgba(79,63,201,.34),inset 0 1px 0 rgba(255,255,255,.35)}
+    .dc.on small{color:rgba(255,255,255,.88)}
+    :root[data-theme=dark] .strip{box-shadow:inset 0 2px 8px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.06)}
+    :root[data-theme=dark] .dc:hover:not(.on){background:rgba(255,255,255,.06)}
+
     .it{display:flex;gap:12px;align-items:center;padding:12px 6px;border-bottom:1px solid var(--bd-s);cursor:pointer;color:var(--h);font-weight:500;transition:background .15s}
     .it:last-of-type{border-bottom:none}
     .it:hover{background:var(--s);border-radius:12px}
@@ -136,15 +141,42 @@
     .ring b{width:74px;height:74px;border-radius:50%;background:var(--bg);display:grid;place-items:center;margin:0;font-size:20px;color:var(--h)}
     .wl{stroke-dasharray:2000;stroke-dashoffset:2000;animation:dr 1.6s forwards}
     @keyframes dr{to{stroke-dashoffset:0}}
-    .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
-    .cal>i{font-style:normal;font-weight:700;color:var(--m);font-size:12px;padding-bottom:4px}
-    .cd{border-radius:14px;padding:9px 2px;border:1px solid var(--bd);background:var(--input-g);transition:.15s}
-    .cd b{display:block;color:var(--h);font-size:14px}
-    .cd small{color:var(--m);font-size:10.5px;display:block;line-height:1.2;margin-top:2px}
-    .cd.rm{background:var(--pl);border-color:rgba(79,63,201,.2)}
-    .cd.td{outline:2px solid var(--p);outline-offset:-1px}
-    .cd.eid{background:linear-gradient(135deg,#F6C358,#E5A124);border-color:transparent}
-    .cd.eid *{color:#332200}
+
+    /* Kalender UI (Referensi Gambar 1: Inner & Outer Shadow) */
+    .cal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .cal-pills{display:inline-flex;align-items:center;gap:4px;padding:5px;border-radius:99px;background:var(--s);border:1px solid var(--bd);box-shadow:inset 0 2px 6px rgba(42,32,115,.07),0 2px 8px rgba(42,32,115,.03);overflow-x:auto;max-width:100%}
+    .cal-mp{border:0;background:transparent;color:var(--b);font:700 12.5px 'Plus Jakarta Sans',system-ui,sans-serif;padding:7px 14px;border-radius:99px;cursor:pointer;transition:all .18s ease;white-space:nowrap}
+    .cal-mp:hover:not(.on){color:var(--h);background:rgba(255,255,255,.38)}
+    .cal-mp.on{background:linear-gradient(135deg,#7B6CF6,var(--p));color:#fff;box-shadow:0 4px 12px rgba(79,63,201,.32),inset 0 1px 0 rgba(255,255,255,.35)}
+    .cal-ef{display:inline-flex;align-items:center;padding:6px 13px;border-radius:99px;background:var(--pink-l);color:var(--pink);font-size:11.5px;font-weight:700;border:1px solid rgba(236,72,153,.2);box-shadow:0 2px 8px rgba(236,72,153,.08)}
+    .cal-title{font-size:19px;font-weight:800;color:var(--h);letter-spacing:-.02em;margin-bottom:12px}
+    .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;text-align:left}
+    .cal>i{font-style:normal;font-weight:700;color:var(--m);font-size:12px;padding-bottom:4px;text-align:center}
+    .cd{position:relative;border-radius:14px;padding:10px 10px 9px;min-height:66px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--bd);background:var(--input-g);box-shadow:0 4px 12px rgba(42,32,115,.04),inset 0 1px 0 rgba(255,255,255,.9);transition:.18s}
+    .cd.out{background:var(--s);box-shadow:inset 0 2px 6px rgba(42,32,115,.06),0 1px 0 rgba(255,255,255,.65);opacity:.82}
+    .cd b{display:block;color:var(--h);font-size:14px;font-weight:800;line-height:1.1}
+    .cd small{color:var(--m);font-size:10.5px;font-weight:500;display:block;line-height:1.25;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cd .cdot{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--p)}
+    .cd.rm{background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(123,108,246,.12));border-color:rgba(123,108,246,.24);box-shadow:0 5px 14px rgba(79,63,201,.07),inset 0 1px 0 rgba(255,255,255,.95)}
+    .cd.rm small{color:var(--p);font-weight:600}
+    .cd.td{border:1.5px solid var(--p);box-shadow:0 4px 14px rgba(79,63,201,.16),inset 0 0 0 1px rgba(123,108,246,.2)}
+    .cd.eid{background:linear-gradient(135deg,#F9C862,#E5A124);border-color:rgba(255,255,255,.5);box-shadow:0 6px 16px rgba(229,161,36,.28),inset 0 1px 0 rgba(255,255,255,.6)}
+    .cd.eid *{color:#332200!important}
+    :root[data-theme=dark] .cd{box-shadow:0 4px 12px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.07)}
+    :root[data-theme=dark] .cd.out{box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
+    :root[data-theme=dark] .cd.rm{background:linear-gradient(145deg,rgba(45,40,86,.75),rgba(123,108,246,.22))}
+    .cal-leg{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:11.5px;color:var(--b);font-weight:500}
+    .cal-leg span{display:inline-flex;align-items:center;gap:6px}
+    .cal-leg i{width:8px;height:8px;border-radius:50%;display:inline-block}
+    .cal-info-card{padding:14px 18px;border-radius:20px;box-shadow:0 6px 20px rgba(42,32,115,.05),inset 0 1px 0 rgba(255,255,255,.85)}
+    .cal-info-card>b{font-size:13px!important;margin-bottom:8px!important}
+    .cal-info-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px;color:var(--h);flex-wrap:wrap}
+    .cal-tag{display:inline-flex;align-items:center;justify-content:center;min-width:64px;padding:3px 10px;border-radius:99px;font-size:10.5px;font-weight:700;background:var(--pl);color:var(--p);border:1px solid rgba(79,63,201,.18)}
+    .cal-tag.syw{background:rgba(229,161,36,.16);color:#B47808;border-color:rgba(229,161,36,.3)}
+    :root[data-theme=dark] .cal-tag.syw{color:#F6C358}
+    .cal-info-date{color:var(--m);font-size:11.5px;min-width:155px}
+    .cal-info-note{color:var(--m);font-size:11px;margin-top:6px;padding-top:6px;border-top:1px solid var(--bd-s)}
+
     .scroll{overflow-x:auto}
     table{width:100%;border-collapse:collapse;text-align:center;white-space:nowrap}
     th,td{padding:10px 8px;border-bottom:1px solid var(--bd-s)}
@@ -220,6 +252,9 @@
     .vid-body{padding:13px 15px;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
     .vid-player{aspect-ratio:16/9;width:100%;border-radius:18px;overflow:hidden;border:1px solid var(--bd);background:#000;margin-bottom:14px}
     .vid-player iframe{width:100%;height:100%;border:0;display:block}
+    .page-exit{opacity:0;transform:translateY(6px);transition:opacity .15s ease,transform .15s ease}
+    @keyframes pageFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .page-enter{animation:pageFadeIn .32s cubic-bezier(.22,1,.36,1) both}
     .cat-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px}
     .cpill{flex:none;padding:7px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--input-g);color:var(--b);font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
     .cpill.on{background:var(--pl);color:var(--p);border-color:rgba(79,63,201,.25)}
@@ -235,9 +270,11 @@
       .pill{padding:12px 14px 12px 18px;font-size:13.5px}
       .slot-grid{grid-template-columns:repeat(2,1fr)}
       .cal{gap:4px}
-      .cd{padding:6px 2px;border-radius:11px;min-width:0}
-      .cd b{font-size:13px}
-      .cd small{font-size:9px;word-break:break-word}
+      .cd{padding:6px 5px;border-radius:11px;min-height:52px;min-width:0}
+      .cd b{font-size:12.5px}
+      .cd small{font-size:8.5px;letter-spacing:-.02em;margin-top:3px}
+      .cd .cdot{top:6px;right:6px;width:5px;height:5px}
+      .cal-info-date{min-width:auto}
       .recap-grid{grid-template-columns:1fr}
       .bn{display:flex;gap:6px;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;overflow-x:auto;background:var(--card-g);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border:1px solid var(--bd);border-radius:22px;padding:7px 10px;box-shadow:0 12px 36px rgba(24,19,66,.22);-webkit-overflow-scrolling:touch}
       .bn a{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--b);padding:7px 12px;border-radius:15px;transition:.18s}
@@ -254,9 +291,9 @@
   'use strict';
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
+  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "URL_SUPABASE_ANDA";
+  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
@@ -400,7 +437,7 @@
     const D = days();
     return Math.round(D.reduce((s, d) => s + pct(k, d), 0) / D.length);
   };
-  const strip = () => `<div class="strip drag-scroll" data-lenis-prevent>${days().map((d, i) => `<button class="dc ${d === S.day ? 'on' : ''}" onclick="setDay('${d}')">${i + 1}<small>${d.slice(8)}/${d.slice(5, 7)}</small></button>`).join('')}</div>`;
+  const strip = () => `<div class="strip drag-scroll" data-lenis-prevent>${days().map((d, i) => `<button class="dc ${d === S.day ? 'on' : ''}" onclick="setDay('${d}')">Hari ${i + 1} <small>${d.slice(8)}/${d.slice(5, 7)}</small></button>`).join('')}</div>`;
   const msg = t => {
     const e = $('#toast');
     if (!e) return;
@@ -695,29 +732,52 @@
     }
     const c = S.cal;
     const s = S.set, pad = (new Date(c.y, c.m, 1).getDay() + 6) % 7, dim = new Date(c.y, c.m + 1, 0).getDate();
+    const isMob = window.innerWidth <= 800;
+    const shortHijri = m => m === 'Ramadhan' ? 'Ram' : m === 'Sya\'ban' ? 'Sya' : m === 'Syawal' ? 'Syw' : m;
+    const monthTabs = Array.from({ length: 6 }, (_, idx) => {
+      const dObj = new Date(c.y, c.m - 2 + idx, 1);
+      return {
+        y: dObj.getFullYear(),
+        m: dObj.getMonth(),
+        label: dObj.toLocaleDateString('id-ID', { month: 'short' }).replace('.', '')
+      };
+    });
     let cells = '<span></span>'.repeat(pad);
     for (let i = 1; i <= dim; i++) {
       const d = iso(new Date(c.y, c.m, i));
       const hInfo = hdInfo(d);
-      const hijriLabel = hInfo.day ? `${hInfo.day} ${hInfo.month}` : '';
-      cells += `<div class="cd ${d >= s.ramadan_start && d <= s.ramadan_end ? 'rm' : ''} ${d === today() ? 'td' : ''} ${d === s.eid_date ? 'eid' : ''}"><b>${i}</b><small>${hijriLabel}</small></div>`;
+      const hijriLabel = hInfo.day ? `${hInfo.day} ${isMob ? shortHijri(hInfo.month) : hInfo.month}` : '';
+      const isRm = d >= s.ramadan_start && d <= s.ramadan_end;
+      const isTd = d === today();
+      const isEid = d === s.eid_date;
+      const hasDot = d === s.ramadan_start || d === s.ramadan_end || isEid;
+      cells += `<div class="cd ${isRm ? 'rm' : 'out'} ${isTd ? 'td' : ''} ${isEid ? 'eid' : ''}">
+        <div><b>${i}</b>${hasDot ? '<span class="cdot"></span>' : ''}</div>
+        <small>${hijriLabel}</small>
+      </div>`;
     }
     return `
       <div class="card">
-        <div class="row" style="flex-wrap:nowrap">
-          <button class="btn s" style="flex:none" onclick="calNav(-1)">${ic('chevron-left', 18)}</button>
-          <b style="flex:1;text-align:center;justify-content:center;margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em">${new Date(c.y, c.m, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</b>
-          <button class="btn s" style="flex:none" onclick="calNav(1)">${ic('chevron-right', 18)}</button>
+        <div class="cal-top">
+          <div class="cal-pills drag-scroll" data-lenis-prevent>
+            ${monthTabs.map(mt => `<button class="cal-mp ${mt.y === c.y && mt.m === c.m ? 'on' : ''}" onclick="setCalYM(${mt.y},${mt.m})">${mt.label}</button>`).join('')}
+          </div>
+          <span class="cal-ef">${days().length} hari Ramadhan</span>
         </div>
+        <div class="cal-title">${new Date(c.y, c.m, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</div>
         <div class="cal">${['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => `<i>${x}</i>`).join('')}${cells}</div>
-        <p class="note" style="margin-top:12px">Angka besar = Masehi, keterangan bawah = Tanggal & Bulan Hijriah. Area ungu = Ramadhan.</p>
+        <div class="cal-leg">
+          <span><i style="background:var(--p)"></i> Bulan Ramadhan</span>
+          <span><i style="background:var(--gold)"></i> 1 Syawal (Idul Fitri)</span>
+          <span><i style="border:1.5px solid var(--p);background:transparent"></i> Hari ini</span>
+        </div>
       </div>
-      <div class="card">
-        <b>${ic('info', 17)} Keterangan Ramadhan ${s.hijri_year} H</b>
-        <p style="display:flex;align-items:center;gap:8px;margin:4px 0">${ic('moon', 15)} Awal Ramadhan: <b>${fmt(s.ramadan_start)}</b></p>
-        <p style="display:flex;align-items:center;gap:8px;margin:4px 0">${ic('moon-star', 15)} Akhir Ramadhan: <b>${fmt(s.ramadan_end)}</b></p>
-        <p style="display:flex;align-items:center;gap:8px;margin:4px 0">${ic('sparkles', 15)} 1 Syawal: <b>${fmt(s.eid_date)}</b></p>
-        <p class="note" style="text-align:left;margin-top:8px">${esc(s.source_note)}</p>
+      <div class="card cal-info-card">
+        <b>${ic('calendar-days', 15)} Keterangan Ramadhan ${s.hijri_year} H</b>
+        <div class="cal-info-row"><span class="cal-tag">Awal</span><span class="cal-info-date">${fmt(s.ramadan_start)}</span><b>1 Ramadhan ${s.hijri_year} H</b></div>
+        <div class="cal-info-row"><span class="cal-tag">Akhir</span><span class="cal-info-date">${fmt(s.ramadan_end)}</span><b>Akhir Ramadhan ${s.hijri_year} H</b></div>
+        <div class="cal-info-row"><span class="cal-tag syw">Syawal</span><span class="cal-info-date">${fmt(s.eid_date)}</span><b>1 Syawal ${s.hijri_year} H (Idul Fitri)</b></div>
+        <div class="cal-info-note">${esc(s.source_note)}</div>
       </div>`;
   };
 
@@ -959,16 +1019,21 @@
     const cats = ['Semua', ...new Set(KAJIAN_LIST.map(v => v.cat))];
     const list = KAJIAN_LIST.filter(v => S.kajianCat === 'Semua' || v.cat === S.kajianCat);
     const active = S.activeVid ? KAJIAN_LIST.find(v => v.id === S.activeVid) : null;
+    const ytOrigin = (window.location.origin && window.location.origin !== 'null' && window.location.origin.startsWith('http')) ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
     return `
       ${active ? `
         <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
             <b style="margin:0">${ic('play-circle', 17)} ${esc(active.title)}</b>
-            <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="playKajian(null)">${ic('x', 14)} Tutup Pemutar</button>
+            <div style="display:flex;gap:8px;align-items:center">
+              <a class="btn s" style="padding:6px 12px;font-size:12px;text-decoration:none" href="https://www.youtube.com/watch?v=${esc(active.id)}" target="_blank" rel="noopener noreferrer">${ic('external-link', 14)} Buka di YouTube</a>
+              <button class="btn s" style="padding:6px 12px;font-size:12px" onclick="playKajian(null)">${ic('x', 14)} Tutup</button>
+            </div>
           </div>
           <div class="vid-player">
-            <iframe src="https://www.youtube.com/embed/${esc(active.id)}?autoplay=1&rel=0" title="${esc(active.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube-nocookie.com/embed/${esc(active.id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1${ytOrigin}" title="${esc(active.title)}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           </div>
+          ${ytOrigin ? '' : `<p class="note" style="text-align:left;margin-bottom:10px">Video YouTube butuh halaman yang dibuka lewat https:// (hosting). Dari file lokal atau pratinjau sandbox, YouTube menolak dengan Error 153.</p>`}
           <p style="font-size:13px;color:var(--m)">Pemateri: <b style="color:var(--h)">${esc(active.speaker)}</b> · Kategori: ${esc(active.cat)}</p>
         </div>` : ''}
       <div class="card">
@@ -1209,7 +1274,7 @@
     }
   }
 
-  function render() {
+  function render(animatePage = false) {
     const appEl = $('#app');
     if (!appEl) return;
     const A = S.admin;
@@ -1230,7 +1295,7 @@
           </div>
           ${nav.map(n => `<a class="nv ${S.page === n[0] ? 'on' : ''}" onclick="go('${n[0]}')">${ic(n[2], 19)}<span>${n[1]}</span></a>`).join('')}
         </aside>
-        <main class="main">
+        <main class="main ${animatePage ? 'page-enter' : ''}">
           <header class="hd">
             <div><h1>${t[0]}</h1><p>${t[1]}</p></div>
             <div class="r">
@@ -1250,6 +1315,16 @@
     const activeBn = appEl.querySelector('.bn a.on');
     if (activeBn && activeBn.scrollIntoView) {
       activeBn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    const activeDayBtn = appEl.querySelector('.strip .dc.on');
+    if (activeDayBtn && activeDayBtn.scrollIntoView) {
+      activeDayBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    if (animatePage && window.gsap) {
+      const blocks = appEl.querySelectorAll('.main > .card, .main > .grid > .card, .main > .hero, .main > .pill, .main > .cd-box, .main > .strip, .main > .uzur-bar');
+      if (blocks.length) {
+        gsap.fromTo(blocks, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38, stagger: 0.04, ease: 'power2.out', clearProps: 'transform,opacity' });
+      }
     }
     initDragScroll();
     initSmoothScrollAndAnimations();
@@ -1444,11 +1519,17 @@
         S.modal = 'login';
         return render();
       }
+      if (S.page === p) return;
+      const mainEl = $('.main');
+      if (mainEl) {
+        mainEl.classList.add('page-exit');
+        await new Promise(r => setTimeout(r, 140));
+      }
       S.page = p;
       S.cities = [];
       const appEl = $('#app');
       if (appEl) appEl.scrollTop = 0;
-      render();
+      render(true);
       if (p === 'imsak') {
         loadAllIndonesianCities();
         if (S.prefs.city_id && !S.imsak) await fetchJ();
@@ -1499,6 +1580,7 @@
       }
     },
     setDay(d) { S.day = d; render(); },
+    setCalYM(y, m) { S.cal = { y, m }; render(); },
     calNav(n) {
       if (!S.cal) {
         const baseDate = S.set && S.set.ramadan_start ? S.set.ramadan_start : today();
