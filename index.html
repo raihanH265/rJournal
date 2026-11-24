@@ -9,7 +9,7 @@
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22rJournal%20-%20Ramadhan%20Jurnal%22%2C%22short_name%22%3A%22rJournal%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%234F3FC9%22%7D">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Scheherazade+New:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -178,10 +178,12 @@
     .cal-info-note{color:var(--m);font-size:11px;margin-top:6px;padding-top:6px;border-top:1px solid var(--bd-s)}
 
     .scroll{overflow-x:auto}
-    table{width:100%;border-collapse:collapse;text-align:center;white-space:nowrap}
+    table{width:100%;border-collapse:separate;border-spacing:0;text-align:center;white-space:nowrap}
     th,td{padding:10px 8px;border-bottom:1px solid var(--bd-s)}
     th{color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
-    tr.hl td{background:linear-gradient(135deg,rgba(79,63,201,.16),rgba(236,72,153,.14));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-weight:700;color:var(--h);border-top:1px solid rgba(255,255,255,.75);border-bottom:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.65)}
+    tr.hl td,.kt-table tr.active-target td{background:linear-gradient(135deg,var(--s),rgba(79,63,201,.18) 55%,rgba(236,72,153,.16));backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);font-weight:700;color:var(--h);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 16px rgba(79,63,201,.12)}
+    tr.hl td:first-child,.kt-table tr.active-target td:first-child{border-left:1px solid var(--bd);border-radius:14px 0 0 14px}
+    tr.hl td:last-child,.kt-table tr.active-target td:last-child{border-right:1px solid var(--bd);border-radius:0 14px 14px 0}
     td.hl-orange{background:linear-gradient(135deg,rgba(245,142,126,.28),rgba(251,182,158,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#9A2B18;font-weight:800;border-left:1px solid rgba(255,255,255,.6);border-right:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
     :root[data-theme=dark] td.hl-orange{color:#FFD1C9}
     .moods{display:flex;gap:10px;margin:10px 0 14px;flex-wrap:wrap}
@@ -218,7 +220,6 @@
     .word-wrap{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:2px;margin-right:.24em}
     .word-inner{display:inline-block;will-change:transform,opacity}
     .kt-table th{background:var(--pl);color:var(--p);font-weight:700;padding:10px;border-radius:8px}
-    .kt-table tr.active-target td{background:var(--pink-l);font-weight:700;color:var(--h)}
     .slot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
     .slot-box{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:14px;border:1.5px solid var(--bd);background:var(--input-g);cursor:pointer;transition:all .18s ease;text-align:center}
     .slot-box:hover{border-color:var(--p)}
@@ -239,7 +240,7 @@
     .bn{display:none}
     .doa-card{background:var(--input-g);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:12px;transition:.2s}
     .doa-card:hover{border-color:rgba(79,63,201,.3)}
-    .arab{font-size:21px;line-height:1.85;text-align:right;color:var(--h);font-weight:700;margin:10px 0;direction:rtl}
+    .arab{font-family:'Scheherazade New','Amiri','Noto Naskh Arabic',serif;font-size:28px;line-height:2.1;text-align:right;color:var(--h);font-weight:500;margin:10px 0;direction:rtl}
     .latin{font-size:13px;font-style:italic;color:var(--p);margin-bottom:6px}
     .vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .vid-card{background:var(--input-g);border:1px solid var(--bd);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
@@ -342,6 +343,7 @@
     hafSurah: '',
     doaCat: 'Semua',
     doaQ: '',
+    vids: [],
     kajianCat: 'Semua',
     activeVid: null,
     pwa: null,
@@ -352,7 +354,7 @@
   const nid = () => 'p' + (++uid);
 
   // ===== Lapisan data (Preview = memori lokal, Produksi = Supabase) =====
-  const mem = { app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
+  const mem = { kajian_videos: [], app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
 
   if (IS_PREVIEW) {
     mem.app_settings.push({ ...DEF });
@@ -627,6 +629,8 @@
       dur: '05:43'
     }
   ];
+  const allVids = () => [...KAJIAN_LIST, ...S.vids.map(v => ({ id: v.yt_id, cat: v.cat || 'Lainnya', title: v.title, speaker: v.speaker || '', dur: '' }))];
+  const ytId = u => (String(u).match(/(?:youtu\.be\/|[?&]v=|\/(?:embed|shorts|live)\/)([\w-]{11})/) || (/^[\w-]{11}$/.test(String(u).trim()) ? [0, String(u).trim()] : []))[1];
 
   const SURAH_LIST = [
     [1,'Al-Fatihah',7],[2,'Al-Baqarah',286],[3,'Ali \'Imran',200],[4,'An-Nisa\'',176],[5,'Al-Ma\'idah',120],[6,'Al-An\'am',165],[7,'Al-A\'raf',206],[8,'Al-Anfal',75],
@@ -1016,9 +1020,9 @@
   };
 
   V.kajian = () => {
-    const cats = ['Semua', ...new Set(KAJIAN_LIST.map(v => v.cat))];
-    const list = KAJIAN_LIST.filter(v => S.kajianCat === 'Semua' || v.cat === S.kajianCat);
-    const active = S.activeVid ? KAJIAN_LIST.find(v => v.id === S.activeVid) : null;
+    const cats = ['Semua', ...new Set(allVids().map(v => v.cat))];
+    const list = allVids().filter(v => S.kajianCat === 'Semua' || v.cat === S.kajianCat);
+    const active = S.activeVid ? allVids().find(v => v.id === S.activeVid) : null;
     const ytOrigin = (window.location.origin && window.location.origin !== 'null' && window.location.origin.startsWith('http')) ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
     return `
       ${active ? `
@@ -1050,7 +1054,7 @@
               </div>
               <div class="vid-body">
                 <div>
-                  <span style="font-size:11px;font-weight:700;color:var(--p)">${esc(v.cat)} · ${esc(v.dur)}</span>
+                  <span style="font-size:11px;font-weight:700;color:var(--p)">${esc(v.cat)}${v.dur ? ' · ' + esc(v.dur) : ''}</span>
                   <b style="display:block;color:var(--h);font-size:14px;margin-top:3px;line-height:1.35">${esc(v.title)}</b>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px">
@@ -1149,6 +1153,24 @@
           <input id="s4" placeholder="Keterangan sumber" value="${esc(s.source_note)}">
           <button class="btn" onclick="saveSet()">${ic('save', 16)} Simpan</button>
         </div>
+      </div>
+      <div class="card">
+        <b>${ic('video', 17)} Video Kajian (tambah lewat link YouTube)</b>
+        <div class="row">
+          <input id="vu" placeholder="Tempel link YouTube (watch, youtu.be, shorts, live)">
+        </div>
+        <div class="row">
+          <input id="vt" placeholder="Judul (kosongkan untuk ambil otomatis)">
+          <input id="vs" placeholder="Pemateri (opsional)">
+          <input id="vc" list="vcats" placeholder="Kategori">
+          <datalist id="vcats">${[...new Set(allVids().map(v => v.cat))].map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+          <button class="btn" onclick="addVid()">${ic('plus', 16)} Tambah</button>
+        </div>
+        ${S.vids.length ? S.vids.map(v => `
+          <div class="it">
+            <span>${esc(v.title)} · ${esc(v.cat)}</span>
+            <button class="x" onclick="delVid('${v.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada video tambahan</p>'}
       </div>
       <div class="card scroll drag-scroll" data-lenis-prevent>
         <b>${ic('users', 17)} Daftar pengguna</b>
@@ -1431,6 +1453,7 @@
   async function boot() {
     const st = await T.sel('app_settings');
     if (st[0]) S.set = st[0];
+    S.vids = await T.sel('kajian_videos').catch(() => []); // tabel belum dibuat -> pakai daftar bawaan saja
     if (S.user && S.admin) await loadUsers();
     else if (S.user) {
       const id = S.user.id;
@@ -1834,6 +1857,27 @@
       S.day = null;
       render();
       msg('Pengaturan disimpan');
+    },
+    async addVid() {
+      const yid = ytId($('#vu').value.trim());
+      if (!yid) return msg('Link YouTube tidak valid');
+      if (allVids().some(v => v.id === yid)) return msg('Video sudah ada');
+      let title = $('#vt').value.trim(), speaker = $('#vs').value.trim();
+      if (!title) { // best-effort: oEmbed YouTube; bila gagal admin isi judul manual
+        try {
+          const j = await (await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + yid))).json();
+          title = j.title; speaker = speaker || j.author_name || '';
+        } catch (e) {}
+      }
+      if (!title) return msg('Isi judul video');
+      S.vids.push(await T.ins('kajian_videos', { yt_id: yid, title, speaker, cat: $('#vc').value.trim() || 'Lainnya' }));
+      render();
+      msg('Video ditambahkan');
+    },
+    async delVid(id) {
+      await T.del('kajian_videos', id);
+      S.vids = S.vids.filter(v => !same(v.id, id));
+      render();
     },
     dismissPwa() { S.pwa = null; render(); },
     async install() {
