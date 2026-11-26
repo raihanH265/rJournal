@@ -35,7 +35,6 @@
       --s:rgba(255,255,255,.45);
       --pink:#EC4899;
       --pink-l:rgba(236,72,153,.14);
-      --orange:#F58E7E;
       --gold:#E5A124;
       --ok:#1D9A64;
       --er:#E5484D;
@@ -113,13 +112,13 @@
     textarea{min-height:84px;resize:vertical}
     input[type=checkbox],input[type=radio]{width:auto}
 
-    /* Sembunyikan Scrollbar / Slider untuk tampilan lebih clean */
+    /* Sembunyikan Scrollbar untuk tampilan bersih */
     *{scrollbar-width:none;-ms-overflow-style:none}
     *::-webkit-scrollbar{display:none;width:0;height:0}
     .drag-scroll{cursor:grab;user-select:none}
     .drag-scroll.dragging{cursor:grabbing}
 
-    /* Day Strip Pill-in-Groove (Referensi Gambar 2) */
+    /* Day Strip Pill-in-Groove */
     .strip{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:6px;background:var(--s);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);border-radius:99px;margin-bottom:16px;box-shadow:inset 0 2px 7px rgba(42,32,115,.08),0 2px 10px rgba(42,32,115,.03)}
     .dc{flex:none;display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:99px;padding:8px 16px;font:700 13px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--b);cursor:pointer;transition:all .2s ease;white-space:nowrap}
     .dc small{display:inline;font:500 11px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--m);opacity:.85}
@@ -143,7 +142,7 @@
     .wl{stroke-dasharray:2000;stroke-dashoffset:2000;animation:dr 1.6s forwards}
     @keyframes dr{to{stroke-dashoffset:0}}
 
-    /* Kalender UI (Referensi Gambar 1: Inner & Outer Shadow) */
+    /* Kalender UI */
     .cal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
     .cal-pills{display:inline-flex;align-items:center;gap:4px;padding:5px;border-radius:99px;background:var(--s);border:1px solid var(--bd);box-shadow:inset 0 2px 6px rgba(42,32,115,.07),0 2px 8px rgba(42,32,115,.03);overflow-x:auto;max-width:100%}
     .cal-mp{border:0;background:transparent;color:var(--b);font:700 12.5px 'Plus Jakarta Sans',system-ui,sans-serif;padding:7px 14px;border-radius:99px;cursor:pointer;transition:all .18s ease;white-space:nowrap}
@@ -182,17 +181,19 @@
     table{width:100%;border-collapse:separate;border-spacing:0;text-align:center;white-space:nowrap}
     th,td{padding:10px 8px;border-bottom:1px solid var(--bd-s)}
     th{color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+    td.hl-accent{color:var(--p);font-weight:700}
     tr.hl td,.kt-table tr.active-target td{background:linear-gradient(135deg,var(--input-g),var(--pl));color:var(--p);font-weight:700;border-top:1.5px solid var(--p);border-bottom:1.5px solid var(--p);backdrop-filter:blur(10px) saturate(150%);-webkit-backdrop-filter:blur(10px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
     tr.hl td:first-child,.kt-table tr.active-target td:first-child{border-left:1.5px solid var(--p);border-radius:14px 0 0 14px}
     tr.hl td:last-child,.kt-table tr.active-target td:last-child{border-right:1.5px solid var(--p);border-radius:0 14px 14px 0}
-    tr.hl td.hl-orange{background:var(--pl);color:var(--p)!important}
-    .wave-glass{position:relative;overflow:hidden;border-radius:22px;padding:14px 12px 6px;background:linear-gradient(135deg,var(--s),rgba(255,255,255,.06));border:1px solid var(--bd);box-shadow:var(--card-sh);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%)}
-    .wave-glass::before,.wave-glass::after{content:'';position:absolute;width:150px;height:150px;border-radius:50%;filter:blur(42px);opacity:.5;pointer-events:none}
-    .wave-glass::before{background:#BFAFF8;left:-30px;top:-45px}
-    .wave-glass::after{background:#F9B199;right:-25px;bottom:-55px}
+
+    /* Wave Graphic Glassmorphism (tanpa titik & tanpa aksen orange) */
+    .wave-glass{position:relative;overflow:hidden;border-radius:22px;padding:18px 16px 12px;background:linear-gradient(145deg,var(--input-g),var(--pl));border:1px solid var(--bd);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 10px 28px rgba(42,32,115,.08);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
+    .wave-glass::before,.wave-glass::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;filter:blur(52px);opacity:.42;pointer-events:none}
+    .wave-glass::before{background:var(--p);left:-40px;bottom:-55px}
+    .wave-glass::after{background:var(--pink);right:-35px;top:-45px}
+    .wave-glass-hd{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;font-weight:700;color:var(--h);opacity:.85}
     .wave-glass svg{position:relative;z-index:1;display:block}
-    td.hl-orange{background:linear-gradient(135deg,rgba(245,142,126,.28),rgba(251,182,158,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#9A2B18;font-weight:800;border-left:1px solid rgba(255,255,255,.6);border-right:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
-    :root[data-theme=dark] td.hl-orange{color:#FFD1C9}
+
     .moods{display:flex;gap:10px;margin:10px 0 14px;flex-wrap:wrap}
     .mo{padding:10px 14px;border-radius:15px;border:1.5px solid var(--bd);background:var(--input-g);color:var(--b);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;transition:all .18s}
     .mo:hover{border-color:var(--p);color:var(--h)}
@@ -264,6 +265,16 @@
     @keyframes pageFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
     .page-enter{animation:pageFadeIn .32s cubic-bezier(.22,1,.36,1) both}
     .cat-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px}
+    .ann{display:flex;align-items:center;gap:10px;max-width:680px;margin:14px auto 0;padding:11px 14px;border-radius:18px;background:linear-gradient(135deg,var(--input-g),var(--pl));border:1.5px solid var(--p);color:var(--p);font-size:13px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+    .ann span{flex:1;color:var(--h);font-weight:600}
+    .ann .x{color:var(--p)}
+    .nv.on,.dc.on,.cpill.on,.bn a.on{position:relative;z-index:2}
+    .nv svg{transition:transform .38s cubic-bezier(.34,1.56,.64,1)}
+    .nv:hover svg{transform:scale(1.22)}
+    .nv:hover + .nv svg,.nv:has(+ .nv:hover) svg{transform:scale(1.1)}
+    .nv.on svg{transform:scale(1.12)}
+    .nv.on:hover svg{transform:scale(1.22)}
+    .dc:active,.cpill:active,.cal-mp:active,.bn a:active,.nv:active{transform:scale(.94)}
     .cpill{flex:none;padding:7px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--input-g);color:var(--b);font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
     .cpill.on{background:var(--pl);color:var(--p);border-color:rgba(79,63,201,.25)}
     @media (max-width:800px){
@@ -338,6 +349,7 @@
     day: null,
     cal: null,
     modal: null,
+    resetUser: null,
     items: [],
     checks: [],
     til: [],
@@ -352,17 +364,19 @@
     doaQ: '',
     vids: [],
     tpls: [],
+    anns: [],
+    doas: [],
+    years: [],
     kajianCat: 'Semua',
     activeVid: null,
-    pwa: null,
-    cdText: null
+    pwa: null
   };
 
   let sb = null, TOKEN = null, uid = 0, beatT = null, cdT = null;
   const nid = () => 'p' + (++uid);
 
   // ===== Lapisan data (Preview = memori lokal, Produksi = Supabase) =====
-  const mem = { templates: [], kajian_videos: [], app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
+  const mem = { announcements: [], doa_custom: [], ramadan_years: [], templates: [], kajian_videos: [], app_settings: [], users: [], items: [], checks: [], tilawah_log: [], hafalan_log: [], journal: [], prefs: [] };
 
   if (IS_PREVIEW) {
     mem.app_settings.push({ ...DEF });
@@ -387,6 +401,15 @@
       const { data, error } = await sb.from(t).insert(r).select().single();
       if (error) throw error;
       return data;
+    },
+    async upd(t, id, patch) {
+      if (IS_PREVIEW) {
+        const r = mem[t].find(x => same(x.id, id));
+        if (r) Object.assign(r, patch);
+        return;
+      }
+      const { error } = await sb.from(t).update(patch).eq('id', id);
+      if (error) throw error;
     },
     async del(t, id) {
       if (IS_PREVIEW) {
@@ -428,7 +451,13 @@
     if (e >= 0 && e <= 29) return { day: e + 1, month: 'Syawal' };
     return { day: '', month: '' };
   };
-  const its = k => S.items.filter(i => i.kind === k && S.user && same(i.user_id, S.user.id)); // item bawaan (user_id null) tidak ditampilkan lagi
+  const annSort = L => L.filter(x => x.active !== false).sort((x, y) => String(y.created_at || y.id).localeCompare(String(x.created_at || x.id), undefined, { numeric: true }));
+  const pickYear = L => {
+    const t = today();
+    const a = [...L].sort((x, y) => x.ramadan_start.localeCompare(y.ramadan_start));
+    return a.find(y => t <= y.eid_date) || a[a.length - 1] || null;
+  };
+  const its = k => S.items.filter(i => i.kind === k && S.user && same(i.user_id, S.user.id));
   const isDone = (id, d) => S.checks.find(c => same(c.item_id, id) && c.day === d);
   const getUzurDays = () => Array.isArray(S.prefs.uzur_days) ? S.prefs.uzur_days : [];
   const isUzur = d => getUzurDays().includes(d);
@@ -439,14 +468,14 @@
   };
 
   // ===== Streak, lencana & ringkasan mingguan =====
-  const dayOk = d => pct('ibadah', d) >= 70; // uzur syar'i dihitung 100% oleh pct()
+  const dayOk = d => pct('ibadah', d) >= 70;
   const avgPct = ds => ds.length ? Math.round(ds.reduce((a, d) => a + pct('ibadah', d), 0) / ds.length) : null;
   function streakInfo() {
     const D = days(), t = today(), last = D.filter(d => d <= t).length - 1;
     let best = 0, run = 0;
     D.forEach(d => { if (d <= t && dayOk(d)) best = Math.max(best, ++run); else run = 0; });
     let i = last;
-    if (i >= 0 && !dayOk(D[i])) i--; // hari ini belum selesai: jangan putus streak
+    if (i >= 0 && !dayOk(D[i])) i--;
     let cur = 0;
     while (i >= 0 && dayOk(D[i])) { cur++; i--; }
     const week = last >= 0 ? avgPct(D.slice(Math.max(0, last - 6), last + 1)) : null;
@@ -475,8 +504,7 @@
       </div>`;
   }
 
-  // ===== Pengingat imsak / berbuka / isya (notifikasi lokal) =====
-  // shortcut: hanya berbunyi saat aplikasi/PWA masih berjalan; push saat tertutup butuh server push
+  // ===== Pengingat imsak / berbuka / isya =====
   let remindT = [], remindDay = null;
   const remindOn = () => { try { return localStorage.getItem('rj_remind') === '1' && 'Notification' in window && Notification.permission === 'granted'; } catch (e) { return false; } };
   function notify(title, body) {
@@ -520,24 +548,41 @@
   const cityLink = c => `<a class="lk blk" data-id="${esc(c.id)}" data-name="${esc(c.lokasi)}" onclick="pickCity(this.dataset.id,this.dataset.name)">${ic('navigation', 14)} ${esc(c.lokasi)}</a>`;
 
   function wave(k) {
-    const D = days(), W = 600, H = 130, P = D.map((d, i) => [i * W / Math.max(D.length - 1, 1), H - pct(k, d) * H / 100 + 10]);
+    const D = days(), W = 600, H = 132, P = D.map((d, i) => [i * W / Math.max(D.length - 1, 1), H - pct(k, d) * (H - 16) / 100 + 10]);
     let p = 'M' + P[0];
     for (let i = 1; i < P.length; i++) {
       const a = P[i - 1], b = P[i], mx = (a[0] + b[0]) / 2;
       p += `C${mx},${a[1]} ${mx},${b[1]} ${b[0]},${b[1]}`;
     }
-    const grid = [0, 50, 100].map(v => { const y = H - v * H / 100 + 10; return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--bd-s)" stroke-width="1" stroke-dasharray="4 6" vector-effect="non-scaling-stroke"/>`; }).join('');
+    const baseY = H + 12;
+    const grid = [25, 50, 75, 100].map(v => {
+      const y = H - v * (H - 16) / 100 + 10;
+      return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--bd-s)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    }).join('');
     return `
       <div class="wave-glass">
-        <svg viewBox="0 0 ${W} ${H + 20}" width="100%" preserveAspectRatio="none">
+        <div class="wave-glass-hd">
+          <span>Grafik Konsistensi Ibadah</span>
+          <span style="color:var(--p)">${overall(k)}%</span>
+        </div>
+        <svg viewBox="0 0 ${W} ${baseY + 4}" width="100%" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EC4899" stop-opacity=".35"/><stop offset="1" stop-color="#4F3FC9" stop-opacity="0"/></linearGradient>
-            <linearGradient id="ws" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4F3FC9"/><stop offset="100%" stop-color="#EC4899"/></linearGradient>
+            <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7B6CF6" stop-opacity=".32"/>
+              <stop offset="65%" stop-color="#EC4899" stop-opacity=".10"/>
+              <stop offset="100%" stop-color="#4F3FC9" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="ws" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4F3FC9"/>
+              <stop offset="55%" stop-color="#7B6CF6"/>
+              <stop offset="100%" stop-color="#EC4899"/>
+            </linearGradient>
           </defs>
           ${grid}
-          <path d="${p}L${W},${H + 10}L0,${H + 10}Z" fill="url(#wg)"/>
-          <path d="${p}" fill="none" stroke="url(#ws)" stroke-width="8" stroke-linecap="round" opacity=".35" style="filter:blur(5px)"/>
-          <path class="wl" d="${p}" fill="none" stroke="url(#ws)" stroke-width="3" stroke-linecap="round"/>
+          <line x1="0" x2="${W}" y1="${baseY}" y2="${baseY}" stroke="var(--bd-s)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+          <path d="${p}L${W},${baseY}L0,${baseY}Z" fill="url(#wg)"/>
+          <path d="${p}" fill="none" stroke="url(#ws)" stroke-width="9" stroke-linecap="round" opacity=".32" style="filter:blur(6px)"/>
+          <path class="wl" d="${p}" fill="none" stroke="url(#ws)" stroke-width="3.2" stroke-linecap="round"/>
         </svg>
       </div>`;
   }
@@ -662,6 +707,7 @@
       dalil: 'HR. Bukhari No. 6324'
     }
   ];
+  const allDoa = () => [...DOA_LIST, ...S.doas.map(d => ({ cat: d.cat || 'Lainnya', title: d.title || '', arab: d.arab || '', latin: d.latin || '', arti: d.arti || '', dalil: d.dalil || '' }))];
 
   const KAJIAN_LIST = [
     {
@@ -707,7 +753,11 @@
       dur: '05:43'
     }
   ];
-  const allVids = () => [...KAJIAN_LIST, ...S.vids.map(v => ({ id: v.yt_id, cat: v.cat || 'Lainnya', title: v.title, speaker: v.speaker || '', dur: '' }))];
+  const vidSort = a => [...a].sort((x, y) => (y.pinned ? 1 : 0) - (x.pinned ? 1 : 0) || (x.sort_order || 0) - (y.sort_order || 0) || String(x.id).localeCompare(String(y.id), undefined, { numeric: true }));
+  const allVids = () => {
+    const c = vidSort(S.vids).map(v => ({ id: v.yt_id, cat: v.cat || 'Lainnya', title: v.title, speaker: v.speaker || '', dur: '', pinned: !!v.pinned }));
+    return [...c.filter(v => v.pinned), ...KAJIAN_LIST, ...c.filter(v => !v.pinned)];
+  };
   const ytId = u => (String(u).match(/(?:youtu\.be\/|[?&]v=|\/(?:embed|shorts|live)\/)([\w-]{11})/) || (/^[\w-]{11}$/.test(String(u).trim()) ? [0, String(u).trim()] : []))[1];
 
   const SURAH_LIST = [
@@ -740,7 +790,8 @@
     daily: ['Daily Jurnal', 'Kegiatan baik harian'],
     jurnal: ['Jurnaling', 'Refleksi dan catatan hari ini'],
     recap: ['Ramadhan Recap', 'Kartu ringkasan pencapaian ibadahmu'],
-    admin: ['Panel Admin', 'Pengaturan dan pengguna']
+    admin: ['Panel Admin', 'Pengaturan Ramadhan, template, dan video kajian'],
+    users: ['Daftar User', 'Pengguna terdaftar dan status aktif']
   };
 
   const F = [
@@ -781,6 +832,7 @@
         <h2>Selamat ${g}.<br>Siap jurnaling <em>Ramadhan</em>?</h2>
         <p>${st}</p>
       </div>
+      ${annBanner()}
       ${S.user ? `
         <div class="cd-box">
           <div style="display:flex;align-items:center;gap:10px">
@@ -808,19 +860,23 @@
   };
 
   V.cal = () => {
-    if (!S.cal) {
-      S.cal = { y: new Date().getFullYear(), m: new Date().getMonth() };
-    }
+    const now = new Date();
+    if (!S.cal) S.cal = { y: now.getFullYear(), m: now.getMonth() };
     const c = S.cal;
+    const cur = c.y * 12 + c.m;
     const s = S.set, pad = (new Date(c.y, c.m, 1).getDay() + 6) % 7, dim = new Date(c.y, c.m + 1, 0).getDate();
     const isMob = window.innerWidth <= 800;
     const shortHijri = m => m === 'Ramadhan' ? 'Ram' : m === 'Sya\'ban' ? 'Sya' : m === 'Syawal' ? 'Syw' : m;
+    // 6 pil bulan selalu terpusat pada bulan aktif (indeks ke-2 = posisi tengah)
     const monthTabs = Array.from({ length: 6 }, (_, idx) => {
-      const dObj = new Date(c.y, c.m - 2 + idx, 1);
+      const ab = cur - 2 + idx;
+      const dObj = new Date(Math.floor(ab / 12), ((ab % 12) + 12) % 12, 1);
+      const yr = dObj.getFullYear();
+      const shortM = dObj.toLocaleDateString('id-ID', { month: 'short' }).replace('.', '');
       return {
-        y: dObj.getFullYear(),
+        y: yr,
         m: dObj.getMonth(),
-        label: dObj.toLocaleDateString('id-ID', { month: 'short' }).replace('.', '')
+        label: yr !== c.y ? `${shortM} '${String(yr).slice(2)}` : shortM
       };
     });
     let cells = '<span></span>'.repeat(pad);
@@ -838,7 +894,7 @@
       </div>`;
     }
     return `
-      <div class="card">
+      <div class="card cal-card">
         <div class="cal-top">
           <div class="cal-pills drag-scroll" data-lenis-prevent>
             ${monthTabs.map(mt => `<button class="cal-mp ${mt.y === c.y && mt.m === c.m ? 'on' : ''}" onclick="setCalYM(${mt.y},${mt.m})">${mt.label}</button>`).join('')}
@@ -862,14 +918,28 @@
       </div>`;
   };
 
-  V.imsak = () => {
+  function imsakTableHTML() {
     const p = S.prefs, r = S.imsak, t = today();
     const activeDate = (r && r.some(x => x.date === t)) ? t : (IS_PREVIEW && r && r.length ? r[0].date : t);
     const K = ['imsak', 'subuh', 'terbit', 'dzuhur', 'ashar', 'maghrib', 'isya'];
+    return r && r.length ? `
+      <table>
+        <tr><th>Hari</th><th>Tgl</th>${K.map(k => `<th>${k}</th>`).join('')}</tr>
+        ${r.map(x => `
+          <tr class="${x.date === activeDate ? 'hl' : ''}">
+            <td>${days().indexOf(x.date) + 1}</td>
+            <td>${x.date.slice(8)}/${x.date.slice(5, 7)}</td>
+            ${K.map(k => `<td class="${k === 'imsak' || k === 'maghrib' ? 'hl-accent' : ''}">${esc(x[k])}</td>`).join('')}
+          </tr>`).join('')}
+      </table>` : `<p class="em">${p.city_id ? (r ? 'Jadwal belum tersedia' : 'Memuat jadwal…') : 'Pilih kota atau kabupaten di atas untuk melihat jadwal imsakiyyah'}</p>`;
+  }
+
+  V.imsak = () => {
+    const p = S.prefs;
     const cityList = S.cities || [];
     return `
       <div class="card">
-        <b>${ic('map-pin', 17)} Wilayah: ${esc(p.city_name || 'Belum dipilih')}</b>
+        <b id="imsak-city-title">${ic('map-pin', 17)} Wilayah: ${esc(p.city_name || 'Belum dipilih')}</b>
         <div class="row">
           <input id="cq" placeholder="Cari seluruh kota / kabupaten di Indonesia (contoh: Jakarta, Bandung, Surabaya...)" oninput="filterCity(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();findCity()}">
           <button class="btn s" onclick="findCity()">${ic('search', 16)} Cari</button>
@@ -879,17 +949,8 @@
         </div>
         <p class="note" style="text-align:left;margin-top:10px">Sumber data: Direktorat Jenderal Bimbingan Masyarakat Islam (Bimas Islam) Kementerian Agama Republik Indonesia melalui layanan terbuka API MyQuran.</p>
       </div>
-      <div class="card scroll drag-scroll" data-lenis-prevent>
-        ${r && r.length ? `
-          <table>
-            <tr><th>Hari</th><th>Tgl</th>${K.map(k => `<th>${k}</th>`).join('')}</tr>
-            ${r.map(x => `
-              <tr class="${x.date === activeDate ? 'hl' : ''}">
-                <td>${days().indexOf(x.date) + 1}</td>
-                <td>${x.date.slice(8)}/${x.date.slice(5, 7)}</td>
-                ${K.map(k => `<td class="${k === 'imsak' || k === 'maghrib' ? 'hl-orange' : ''}">${esc(x[k])}</td>`).join('')}
-              </tr>`).join('')}
-          </table>` : `<p class="em">${p.city_id ? (r ? 'Jadwal belum tersedia' : 'Memuat jadwal…') : 'Pilih kota atau kabupaten di atas untuk melihat jadwal imsakiyyah'}</p>`}
+      <div id="imsak-table-wrap" class="card scroll drag-scroll" data-lenis-prevent>
+        ${imsakTableHTML()}
       </div>`;
   };
 
@@ -1065,9 +1126,9 @@
   };
 
   V.doa = () => {
-    const cats = ['Semua', ...new Set(DOA_LIST.map(d => d.cat))];
+    const cats = ['Semua', ...new Set(allDoa().map(d => d.cat))];
     const q = (S.doaQ || '').trim().toLowerCase();
-    const list = DOA_LIST.filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+    const list = allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
     return `
       <div class="card">
         <b>${ic('heart', 17)} Koleksi Doa Harian & Mustajab Ramadhan</b>
@@ -1118,20 +1179,6 @@
           ${ytOrigin ? '' : `<p class="note" style="text-align:left;margin-bottom:10px">Video YouTube butuh halaman yang dibuka lewat https:// (hosting). Dari file lokal atau pratinjau sandbox, YouTube menolak dengan Error 153.</p>`}
           <p style="font-size:13px;color:var(--m)">Pemateri: <b style="color:var(--h)">${esc(active.speaker)}</b> · Kategori: ${esc(active.cat)}</p>
         </div>` : ''}
-      <div class="card">
-        <b>${ic('layout-template', 17)} Template Ibadah & Daily Jurnal</b>
-        <div class="row">
-          <input id="tpn" placeholder="Nama template (mis. Ibadah Pemula)">
-          <select id="tpk"><option value="ibadah">Ibadah</option><option value="daily">Daily Jurnal</option></select>
-        </div>
-        <textarea id="tpi" placeholder="Satu item per baris, mis.&#10;Shalat 5 waktu berjamaah&#10;Tarawih"></textarea>
-        <button class="btn" style="margin-top:8px" onclick="addTpl()">${ic('plus', 16)} Simpan template</button>
-        ${S.tpls.length ? S.tpls.map(t => `
-          <div class="it">
-            <span>${esc(t.name)} · ${t.kind === 'ibadah' ? 'Ibadah' : 'Daily Jurnal'} · ${(t.items || []).length} item</span>
-            <button class="x" onclick="delTpl('${t.id}')" title="Hapus">${ic('x', 16)}</button>
-          </div>`).join('') : '<p class="em">Belum ada template</p>'}
-      </div>
       <div class="card">
         <b>${ic('video', 17)} Video Kajian Seputar Ramadhan</b>
         <div class="cat-pills drag-scroll" data-lenis-prevent>
@@ -1227,12 +1274,8 @@
   };
 
   V.admin = () => {
-    const s = S.set, U = S.users, now = Date.now(), act = U.filter(u => u.last_seen && now - new Date(u.last_seen) < 12e4);
+    const s = S.set;
     return `
-      <div class="grid">
-        <div class="card st"><small>Total pengguna</small><br><b>${U.length}</b></div>
-        <div class="card st"><small>Sedang membuka aplikasi</small><br><b class="ok">${act.length}</b></div>
-      </div>
       <div class="card">
         <b>${ic('settings', 17)} Pengaturan Ramadhan (sesuai ketetapan pemerintah)</b>
         <div class="row"><label>Tahun H</label><input id="sy" type="number" value="${s.hijri_year}"></div>
@@ -1247,6 +1290,61 @@
         </div>
       </div>
       <div class="card">
+        <b>${ic('calendar-range', 17)} Tahun Ramadhan Tersimpan (otomatis berganti)</b>
+        ${S.years.length ? [...S.years].sort((x, y) => x.ramadan_start.localeCompare(y.ramadan_start)).map(y => `
+          <div class="it">
+            <span>${esc(y.hijri_year)} H · ${esc(y.ramadan_start)} s/d ${esc(y.ramadan_end)} · Syawal ${esc(y.eid_date)}</span>
+            <button class="x" onclick="delYear('${y.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada. Setiap kali Anda menekan Simpan pada pengaturan di atas, tahun itu ikut tersimpan.</p>'}
+        <p class="note" style="text-align:left;margin-top:8px">Aplikasi memakai tahun yang sedang berjalan atau yang paling dekat berikutnya, tanpa perlu mengubah tanggal lagi.</p>
+      </div>
+      <div class="card">
+        <b>${ic('megaphone', 17)} Pengumuman (tampil di Beranda semua pengguna)</b>
+        <div class="row">
+          <input id="ann1" placeholder="Tulis pengumuman, mis. Awal Ramadhan 1448 H jatuh pada ..." onkeydown="if(event.key==='Enter'){event.preventDefault();addAnn()}">
+          <button class="btn" onclick="addAnn()">${ic('send', 16)} Terbitkan</button>
+        </div>
+        ${S.anns.length ? annSort([...S.anns]).map(a => `
+          <div class="it">
+            <span>${esc(a.text)}</span>
+            <button class="x" onclick="delAnn('${a.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') + '<p class="note" style="text-align:left;margin-top:8px">Hanya pengumuman terbaru yang tampil; pengguna dapat menutupnya.</p>' : '<p class="em">Belum ada pengumuman</p>'}
+      </div>
+      <div class="card">
+        <b>${ic('book-open', 17)} Kelola Doa</b>
+        <div class="row">
+          <input id="dck" list="dcats" placeholder="Kategori">
+          <datalist id="dcats">${[...new Set(allDoa().map(d => d.cat))].map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+          <input id="dct" placeholder="Judul doa">
+        </div>
+        <textarea id="dca" dir="rtl" placeholder="Teks Arab" style="font-family:'Scheherazade New','Amiri',serif;font-size:22px"></textarea>
+        <textarea id="dcl" placeholder="Latin" style="margin-top:8px"></textarea>
+        <textarea id="dcr" placeholder="Arti" style="margin-top:8px"></textarea>
+        <div class="row">
+          <input id="dcs" placeholder="Sumber / dalil (mis. HR. Abu Dawud)">
+          <button class="btn" onclick="addDoa()">${ic('plus', 16)} Tambah doa</button>
+        </div>
+        ${S.doas.length ? S.doas.map(d => `
+          <div class="it">
+            <span>${esc(d.title)} · ${esc(d.cat)}</span>
+            <button class="x" onclick="delDoa('${d.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada doa tambahan</p>'}
+      </div>
+      <div class="card">
+        <b>${ic('layout-template', 17)} Template Ibadah & Daily Jurnal</b>
+        <div class="row">
+          <input id="tpn" placeholder="Nama template (mis. Ibadah Pemula)">
+          <select id="tpk"><option value="ibadah">Ibadah</option><option value="daily">Daily Jurnal</option></select>
+        </div>
+        <textarea id="tpi" placeholder="Satu item per baris, mis.&#10;Shalat 5 waktu berjamaah&#10;Tarawih"></textarea>
+        <button class="btn" style="margin-top:8px" onclick="addTpl()">${ic('plus', 16)} Simpan template</button>
+        ${S.tpls.length ? S.tpls.map(t => `
+          <div class="it">
+            <span>${esc(t.name)} · ${t.kind === 'ibadah' ? 'Ibadah' : 'Daily Jurnal'} · ${(t.items || []).length} item</span>
+            <button class="x" onclick="delTpl('${t.id}')" title="Hapus">${ic('x', 16)}</button>
+          </div>`).join('') : '<p class="em">Belum ada template</p>'}
+      </div>
+      <div class="card">
         <b>${ic('video', 17)} Video Kajian (tambah lewat link YouTube)</b>
         <div class="row">
           <input id="vu" placeholder="Tempel link YouTube (watch, youtu.be, shorts, live)">
@@ -1258,29 +1356,64 @@
           <datalist id="vcats">${[...new Set(allVids().map(v => v.cat))].map(c => `<option value="${esc(c)}">`).join('')}</datalist>
           <button class="btn" onclick="addVid()">${ic('plus', 16)} Tambah</button>
         </div>
-        ${S.vids.length ? S.vids.map(v => `
+        ${S.vids.length ? vidSort(S.vids).map(v => `
           <div class="it">
-            <span>${esc(v.title)} · ${esc(v.cat)}</span>
+            <span>${v.pinned ? ic('pin', 14) : ''} ${esc(v.title)} · ${esc(v.cat)}</span>
+            <button class="x" onclick="moveVid('${v.id}',-1)" title="Naik">${ic('chevron-up', 16)}</button>
+            <button class="x" onclick="moveVid('${v.id}',1)" title="Turun">${ic('chevron-down', 16)}</button>
+            <button class="x" style="${v.pinned ? 'color:var(--p)' : ''}" onclick="pinVid('${v.id}')" title="Sematkan di atas">${ic('pin', 16)}</button>
             <button class="x" onclick="delVid('${v.id}')" title="Hapus">${ic('x', 16)}</button>
-          </div>`).join('') : '<p class="em">Belum ada video tambahan</p>'}
+          </div>`).join('') + '<p class="note" style="text-align:left;margin-top:8px">Video yang disematkan tampil paling atas. Urutan naik/turun berlaku di antara video dengan status sama.</p>' : '<p class="em">Belum ada video tambahan</p>'}
+      </div>`;
+  };
+
+  V.users = () => {
+    const U = S.users, now = Date.now(), act = U.filter(u => u.last_seen && now - new Date(u.last_seen) < 12e4);
+    return `
+      <div class="grid">
+        <div class="card st"><small>Total pengguna</small><br><b>${U.length}</b></div>
+        <div class="card st"><small>Sedang membuka aplikasi</small><br><b class="ok">${act.length}</b></div>
       </div>
       <div class="card scroll drag-scroll" data-lenis-prevent>
         <b>${ic('users', 17)} Daftar pengguna</b>
         ${U.length ? `
           <table>
-            <tr><th>Username</th><th>Nama</th><th>Terdaftar</th><th>Status</th></tr>
+            <tr><th>Username</th><th>Nama</th><th>Terdaftar</th><th>Status</th><th>Aksi</th></tr>
             ${U.map(u => {
               const on = u.last_seen && now - new Date(u.last_seen) < 12e4;
-              return `<tr><td>${esc(u.username)}</td><td>${esc(u.full_name)}</td><td>${esc((u.created_at || '').slice(0, 10))}</td><td><span class="badge ${on ? 'on' : 'off'}"><i class="dot"></i>${on ? 'Aktif' : 'Offline'}</span></td></tr>`;
+              const off = u.active === false;
+              return `<tr><td>${esc(u.username)}</td><td>${esc(u.full_name)}</td><td>${esc((u.created_at || '').slice(0, 10))}</td><td><span class="badge ${!off && on ? 'on' : 'off'}"><i class="dot"></i>${off ? 'Nonaktif' : on ? 'Aktif' : 'Offline'}</span></td><td><button class="btn s" style="padding:5px 10px;font-size:12px" onclick="openResetPw('${u.id}')">${ic('key-round', 14)} Reset</button> <button class="btn s" style="padding:5px 10px;font-size:12px" onclick="togActive('${u.id}')">${ic(off ? 'user-check' : 'user-x', 14)} ${off ? 'Aktifkan' : 'Nonaktifkan'}</button></td></tr>`;
             }).join('')}
           </table>` : '<p class="em">Belum ada data</p>'}
       </div>
       <p class="note" style="display:flex;align-items:center;justify-content:center;gap:6px">${ic('lock', 14)} Data ibadah, tilawah, hafalan, dan jurnal pengguna dilindungi: admin tidak dapat membacanya.</p>`;
   };
 
+  const annBanner = () => {
+    let seen = '';
+    try { seen = localStorage.getItem('rj_ann') || ''; } catch (e) {}
+    const a = annSort(S.anns)[0];
+    if (!a || same(a.id, seen)) return '';
+    return `<div class="ann">${ic('megaphone', 18)}<span>${esc(a.text)}</span><button class="x" onclick="dismissAnn('${a.id}')" title="Tutup">${ic('x', 16)}</button></div>`;
+  };
+
   function modalH() {
     const m = S.modal;
     if (!m) return '';
+    if (m === 'resetpw' && S.resetUser) {
+      return `
+        <div class="mb" data-lenis-prevent onclick="if(event.target===this)openM(null)">
+          <div class="mc">
+            <div class="av">${ic('key-round', 32)}</div>
+            <h2>Reset Password</h2>
+            <p class="sub">Atur password baru untuk <b>${esc(S.resetUser.username)}</b></p>
+            <label>Password Baru</label>
+            <div class="in"><span>${ic('lock', 17)}</span><input id="rpw" type="password" placeholder="Minimal 6 karakter" onkeydown="if(event.key==='Enter'){event.preventDefault();submitResetPw()}"></div>
+            <button class="btn w" onclick="submitResetPw()">Simpan Password ${ic('check', 17)}</button>
+            <a class="lk c" onclick="openM(null)">Batal</a>
+          </div>
+        </div>`;
+    }
     const reg = m === 'register', adm = m === 'admin';
     return `
       <div class="mb" data-lenis-prevent onclick="if(event.target===this)openM(null)">
@@ -1388,12 +1521,72 @@
     }
   }
 
+  const SCROLLERS = '.strip,.cat-pills,.cal-pills,.bn';
+  const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const INDICATORS = [
+    ['side', '.side .nv.on', true],
+    ['bn', '.bn a.on', true],
+    ['day', '.strip .dc.on', false],
+    ['cat', '.cat-pills .cpill.on', false],
+    ['mon', '.cal-pills .cal-mp.on', false]
+  ];
+  let lastRects = {}, monthShift = 0;
+  const SPRING = 'cubic-bezier(.34,1.45,.64,1)';
+
+  function slideIndicators(appEl, pageNav) {
+    const rects = {};
+    INDICATORS.forEach(([k, sel, nav]) => {
+      const e = appEl.querySelector(sel);
+      if (!e || !e.getClientRects().length) return;
+      const r = e.getBoundingClientRect();
+      rects[k] = { x: r.left, y: r.top };
+      const p = lastRects[k];
+      if (!p || REDUCED || (pageNav && !nav) || (k === 'mon' && monthShift)) return;
+      const dx = p.x - r.left, dy = p.y - r.top;
+      if (Math.abs(dx) + Math.abs(dy) < 2) return;
+      e.animate([{ transform: `translate(${dx}px,${dy}px) scale(.94)` }, { transform: 'translate(0,0) scale(1)' }], { duration: 560, easing: SPRING });
+    });
+    lastRects = rects;
+
+    if (monthShift && !REDUCED) {
+      const ps = [...appEl.querySelectorAll('.cal-pills .cal-mp')];
+      if (ps.length > 1) {
+        const slot = ps[1].getBoundingClientRect().left - ps[0].getBoundingClientRect().left;
+        const dx = Math.max(-5, Math.min(5, monthShift)) * slot, box = ps[0].parentElement;
+        box.style.overflow = 'hidden';
+        let last;
+        ps.forEach(b => {
+          last = b.animate([{ transform: `translateX(${dx}px)` }, { transform: 'translateX(0)' }], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
+        });
+        last.finished.then(() => { box.style.overflow = ''; }).catch(() => { box.style.overflow = ''; });
+      }
+    }
+    monthShift = 0;
+  }
+
+  function glideTo(el, from) {
+    el.scrollLeft = from;
+    const a = el.querySelector('.on');
+    if (!a) return;
+    const er = el.getBoundingClientRect(), ar = a.getBoundingClientRect();
+    const to = Math.max(0, Math.min(el.scrollWidth - el.clientWidth, from + (ar.left - er.left) - (er.width - ar.width) / 2));
+    if (Math.abs(to - from) < 2) return;
+    const t0 = performance.now(), D = 520;
+    const step = t => {
+      const k = Math.min(1, (t - t0) / D);
+      el.scrollLeft = from + (to - from) * (1 - Math.pow(1 - k, 3));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
   function render(animatePage = false) {
     const appEl = $('#app');
     if (!appEl) return;
     const A = S.admin;
-    const nav = N.filter(n => !A || ['home', 'cal'].includes(n[0])).concat(A ? [['admin', 'Admin', 'shield']] : []);
+    const nav = N.filter(n => !A || ['home', 'cal'].includes(n[0])).concat(A ? [['admin', 'Admin', 'shield'], ['users', 'Daftar User', 'users']] : []);
     const y = appEl.scrollTop;
+    const keepX = [...appEl.querySelectorAll(SCROLLERS)].map(e => e.scrollLeft);
     const t = TT[S.page] || TT.home;
     if (S.page === 'home') curDay();
 
@@ -1407,9 +1600,9 @@
             <div class="lg">${ic('moon', 22)}</div>
             <div><b>rJournal</b><small>Ramadhan Jurnal</small></div>
           </div>
-          ${nav.map(n => `<a class="nv ${S.page === n[0] ? 'on' : ''}" onclick="go('${n[0]}')">${ic(n[2], 19)}<span>${n[1]}</span></a>`).join('')}
+          ${nav.map(n => `<a class="nv ${S.page === n[0] ? 'on' : ''}" data-p="${n[0]}" onclick="go('${n[0]}')">${ic(n[2], 19)}<span>${n[1]}</span></a>`).join('')}
         </aside>
-        <main class="main ${animatePage ? 'page-enter' : ''}">
+        <main class="main ${animatePage === true ? 'page-enter' : ''}">
           <header class="hd">
             <div><h1>${t[0]}</h1><p>${t[1]}</p></div>
             <div class="r">
@@ -1420,24 +1613,19 @@
         </main>
       </div>
       <nav class="bn drag-scroll" data-lenis-prevent>
-        ${nav.map(n => `<a class="${S.page === n[0] ? 'on' : ''}" onclick="go('${n[0]}')">${ic(n[2], 20)}<span>${n[1]}</span></a>`).join('')}
+        ${nav.map(n => `<a class="${S.page === n[0] ? 'on' : ''}" data-p="${n[0]}" onclick="go('${n[0]}')">${ic(n[2], 20)}<span>${n[1]}</span></a>`).join('')}
       </nav>
       ${modalH()}`;
 
     if (window.lucide) lucide.createIcons();
     appEl.scrollTop = y;
-    const activeBn = appEl.querySelector('.bn a.on');
-    if (activeBn && activeBn.scrollIntoView) {
-      activeBn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-    const activeDayBtn = appEl.querySelector('.strip .dc.on');
-    if (activeDayBtn && activeDayBtn.scrollIntoView) {
-      activeDayBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    appEl.querySelectorAll(SCROLLERS).forEach((e, i) => glideTo(e, animatePage === true ? 0 : (keepX[i] || 0)));
+    slideIndicators(appEl, animatePage === true);
     if (animatePage && window.gsap) {
-      const blocks = appEl.querySelectorAll('.main > .card, .main > .grid > .card, .main > .hero, .main > .pill, .main > .cd-box, .main > .strip, .main > .uzur-bar');
-      if (blocks.length) {
-        gsap.fromTo(blocks, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38, stagger: 0.04, ease: 'power2.out', clearProps: 'transform,opacity' });
+      const blocks = appEl.querySelectorAll('.main > .card, .main > .grid > .card, .main > .hero, .main > .pill, .main > .cd-box, .main > .uzur-bar' + (animatePage === true ? ', .main > .strip' : ''));
+      const fadeSet = [...blocks].flatMap(b => animatePage === 'soft' && b.classList.contains('cal-card') ? [...b.children] : [b]);
+      if (fadeSet.length) {
+        gsap.fromTo(fadeSet, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38, stagger: 0.04, ease: 'power2.out', clearProps: 'transform,opacity' });
       }
     }
     initDragScroll();
@@ -1502,7 +1690,8 @@
   }
 
   async function loadUsers() {
-    S.users = await T.sel('users', {}, 'id,username,full_name,last_seen,created_at');
+    try { S.users = await T.sel('users', {}, 'id,username,full_name,last_seen,created_at,active'); }
+    catch (e) { S.users = await T.sel('users', {}, 'id,username,full_name,last_seen,created_at'); }
   }
 
   async function loadAllIndonesianCities() {
@@ -1545,8 +1734,13 @@
   async function boot() {
     const st = await T.sel('app_settings');
     if (st[0]) S.set = st[0];
-    S.tpls = await T.sel('templates').catch(() => []); // tabel belum dibuat -> tanpa template
-    S.vids = await T.sel('kajian_videos').catch(() => []); // tabel belum dibuat -> pakai daftar bawaan saja
+    S.tpls = await T.sel('templates').catch(() => []);
+    S.anns = await T.sel('announcements').catch(() => []);
+    S.doas = await T.sel('doa_custom').catch(() => []);
+    S.years = await T.sel('ramadan_years').catch(() => []);
+    const py = pickYear(S.years);
+    if (py) S.set = py;
+    S.vids = await T.sel('kajian_videos').catch(() => []);
     if (S.user && S.admin) await loadUsers();
     else if (S.user) {
       const id = S.user.id;
@@ -1631,6 +1825,26 @@
     await boot();
   }
 
+  async function persistPref(p) {
+    S.prefs = { ...S.prefs, ...p, user_id: S.user.id };
+    try {
+      await T.up('prefs', S.prefs, 'user_id');
+    } catch (err) {
+      const { uzur_days, ...corePrefs } = S.prefs;
+      await T.up('prefs', corePrefs, 'user_id');
+    }
+  }
+
+  function refreshImsakTable() {
+    const wrap = $('#imsak-table-wrap');
+    if (wrap) {
+      wrap.innerHTML = imsakTableHTML();
+      wrap.classList.remove('page-enter');
+      void wrap.offsetWidth;
+      wrap.classList.add('page-enter');
+    }
+  }
+
   const A = {
     async go(p) {
       if (!S.user && !['home', 'cal', 'doa', 'kajian'].includes(p)) {
@@ -1638,6 +1852,7 @@
         return render();
       }
       if (S.page === p) return;
+      if (p === 'users') await loadUsers();
       const mainEl = $('.main');
       if (mainEl) {
         mainEl.classList.add('page-exit');
@@ -1650,15 +1865,13 @@
       render(true);
       if (p === 'imsak') {
         loadAllIndonesianCities();
-        if (S.prefs.city_id && !S.imsak) await fetchJ();
-        render();
-      }
-      if (p === 'admin') {
-        await loadUsers();
-        render();
+        if (S.prefs.city_id && !S.imsak) {
+          await fetchJ();
+          if (S.page === 'imsak') refreshImsakTable();
+        }
       }
     },
-    setDoaCat(c) { S.doaCat = c; render(); },
+    setDoaCat(c) { return soft(() => { S.doaCat = c; }); },
     searchDoa(q) {
       S.doaQ = q;
       render();
@@ -1667,7 +1880,7 @@
     },
     async copyDoa(idx) {
       const q = (S.doaQ || '').trim().toLowerCase();
-      const list = DOA_LIST.filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+      const list = allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
       const d = list[idx];
       if (!d) return;
       const txt = `${d.title}\n${d.arab}\n${d.latin}\nArtinya: "${d.arti}" (${d.dalil})`;
@@ -1677,7 +1890,7 @@
     async saveDoaToJournal(idx) {
       if (!S.user) { S.modal = 'login'; return render(); }
       const q = (S.doaQ || '').trim().toLowerCase();
-      const list = DOA_LIST.filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+      const list = allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
       const d = list[idx];
       if (!d) return;
       const day = curDay();
@@ -1688,7 +1901,7 @@
       await loadData();
       msg('Doa ditambahkan ke catatan Jurnaling hari ini');
     },
-    setKajianCat(c) { S.kajianCat = c; render(); },
+    setKajianCat(c) { return soft(() => { S.kajianCat = c; }); },
     playKajian(id) {
       S.activeVid = id;
       render();
@@ -1697,17 +1910,12 @@
         if (appEl) appEl.scrollTop = 0;
       }
     },
-    setDay(d) { S.day = d; render(); },
-    setCalYM(y, m) { S.cal = { y, m }; render(); },
-    calNav(n) {
-      if (!S.cal) {
-        S.cal = { y: new Date().getFullYear(), m: new Date().getMonth() };
-      }
-      const c = S.cal;
-      c.m += n;
-      if (c.m < 0) { c.m = 11; c.y--; }
-      if (c.m > 11) { c.m = 0; c.y++; }
-      render();
+    setDay(d) { return soft(() => { S.day = d; }); },
+    setCalYM(y, m) {
+      const now = new Date();
+      const prev = S.cal || { y: now.getFullYear(), m: now.getMonth() };
+      monthShift = (y * 12 + m) - (prev.y * 12 + prev.m);
+      return soft(() => { S.cal = { y, m }; });
     },
     openM(m) { S.modal = m; render(); },
     eye() { const e = $('#lp'); if (e) e.type = e.type === 'password' ? 'text' : 'password'; },
@@ -1725,6 +1933,7 @@
           S.user = { username: u, full_name: 'Admin' };
         } else {
           let found = mem.users.find(x => x.username.toLowerCase() === u.toLowerCase());
+          if (found && found.active === false) return msg('Akun dinonaktifkan oleh admin');
           if (!found) {
             found = { id: nid(), username: u.toLowerCase(), full_name: u, last_seen: new Date().toISOString(), created_at: new Date().toISOString() };
             mem.users.push(found);
@@ -1839,13 +2048,7 @@
       render();
     },
     async savePref(p) {
-      S.prefs = { ...S.prefs, ...p, user_id: S.user.id };
-      try {
-        await T.up('prefs', S.prefs, 'user_id');
-      } catch (err) {
-        const { uzur_days, ...corePrefs } = S.prefs;
-        await T.up('prefs', corePrefs, 'user_id');
-      }
+      await persistPref(p);
       render();
     },
     async togTilSlot(d, slotKey, waktu, pages) {
@@ -1936,21 +2139,124 @@
     async pickCity(id, name) {
       S.cities = [];
       S.imsak = null;
-      await A.savePref({ city_id: id, city_name: name });
+      const listContainer = $('#city-results');
+      if (listContainer) {
+        listContainer.style.marginTop = '0';
+        listContainer.innerHTML = '';
+      }
+      const titleEl = $('#imsak-city-title');
+      if (titleEl) {
+        titleEl.innerHTML = `${ic('map-pin', 17)} Wilayah: ${esc(name)}`;
+        if (window.lucide) lucide.createIcons();
+      }
+      await persistPref({ city_id: id, city_name: name });
+      refreshImsakTable();
       await fetchJ();
       scheduleReminders();
-      render();
+      if (S.page === 'imsak') refreshImsakTable();
     },
     async saveSet() {
       const v = i => $('#' + i).value;
       const s = { id: 1, hijri_year: +v('sy'), ramadan_start: v('s1'), ramadan_end: v('s2'), eid_date: v('s3'), source_note: v('s4') };
       if (!s.ramadan_start || !s.ramadan_end || s.ramadan_end < s.ramadan_start) return msg('Tanggal tidak valid');
       await T.up('app_settings', s, 'id');
-      S.set = s;
+      try {
+        await T.up('ramadan_years', { hijri_year: s.hijri_year, ramadan_start: s.ramadan_start, ramadan_end: s.ramadan_end, eid_date: s.eid_date, source_note: s.source_note }, 'hijri_year');
+        S.years = await T.sel('ramadan_years');
+      } catch (e) {}
+      S.set = pickYear(S.years) || s;
       S.cal = null;
       S.day = null;
       render();
       msg('Pengaturan disimpan');
+    },
+    async delYear(id) {
+      await T.del('ramadan_years', id);
+      S.years = S.years.filter(y => !same(y.id, id));
+      S.set = pickYear(S.years) || S.set;
+      S.cal = null;
+      S.day = null;
+      render();
+    },
+    async addAnn() {
+      const text = $('#ann1').value.trim();
+      if (!text) return msg('Tulis pengumuman dulu');
+      S.anns.push(await T.ins('announcements', { text, created_at: new Date().toISOString() }));
+      render();
+      msg('Pengumuman diterbitkan');
+    },
+    async delAnn(id) {
+      await T.del('announcements', id);
+      S.anns = S.anns.filter(a => !same(a.id, id));
+      render();
+    },
+    dismissAnn(id) {
+      try { localStorage.setItem('rj_ann', String(id)); } catch (e) {}
+      render();
+    },
+    async addDoa() {
+      const v = i => $('#' + i).value.trim();
+      if (!v('dct') || !v('dca')) return msg('Isi judul dan teks Arab');
+      S.doas.push(await T.ins('doa_custom', { cat: v('dck') || 'Lainnya', title: v('dct'), arab: v('dca'), latin: v('dcl'), arti: v('dcr'), dalil: v('dcs') }));
+      render();
+      msg('Doa ditambahkan');
+    },
+    async delDoa(id) {
+      await T.del('doa_custom', id);
+      S.doas = S.doas.filter(d => !same(d.id, id));
+      render();
+    },
+    async pinVid(id) {
+      const v = S.vids.find(x => same(x.id, id));
+      if (!v) return;
+      const pinned = !v.pinned;
+      await T.upd('kajian_videos', v.id, { pinned });
+      v.pinned = pinned;
+      render();
+    },
+    async moveVid(id, dir) {
+      const L = vidSort(S.vids), i = L.findIndex(v => same(v.id, id)), j = i + dir;
+      if (i < 0 || j < 0 || j >= L.length || !!L[i].pinned !== !!L[j].pinned) return;
+      [L[i], L[j]] = [L[j], L[i]];
+      for (let k = 0; k < L.length; k++) {
+        if ((L[k].sort_order || 0) !== k) {
+          await T.upd('kajian_videos', L[k].id, { sort_order: k });
+          L[k].sort_order = k;
+        }
+      }
+      render();
+    },
+    openResetPw(id) {
+      const u = S.users.find(x => same(x.id, id));
+      if (!u) return;
+      S.resetUser = u;
+      S.modal = 'resetpw';
+      render();
+    },
+    async submitResetPw() {
+      const pw = ($('#rpw')?.value || '');
+      if (pw.length < 6) return msg('Password minimal 6 karakter');
+      if (!IS_PREVIEW && S.resetUser) {
+        const { error } = await sb.rpc('admin_reset_password', { p_user_id: String(S.resetUser.id), p_password: pw });
+        if (error) throw error;
+      }
+      S.modal = null;
+      S.resetUser = null;
+      render();
+      msg('Password berhasil diubah');
+    },
+    async togActive(id) {
+      const u = S.users.find(x => same(x.id, id));
+      if (!u) return;
+      const next = u.active === false;
+      if (IS_PREVIEW) { const m = mem.users.find(x => same(x.id, id)); if (m) m.active = next; }
+      else {
+        const { error } = await sb.rpc('admin_set_active', { p_user_id: String(id), p_active: next });
+        if (error) throw error;
+      }
+      u.active = next;
+      render();
+      msg(next ? 'Akun diaktifkan' : 'Akun dinonaktifkan');
     },
     async addTpl() {
       const name = $('#tpn').value.trim();
@@ -1979,10 +2285,11 @@
       if (!yid) return msg('Link YouTube tidak valid');
       if (allVids().some(v => v.id === yid)) return msg('Video sudah ada');
       let title = $('#vt').value.trim(), speaker = $('#vs').value.trim();
-      if (!title) { // best-effort: oEmbed YouTube; bila gagal admin isi judul manual
+      if (!title) {
         try {
           const j = await (await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + yid))).json();
-          title = j.title; speaker = speaker || j.author_name || '';
+          title = j.title;
+          speaker = speaker || j.author_name || '';
         } catch (e) {}
       }
       if (!title) return msg('Isi judul video');
@@ -1998,14 +2305,16 @@
     async togRemind() {
       if (remindOn()) {
         try { localStorage.setItem('rj_remind', '0'); } catch (e) {}
-        scheduleReminders(); render();
+        scheduleReminders();
+        render();
         return msg('Pengingat dimatikan');
       }
       if (!S.imsak) return msg('Pilih kota di Imsakiyyah dulu');
       if (!('Notification' in window)) return msg('Browser tidak mendukung notifikasi');
       if (await Notification.requestPermission() !== 'granted') return msg('Izin notifikasi ditolak');
       try { localStorage.setItem('rj_remind', '1'); } catch (e) {}
-      scheduleReminders(); render();
+      scheduleReminders();
+      render();
       msg('Pengingat aktif: imsak, berbuka, isya');
     },
     dismissPwa() { S.pwa = null; render(); },
@@ -2017,6 +2326,14 @@
       }
     }
   };
+
+  async function soft(update) {
+    const calc = document.querySelector('.main > .cal-card');
+    document.querySelectorAll('.main > :not(.hd):not(.strip)' + (calc ? ':not(.cal-card), .main > .cal-card > *' : '')).forEach(e => e.classList.add('page-exit'));
+    await new Promise(r => setTimeout(r, 120));
+    update();
+    render('soft');
+  }
 
   for (const k in A) {
     window[k] = async (...a) => {
