@@ -277,6 +277,19 @@
     .dc:active,.cpill:active,.cal-mp:active,.bn a:active,.nv:active{transform:scale(.94)}
     .cpill{flex:none;padding:7px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--input-g);color:var(--b);font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
     .cpill.on{background:var(--pl);color:var(--p);border-color:rgba(79,63,201,.25)}
+    .gm-prev{padding:12px 14px;border-radius:16px;background:var(--input-g);border:1px solid var(--bd);margin:12px 0}
+    .gm-ar{font-family:'Scheherazade New','Amiri','Noto Naskh Arabic',serif;font-size:26px;line-height:2;direction:rtl;text-align:right;color:var(--h)}
+    .gm-slots,.gm-tiles{display:flex;flex-wrap:wrap;gap:8px;direction:rtl}
+    .gm-slots{min-height:56px;padding:10px;border-radius:16px;border:1.5px dashed var(--bd-s);margin:8px 0 14px}
+    .gm-tiles{justify-content:center}
+    .gm-w,.gm-tile{font-family:'Scheherazade New','Amiri',serif;font-size:24px;line-height:1.6;padding:2px 14px;border-radius:14px}
+    .gm-tile{border:1.5px solid var(--bd);background:var(--input-g);color:var(--h);cursor:pointer;transition:.18s}
+    .gm-tile:hover:not(.used){border-color:var(--p);transform:translateY(-2px)}
+    .gm-tile.used{opacity:.25;pointer-events:none}
+    .gm-w.ok{background:var(--pl);color:var(--p);border:1.5px solid var(--p)}
+    .shake{animation:shk .36s}
+    @keyframes shk{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+    .mz{display:block;width:100%;max-width:440px;aspect-ratio:1;margin:12px auto;touch-action:none;border-radius:20px;background:var(--input-g);border:1px solid var(--bd);cursor:crosshair}
     @media (max-width:800px){
       .side{display:none}
       .shell{margin:0;border-radius:0;border:0;min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
@@ -310,9 +323,9 @@
   'use strict';
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
+  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "URL_SUPABASE_ANDA";
+  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
@@ -369,6 +382,8 @@
     years: [],
     kajianCat: 'Semua',
     activeVid: null,
+    gameTab: 'words',
+    hafSurah2: '',
     pwa: null
   };
 
@@ -636,6 +651,7 @@
     ['hafalan', 'Hafalan', 'brain'],
     ['doa', 'Doa', 'heart'],
     ['kajian', 'Kajian', 'play-circle'],
+    ['game', 'Games', 'gamepad-2'],
     ['daily', 'Daily Jurnal', 'check-circle-2'],
     ['jurnal', 'Jurnaling', 'pen-line'],
     ['recap', 'Recap', 'award']
@@ -708,6 +724,11 @@
     }
   ];
   const allDoa = () => [...DOA_LIST, ...S.doas.map(d => ({ cat: d.cat || 'Lainnya', title: d.title || '', arab: d.arab || '', latin: d.latin || '', arti: d.arti || '', dalil: d.dalil || '' }))];
+
+  const doaList = () => {
+    const q = (S.doaQ || '').trim().toLowerCase();
+    return allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
+  };
 
   const KAJIAN_LIST = [
     {
@@ -787,6 +808,7 @@
     hafalan: ['Ziyadah & Muroja’ah', 'Sesuai jumlah hafalanmu'],
     doa: ['Doa & Dzikir', 'Doa harian & koleksi doa mustajab Ramadhan'],
     kajian: ['Video Kajian', 'Tausiyah & ilmu seputar bulan suci Ramadhan'],
+    game: ['Games Sambung Ayat', 'Susun kata dan labirin untuk melatih hafalan'],
     daily: ['Daily Jurnal', 'Kegiatan baik harian'],
     jurnal: ['Jurnaling', 'Refleksi dan catatan hari ini'],
     recap: ['Ramadhan Recap', 'Kartu ringkasan pencapaian ibadahmu'],
@@ -802,6 +824,7 @@
     ['hafalan', 'brain', 'Ziyadah & Muroja’ah', 'Rencana sesuai jumlah hafalan.'],
     ['doa', 'heart', 'Doa Mustajab Ramadhan', 'Koleksi doa harian, niat puasa, berbuka, hingga Lailatul Qadar.'],
     ['kajian', 'play-circle', 'Video Kajian Ramadhan', 'Kumpulan video kajian pilihan seputar puasa, fiqih & Lailatul Qadar.'],
+    ['game', 'gamepad-2', 'Games Sambung Ayat', 'Susun kata dan labirin untuk melatih hafalan ayat.'],
     ['daily', 'check-circle-2', 'Daily Jurnal', 'Ceklis kegiatan baik harianmu.'],
     ['jurnal', 'pen-line', 'Jurnaling', 'Refleksi, syukur, dan catatan.'],
     ['recap', 'award', 'Ramadhan Recap', 'Kartu ringkasan ibadah estetik yang siap diunduh dan dibagikan.']
@@ -1092,13 +1115,23 @@
             <option value="murojaah">Muroja’ah (Mengulang)</option>
           </select>
           <select id="hs" onchange="onSelectSurah(this.value)">
-            <option value="">-- Pilih Surah Al-Qur'an (1–114) --</option>
+            <option value="">-- Surah awal (1–114) --</option>
             ${SURAH_LIST.map(([no, nm, ay]) => {
               const val = `${no}. ${nm}`;
               return `<option value="${esc(val)}" ${S.hafSurah === val ? 'selected' : ''}>${no}. ${esc(nm)} (${ay} ayat)</option>`;
             }).join('')}
           </select>
         </div>
+        <div class="row">
+          <select id="hs2" onchange="onSelectSurah2(this.value)">
+            <option value="">Sampai surah (opsional, bila setoran mencakup beberapa surah berurutan)</option>
+            ${SURAH_LIST.map(([no, nm]) => {
+              const val = `${no}. ${nm}`;
+              return `<option value="${esc(val)}" ${S.hafSurah2 === val ? 'selected' : ''}>${no}. ${esc(nm)}</option>`;
+            }).join('')}
+          </select>
+        </div>
+        <p class="note" style="text-align:left">Jika memilih beberapa surah: ayat awal berlaku untuk surah pertama, ayat akhir untuk surah terakhir, dan surah di antaranya dicatat penuh.</p>
         <div class="row">
           <input id="hf" type="number" min="1" max="${selSurahObj ? selSurahObj[2] : 286}" placeholder="Dari ayat ke-">
           <input id="hto" type="number" min="1" max="${selSurahObj ? selSurahObj[2] : 286}" placeholder="${maxAyatHint}">
@@ -1127,9 +1160,7 @@
 
   V.doa = () => {
     const cats = ['Semua', ...new Set(allDoa().map(d => d.cat))];
-    const q = (S.doaQ || '').trim().toLowerCase();
-    const list = allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
-    return `
+    const list = doaList();    return `
       <div class="card">
         <b>${ic('heart', 17)} Koleksi Doa Harian & Mustajab Ramadhan</b>
         <div class="row" style="margin-bottom:10px">
@@ -1389,6 +1420,285 @@
       <p class="note" style="display:flex;align-items:center;justify-content:center;gap:6px">${ic('lock', 14)} Data ibadah, tilawah, hafalan, dan jurnal pengguna dilindungi: admin tidak dapat membacanya.</p>`;
   };
 
+  // ===== Games sambung ayat (teks ayat diambil dari api.alquran.cloud) =====
+  const G = { cache: {}, surah: 1, start: 1, phase: 'idle', err: '', ay: [], idx: 0, target: [], tiles: [], got: [], miss: 0, done: false, shake: -1, score: 0, streak: 0, mz: null, ayat: 0, fontOk: false };
+  const plain = s => s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '').replace(/\u0671/g, '\u0627');
+  const wordsOf = t => t.split(/\s+/).filter(Boolean);
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  async function surahText(n) {
+    if (G.cache[n]) return G.cache[n];
+    const j = await (await fetch(`https://api.alquran.cloud/v1/surah/${n}/quran-uthmani`)).json();
+    const ay = j.data.ayahs.map(a => a.text.trim());
+    if (n !== 1 && plain(ay[0]).startsWith('بسم الله الرحمن الرحيم')) ay[0] = wordsOf(ay[0]).slice(4).join(' ');
+    return (G.cache[n] = ay);
+  }
+
+  function gameHTML() {
+    if (G.phase === 'loading') return '<p class="em">Memuat teks ayat…</p>';
+    if (G.phase === 'error') return `<p class="em">${esc(G.err)}</p>`;
+    if (G.phase !== 'play') return `<p class="em">${S.gameTab === 'words' ? 'Pilih surat lalu tekan Mulai. Susun kata-kata ayat berikutnya sesuai urutan.' : 'Pilih surat lalu tekan Mulai. Gambar garis dari awal ke akhir ayat tanpa menyentuh dinding.'}</p>`;
+    return S.gameTab === 'words' ? wordsHTML() : mazeHTML();
+  }
+
+  function paintGame() {
+    const el = $('#game-area');
+    if (!el) return;
+    el.innerHTML = gameHTML();
+    if (window.lucide) lucide.createIcons();
+    mountGame();
+  }
+  function mountGame() { if (S.gameTab === 'maze' && G.phase === 'play') drawMaze(); }
+
+  async function startGame() {
+    const st = $('#gst');
+    G.start = Math.max(1, st ? +st.value || 1 : 1);
+    G.phase = 'loading';
+    paintGame();
+    try {
+      G.ay = await surahText(G.surah);
+    } catch (e) {
+      G.phase = 'error';
+      G.err = 'Gagal memuat teks ayat. Periksa koneksi internet lalu coba lagi.';
+      return paintGame();
+    }
+    G.score = 0;
+    G.streak = 0;
+    if (S.gameTab === 'words') { G.idx = Math.min(G.start, G.ay.length - 1) - 1; roundWords(); }
+    else roundMaze();
+  }
+
+  // --- Susun Kata ---
+  function roundWords() {
+    G.target = wordsOf(G.ay[G.idx + 1]);
+    G.got = [];
+    G.miss = 0;
+    G.done = false;
+    G.shake = -1;
+    G.tiles = shuffle(G.target.map(w => ({ w, used: false })));
+    G.phase = 'play';
+    paintGame();
+  }
+  function wordsHTML() {
+    const last = G.idx + 2 >= G.ay.length;
+    return `
+      <div class="gm-prev"><small>Ayat ${G.idx + 1}</small><div class="gm-ar">${esc(G.ay[G.idx])}</div></div>
+      <small>Sambungkan ayat ${G.idx + 2}: tekan kata sesuai urutan</small>
+      <div class="gm-slots">${G.got.length ? G.got.map(w => `<span class="gm-w ok">${esc(w)}</span>`).join('') : '<span class="note">…</span>'}</div>
+      ${G.done ? `
+        <div class="ann" style="margin:12px auto">${ic('trophy', 18)}<span>Benar! Skor ${G.score} · beruntun ${G.streak}</span></div>
+        <button class="btn" onclick="gameNext()">${last ? 'Selesai' : 'Ayat berikutnya'} ${ic('arrow-right', 16)}</button>` : `
+        <div class="gm-tiles">${G.tiles.map((t, i) => `<button class="gm-tile ${t.used ? 'used' : ''} ${G.shake === i ? 'shake' : ''}" onclick="gamePick(${i})">${esc(t.w)}</button>`).join('')}</div>
+        <div class="row" style="margin-top:12px"><small style="color:var(--m)">Skor ${G.score} · salah ${G.miss}</small><button class="btn s" style="margin-left:auto" onclick="gameNext()">Lewati</button></div>`}`;
+  }
+  function gamePick(i) {
+    const t = G.tiles[i];
+    if (!t || t.used || G.done) return;
+    if (t.w === G.target[G.got.length]) {
+      t.used = true;
+      G.got.push(t.w);
+      G.shake = -1;
+      if (G.got.length === G.target.length) {
+        G.done = true;
+        if (!G.miss) G.streak++;
+        G.score += Math.max(10, G.target.length * 10 - G.miss * 5);
+      }
+    } else {
+      G.miss++;
+      G.streak = 0;
+      G.shake = i;
+    }
+    paintGame();
+  }
+  function gameNext() {
+    if (!G.done) G.streak = 0;
+    if (G.idx + 2 >= G.ay.length) {
+      G.phase = 'idle';
+      msg(`Surat selesai! Skor ${G.score}`);
+      return paintGame();
+    }
+    G.idx++;
+    roundWords();
+  }
+
+  // --- Labirin ---
+  function makeMaze(N) {
+    const M = Array.from({ length: N * N }, () => ({ w: [true, true, true, true] })); // atas, kanan, bawah, kiri
+    const D = [[0, -1, 0, 2], [1, 0, 1, 3], [0, 1, 2, 0], [-1, 0, 3, 1]];
+    const seen = new Set([0]), st = [0];
+    while (st.length) {
+      const c = st[st.length - 1], x = c % N, y = Math.floor(c / N);
+      const nb = D.filter(([dx, dy]) => { const nx = x + dx, ny = y + dy; return nx >= 0 && ny >= 0 && nx < N && ny < N && !seen.has(ny * N + nx); });
+      if (!nb.length) { st.pop(); continue; }
+      const [dx, dy, a, b] = nb[Math.floor(Math.random() * nb.length)], n = (y + dy) * N + x + dx;
+      M[c].w[a] = false;
+      M[n].w[b] = false;
+      seen.add(n);
+      st.push(n);
+    }
+    return M;
+  }
+  function solveMaze(M, N) {
+    const prev = new Map([[0, -1]]), q = [0], D = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    while (q.length) {
+      const c = q.shift();
+      if (c === N * N - 1) break;
+      D.forEach(([dx, dy], k) => {
+        const x = (c % N) + dx, y = Math.floor(c / N) + dy, n = y * N + x;
+        if (x >= 0 && y >= 0 && x < N && y < N && !M[c].w[k] && !prev.has(n)) { prev.set(n, c); q.push(n); }
+      });
+    }
+    const p = [];
+    for (let c = N * N - 1; c !== -1; c = prev.get(c)) p.unshift(c);
+    return p;
+  }
+  function roundMaze() {
+    const pool = G.ay.map(wordsOf).filter(w => w.length >= 3 && w.length <= 9);
+    if (!pool.length) {
+      G.phase = 'error';
+      G.err = 'Surat ini tidak punya ayat pendek (3–9 kata). Pilih surat lain.';
+      return paintGame();
+    }
+    const words = pool[Math.floor(Math.random() * pool.length)], N = words.length <= 6 ? 6 : 7;
+    let M, path;
+    for (let t = 0; t < 80; t++) { M = makeMaze(N); path = solveMaze(M, N); if (path.length >= words.length + 2) break; }
+    const L = path.length, lab = {};
+    words.forEach((w, k) => { lab[path[words.length > 1 ? Math.round(k * (L - 1) / (words.length - 1)) : 0]] = w; });
+    const onPath = new Set(path), pick = G.ay.flatMap(wordsOf).filter(w => !words.includes(w));
+    shuffle(M.map((c, k) => k).filter(k => !onPath.has(k) && M[k].w.filter(Boolean).length === 3)).slice(0, 5)
+      .forEach(k => { if (pick.length) lab[k] = pick[Math.floor(Math.random() * pick.length)]; });
+    G.ayat = G.ay.findIndex(t => wordsOf(t).join(' ') === words.join(' ')) + 1;
+    G.mz = { N, M, lab, words, pts: [], drawing: false, state: 'idle', walls: [], cs: 0 };
+    G.phase = 'play';
+    paintGame();
+  }
+  function mazeMsg() {
+    const s = G.mz.state;
+    return s === 'win' ? `<div class="gm-ar" style="text-align:center">${esc(G.mz.words.join(' '))}</div><b style="color:var(--ok)">Selamat! Ayat tersambung. Skor ${G.score}</b>`
+      : s === 'fail' ? '<b style="color:var(--er)">Menyentuh dinding! Mulai lagi dari ▶.</b>'
+      : 'Tekan sel ▶ lalu geser tanpa melepas jari.';
+  }
+  function mazeStatus() { const el = $('#mz-msg'); if (el && G.mz) el.innerHTML = mazeMsg(); }
+  function mazeHTML() {
+    return `
+      <p class="note" style="margin-bottom:6px">Ayat ke-${G.ayat}: tarik garis dari ▶ (awal ayat) ke ★ (akhir ayat) tanpa menyentuh dinding. Lewati kata sesuai urutan ayat; kata lain hanya pengecoh.</p>
+      <canvas id="mz" class="mz"></canvas>
+      <div id="mz-msg" class="note" style="min-height:44px">${mazeMsg()}</div>
+      <div class="row" style="justify-content:center">
+        <button class="btn s" onclick="mazeReset()">${ic('rotate-ccw', 15)} Ulangi</button>
+        <button class="btn s" onclick="mazeNew()">${ic('shuffle', 15)} Ayat baru</button>
+      </div>`;
+  }
+  function drawMaze() {
+    const cv = $('#mz'), m = G.mz;
+    if (!cv || !m) return;
+    if (!G.fontOk && document.fonts) {
+      G.fontOk = true;
+      document.fonts.load("700 20px 'Scheherazade New'").then(() => { if ($('#mz')) drawMaze(); });
+    }
+    const W = cv.clientWidth || 340, N = m.N, cs = W / N, dpr = window.devicePixelRatio || 1, px = Math.round(W * dpr);
+    if (cv.width !== px) cv.width = cv.height = px;
+    const g = cv.getContext('2d'), css = getComputedStyle(document.documentElement), c = n => css.getPropertyValue(n).trim();
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, W, W);
+    m.cs = cs;
+    m.walls = [];
+    g.globalAlpha = .16;
+    g.fillStyle = c('--ok');
+    g.fillRect(0, 0, cs, cs);
+    g.fillStyle = c('--gold');
+    g.fillRect((N - 1) * cs, (N - 1) * cs, cs, cs);
+    g.globalAlpha = 1;
+    g.strokeStyle = c('--h');
+    g.lineWidth = 3;
+    g.lineCap = 'round';
+    g.beginPath();
+    m.M.forEach((cell, k) => {
+      const x = (k % N) * cs, y = Math.floor(k / N) * cs;
+      [[x, y, x + cs, y], [x + cs, y, x + cs, y + cs], [x, y + cs, x + cs, y + cs], [x, y, x, y + cs]].forEach((s, i) => {
+        if (cell.w[i]) { g.moveTo(s[0], s[1]); g.lineTo(s[2], s[3]); m.walls.push(s); }
+      });
+    });
+    g.stroke();
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillStyle = c('--p');
+    Object.entries(m.lab).forEach(([k, w]) => {
+      let f = Math.round(cs * .36);
+      const font = s => `700 ${s}px 'Scheherazade New','Amiri',serif`;
+      g.font = font(f);
+      while (g.measureText(w).width > cs * .86 && f > 9) g.font = font(--f);
+      g.fillText(w, (k % N + .5) * cs, (Math.floor(k / N) + .5) * cs);
+    });
+    g.font = `700 ${Math.round(cs * .24)}px system-ui,sans-serif`;
+    g.fillStyle = c('--ok');
+    g.fillText('▶', cs * .22, cs * .8);
+    g.fillStyle = c('--gold');
+    g.fillText('★', N * cs - cs * .22, N * cs - cs * .2);
+    if (m.pts.length > 1) {
+      g.strokeStyle = m.state === 'fail' ? c('--er') : c('--pink');
+      g.lineWidth = 5;
+      g.lineJoin = 'round';
+      g.globalAlpha = .9;
+      g.beginPath();
+      m.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+      g.stroke();
+      g.globalAlpha = 1;
+    }
+    bindMaze(cv);
+  }
+  function bindMaze(cv) {
+    if (cv.dataset.bound) return;
+    cv.dataset.bound = '1';
+    const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const cellOf = ([x, y]) => Math.floor(y / G.mz.cs) * G.mz.N + Math.floor(x / G.mz.cs);
+    const hit = ([x, y]) => G.mz.walls.some(([x1, y1, x2, y2]) => {
+      const dx = Math.max(Math.min(x1, x2) - x, 0, x - Math.max(x1, x2)), dy = Math.max(Math.min(y1, y2) - y, 0, y - Math.max(y1, y2));
+      return dx * dx + dy * dy < 36;
+    });
+    cv.addEventListener('pointerdown', e => {
+      const m = G.mz, p = pos(e);
+      if (m.state === 'win' || cellOf(p) !== 0) return;
+      cv.setPointerCapture(e.pointerId);
+      Object.assign(m, { drawing: true, pts: [p], state: 'idle' });
+      mazeStatus();
+      drawMaze();
+    });
+    cv.addEventListener('pointermove', e => {
+      const m = G.mz;
+      if (!m || !m.drawing) return;
+      const [px, py] = m.pts[m.pts.length - 1], [x, y] = pos(e), n = Math.max(1, Math.ceil(Math.hypot(x - px, y - py) / 3));
+      for (let i = 1; i <= n; i++) {
+        const p = [px + (x - px) * i / n, py + (y - py) * i / n];
+        m.pts.push(p);
+        if (hit(p)) { m.drawing = false; m.state = 'fail'; break; }
+        if (cellOf(p) === m.N * m.N - 1) { m.drawing = false; m.state = 'win'; G.score += 10 + m.words.length * 5; break; }
+      }
+      mazeStatus();
+      drawMaze();
+    });
+    const up = () => {
+      const m = G.mz;
+      if (m && m.drawing) { m.drawing = false; m.pts = []; drawMaze(); }
+    };
+    cv.addEventListener('pointerup', up);
+    cv.addEventListener('pointercancel', up);
+  }
+
+  V.game = () => `
+    <div class="card">
+      <b>${ic('gamepad-2', 17)} Games Sambung Ayat</b>
+      <div class="cat-pills drag-scroll" data-lenis-prevent>
+        ${[['words', 'Susun Kata'], ['maze', 'Labirin Ayat']].map(([k, l]) => `<button class="cpill ${S.gameTab === k ? 'on' : ''}" onclick="setGameTab('${k}')">${l}</button>`).join('')}
+      </div>
+      <div class="row">
+        <select onchange="gameSurah(this.value)">${SURAH_LIST.map(([no, nm, ay]) => `<option value="${no}" ${G.surah === no ? 'selected' : ''}>${no}. ${esc(nm)} (${ay} ayat)</option>`).join('')}</select>
+        ${S.gameTab === 'words' ? `<input id="gst" type="number" min="1" value="${G.start}" placeholder="Mulai dari ayat" style="max-width:150px">` : ''}
+        <button class="btn" onclick="startGame()">${ic('play', 16)} Mulai</button>
+      </div>
+      <div id="game-area">${gameHTML()}</div>
+    </div>`;
+
   const annBanner = () => {
     let seen = '';
     try { seen = localStorage.getItem('rj_ann') || ''; } catch (e) {}
@@ -1583,8 +1893,7 @@
   function render(animatePage = false) {
     const appEl = $('#app');
     if (!appEl) return;
-    const A = S.admin;
-    const nav = N.filter(n => !A || ['home', 'cal'].includes(n[0])).concat(A ? [['admin', 'Admin', 'shield'], ['users', 'Daftar User', 'users']] : []);
+    const nav = N.filter(n => !S.admin || ['home', 'cal'].includes(n[0])).concat(S.admin ? [['admin', 'Admin', 'shield'], ['users', 'Daftar User', 'users']] : []);
     const y = appEl.scrollTop;
     const keepX = [...appEl.querySelectorAll(SCROLLERS)].map(e => e.scrollLeft);
     const t = TT[S.page] || TT.home;
@@ -1629,6 +1938,8 @@
       }
     }
     initDragScroll();
+    if (S.page === 'hafalan') hafHints();
+    if (S.page === 'game') mountGame();
     initSmoothScrollAndAnimations();
   }
 
@@ -1845,9 +2156,17 @@
     }
   }
 
+  const findSurah = v => SURAH_LIST.find(([no, nm]) => `${no}. ${nm}` === v);
+  function hafHints() {
+    const a = findSurah(S.hafSurah), b = findSurah(S.hafSurah2) || a, multi = a && b && a[0] !== b[0];
+    const f = $('#hf'), t = $('#hto');
+    if (f) { f.max = a ? a[2] : 286; f.placeholder = multi ? 'Dari ayat ke- (kosong = ayat 1)' : 'Dari ayat ke-'; }
+    if (t) { t.max = b ? b[2] : 286; t.placeholder = multi ? `Sampai ayat ke- (kosong = tamat, maks ${b[2]})` : a ? `Maks ${a[2]} ayat` : 'Sampai ayat'; }
+  }
+
   const A = {
     async go(p) {
-      if (!S.user && !['home', 'cal', 'doa', 'kajian'].includes(p)) {
+      if (!S.user && !['home', 'cal', 'doa', 'kajian', 'game'].includes(p)) {
         S.modal = 'login';
         return render();
       }
@@ -1879,9 +2198,7 @@
       if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); }
     },
     async copyDoa(idx) {
-      const q = (S.doaQ || '').trim().toLowerCase();
-      const list = allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
-      const d = list[idx];
+      const list = doaList();      const d = list[idx];
       if (!d) return;
       const txt = `${d.title}\n${d.arab}\n${d.latin}\nArtinya: "${d.arti}" (${d.dalil})`;
       if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(txt);
@@ -1889,9 +2206,7 @@
     },
     async saveDoaToJournal(idx) {
       if (!S.user) { S.modal = 'login'; return render(); }
-      const q = (S.doaQ || '').trim().toLowerCase();
-      const list = allDoa().filter(d => (S.doaCat === 'Semua' || d.cat === S.doaCat) && (!q || d.title.toLowerCase().includes(q) || d.arti.toLowerCase().includes(q) || d.latin.toLowerCase().includes(q)));
-      const d = list[idx];
+      const list = doaList();      const d = list[idx];
       if (!d) return;
       const day = curDay();
       const existing = S.jr.find(x => x.day === day) || {};
@@ -1918,7 +2233,13 @@
       return soft(() => { S.cal = { y, m }; });
     },
     openM(m) { S.modal = m; render(); },
-    eye() { const e = $('#lp'); if (e) e.type = e.type === 'password' ? 'text' : 'password'; },
+    eye() {
+      const e = $('#lp'), b = $('.eye');
+      if (!e || !b) return;
+      e.type = e.type === 'password' ? 'text' : 'password';
+      b.innerHTML = ic(e.type === 'password' ? 'eye' : 'eye-off', 17);
+      if (window.lucide) lucide.createIcons();
+    },
     async quick(adm) {
       S.admin = adm;
       S.user = adm ? { username: 'admin@preview', full_name: 'Admin' } : mem.users[0];
@@ -2075,27 +2396,31 @@
       await A.savePref({ hafal_juz: +$('#hj').value || 0, zi_target: +$('#hz').value || 5 });
       msg('Profil hafalan tersimpan');
     },
-    onSelectSurah(val) {
-      S.hafSurah = val;
-      const found = SURAH_LIST.find(([no, nm]) => `${no}. ${nm}` === val);
-      const toEl = $('#hto');
-      if (toEl && found) {
-        toEl.max = found[2];
-        toEl.placeholder = `Maks ${found[2]} ayat`;
-      }
-    },
+    onSelectSurah(val) { S.hafSurah = val; hafHints(); },
+    onSelectSurah2(val) { S.hafSurah2 = val; hafHints(); },
     async addHaf() {
-      const s = $('#hs').value.trim(), a = +$('#hf').value, b = +$('#hto').value;
-      if (!s || !a || b < a) return msg('Isi surah dan rentang ayat dengan benar');
+      const s1 = findSurah($('#hs').value), s2 = findSurah($('#hs2').value) || s1;
+      if (!s1) return msg('Pilih surah dulu');
+      const a = +$('#hf').value, b = +$('#hto').value, multi = s1[0] !== s2[0], step = s2[0] >= s1[0] ? 1 : -1;
+      if (!multi && (!a || !b)) return msg('Isi rentang ayat dengan benar');
+      const rows = [];
+      for (let n = s1[0]; n !== s2[0] + step; n += step) {
+        const [no, nm, cnt] = SURAH_LIST[n - 1];
+        rows.push({ surah: `${no}. ${nm}`, ayat_from: n === s1[0] ? (a || 1) : 1, ayat_to: n === s2[0] ? (b || cnt) : cnt, cnt });
+      }
+      const bad = rows.find(r => r.ayat_from < 1 || r.ayat_to < r.ayat_from || r.ayat_to > r.cnt);
+      if (bad) return msg(`Rentang ayat ${bad.surah} tidak valid (1–${bad.cnt})`);
       const noteTxt = ($('#hnote')?.value || '').trim();
-      const qualTxt = $('#hq').value + (noteTxt ? ` (${noteTxt})` : '');
-      await T.ins('hafalan_log', { user_id: S.user.id, day: curDay(), type: $('#ht').value, surah: s, ayat_from: a, ayat_to: b, quality: qualTxt });
+      const quality = $('#hq').value + (noteTxt ? ` (${noteTxt})` : '');
+      for (const r of rows) {
+        await T.ins('hafalan_log', { user_id: S.user.id, day: curDay(), type: $('#ht').value, surah: r.surah, ayat_from: r.ayat_from, ayat_to: r.ayat_to, quality });
+      }
       S.hafSurah = '';
+      S.hafSurah2 = '';
       await loadData();
       render();
-      msg('Catatan hafalan tersimpan');
-    },
-    async saveJr() {
+      msg(rows.length > 1 ? `${rows.length} surah tersimpan` : 'Catatan hafalan tersimpan');
+    },    async saveJr() {
       const m = document.querySelector('input[name=mood]:checked');
       await T.up('journal', { user_id: S.user.id, day: curDay(), mood: m ? m.value : null, gratitude: $('#jg').value, reflection: $('#jr').value, note: $('#jn').value }, 'user_id,day');
       await loadData();
@@ -2124,19 +2449,7 @@
         if (window.lucide) lucide.createIcons();
       }
     },
-    async findCity() {
-      const q = $('#cq').value.trim();
-      if (!q) {
-        S.cities = [];
-        return render();
-      }
-      const all = await loadAllIndonesianCities();
-      const term = q.toUpperCase();
-      S.cities = all.filter(c => c.lokasi.toUpperCase().includes(term));
-      if (!S.cities.length) msg('Kota / Kabupaten tidak ditemukan');
-      render();
-    },
-    async pickCity(id, name) {
+    findCity() { return A.filterCity($('#cq').value); },    async pickCity(id, name) {
       S.cities = [];
       S.imsak = null;
       const listContainer = $('#city-results');
@@ -2160,15 +2473,16 @@
       const s = { id: 1, hijri_year: +v('sy'), ramadan_start: v('s1'), ramadan_end: v('s2'), eid_date: v('s3'), source_note: v('s4') };
       if (!s.ramadan_start || !s.ramadan_end || s.ramadan_end < s.ramadan_start) return msg('Tanggal tidak valid');
       await T.up('app_settings', s, 'id');
+      let warn = '';
       try {
         await T.up('ramadan_years', { hijri_year: s.hijri_year, ramadan_start: s.ramadan_start, ramadan_end: s.ramadan_end, eid_date: s.eid_date, source_note: s.source_note }, 'hijri_year');
         S.years = await T.sel('ramadan_years');
-      } catch (e) {}
+      } catch (e) { warn = 'Pengaturan utama tersimpan, tetapi daftar tahun gagal: ' + (e.message || e); }
       S.set = pickYear(S.years) || s;
       S.cal = null;
       S.day = null;
       render();
-      msg('Pengaturan disimpan');
+      msg(warn || 'Pengaturan disimpan');
     },
     async delYear(id) {
       await T.del('ramadan_years', id);
@@ -2317,6 +2631,18 @@
       render();
       msg('Pengingat aktif: imsak, berbuka, isya');
     },
+    setGameTab(k) { return soft(() => { S.gameTab = k; G.phase = 'idle'; }); },
+    gameSurah(v) { G.surah = +v; G.phase = 'idle'; paintGame(); },
+    startGame,
+    gamePick,
+    gameNext,
+    mazeNew: roundMaze,
+    mazeReset() {
+      if (!G.mz) return;
+      Object.assign(G.mz, { pts: [], drawing: false, state: 'idle' });
+      mazeStatus();
+      drawMaze();
+    },
     dismissPwa() { S.pwa = null; render(); },
     async install() {
       if (S.pwa) {
@@ -2338,7 +2664,10 @@
   for (const k in A) {
     window[k] = async (...a) => {
       try { return await A[k](...a); }
-      catch (e) { msg(e && e.message ? e.message : String(e)); }
+      catch (e) {
+        const m = e && e.message ? e.message : String(e);
+        msg(/permission denied/i.test(m) ? m + ' (jalankan SQL GRANT di Supabase)' : m);
+      }
     };
   }
 
