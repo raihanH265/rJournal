@@ -14,12 +14,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Tanam data Al-Qur'an
+          node-version: 22
+      - name: Siapkan situs
         run: |
-          node bundle-quran.mjs index.html
           mkdir _site
-          cp index.offline.html _site/index.html
+          if node bundle-quran.mjs index.html; then
+            cp index.offline.html _site/index.html
+          else
+            echo "::warning::Data Al-Qur'an gagal ditanam, memakai versi online"
+            cp index.html _site/index.html
+          fi
           cp manifest.json sw.js icon-192.png icon-512.png _site/
       - uses: actions/upload-pages-artifact@v3
         with:
