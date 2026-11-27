@@ -438,9 +438,9 @@
   'use strict';
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "URL_SUPABASE_ANDA";
-  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
+  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
@@ -516,11 +516,25 @@
   const T = {
     async sel(t, f = {}, c = '*') {
       if (IS_PREVIEW) return mem[t].filter(r => Object.keys(f).every(k => same(r[k], f[k]))).map(r => ({ ...r }));
-      let q = sb.from(t).select(c);
-      for (const k in f) q = q.eq(k, f[k]);
-      const { data, error } = await q;
-      if (error) throw error;
-      return data || [];
+      const query = () => {
+        let q = sb.from(t).select(c);
+        for (const k in f) q = q.eq(k, f[k]);
+        return q;
+      };
+      const run = async q => {
+        const { data, error } = await q;
+        if (error) throw error;
+        return data || [];
+      };
+      const first = await run(query());
+      if (first.length < 1000) return first;
+      // Supabase membatasi 1000 baris per permintaan: ambil ulang bertahap dengan urutan tetap
+      const all = [];
+      for (let from = 0; ; from += 1000) {
+        const page = await run(query().order('id').range(from, from + 999));
+        all.push(...page);
+        if (page.length < 1000) return all;
+      }
     },
     async ins(t, r) {
       if (IS_PREVIEW) {
@@ -2626,7 +2640,7 @@
   async function loadData() {
     const f = { user_id: S.user.id };
     [S.items, S.checks, S.til, S.haf, S.jr] = await Promise.all([
-      T.sel('items'),
+      T.sel('items', f),
       T.sel('checks', f),
       T.sel('tilawah_log', f),
       T.sel('hafalan_log', f),
@@ -2758,7 +2772,7 @@
   function beat() {
     clearInterval(beatT);
     if (IS_PREVIEW) return;
-    const f = async () => { try { await sb.rpc('heartbeat'); } catch (e) {} };
+    const f = async () => { if (!document.hidden) try { await sb.rpc('heartbeat'); } catch (e) {} };
     f();
     beatT = setInterval(f, 60000);
   }
@@ -2853,7 +2867,7 @@
       const d = list[idx];
       if (!d) return;
       const day = curDay();
-      const existing = S.jr.find(x => x.day === day) || {};
+      const existing = (await T.sel('journal', { user_id: S.user.id, day }))[0] || {};
       const snippet = `[${d.title}] ${d.arti}`;
       const nextNote = existing.note ? `${existing.note}\n${snippet}` : snippet;
       await T.up('journal', { user_id: S.user.id, day, mood: existing.mood || null, gratitude: existing.gratitude || '', reflection: existing.reflection || '', note: nextNote }, 'user_id,day');
@@ -3339,13 +3353,24 @@
     render('soft');
   }
 
+  const busy = new Set(); // aksi yang sama tidak dikirim dua kali selagi server belum menjawab
   for (const k in A) {
     window[k] = async (...a) => {
+      const key = A[k].constructor.name === 'AsyncFunction' && k + JSON.stringify(a);
+      if (key && busy.has(key)) return;
+      if (key) busy.add(key);
       try { return await A[k](...a); }
       catch (e) {
+        // 23505 = baris sudah ada (dicentang dari perangkat lain): muat ulang saja
+        if (e && e.code === '23505' && (k === 'tog' || k === 'togTilSlot')) {
+          await loadData();
+          render();
+          return msg('Data diperbarui dari perangkat lain');
+        }
         const m = e && e.message ? e.message : String(e);
         msg(/permission denied/i.test(m) ? m + ' (jalankan SQL GRANT di Supabase)' : m);
       }
+      finally { busy.delete(key); }
     };
   }
 
