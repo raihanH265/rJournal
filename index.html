@@ -454,9 +454,9 @@
   try { Object.keys(localStorage).filter(k => k.startsWith('rj_')).forEach(k => { const n = 'rl_' + k.slice(3); if (localStorage.getItem(n) === null) localStorage.setItem(n, localStorage.getItem(k)); localStorage.removeItem(k); }); } catch (e) {}
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
+  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "URL_SUPABASE_ANDA";
+  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
@@ -1569,6 +1569,8 @@
   };
 
   // ===== Games sambung ayat (teks ayat diambil dari api.alquran.cloud) =====
+  // nama pemain disimpan per perangkat; indeks 0 = pemain 1 / nama sendiri saat online
+  const loadPN = () => { try { const a = JSON.parse(localStorage.getItem('rl_pn')); if (Array.isArray(a)) return [String(a[0] || ''), String(a[1] || '')]; } catch (e) {} return ['', '']; };
   const G = {
     cache: {},
     surah: 1,
@@ -1604,7 +1606,14 @@
     vsScores: [0, 0],
     vsTurn: 0, // 0 = Pemain 1, 1 = Pemain 2
     vsMiss: [0, 0],
-    history: []
+    history: [],
+    pn: loadPN(),
+    me: 0, // online: 0 = host, 1 = yang bergabung
+    code: '',
+    peer: false,
+    peerLast: null,
+    net: null,
+    joinT: null
   };
   const plain = s => s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '').replace(/\u0671/g, '\u0627');
   // token tanpa huruf (tanda waqaf, sajdah, hizb) bukan kata: gabungkan ke kata sebelumnya, atau berikutnya bila di awal
@@ -1701,13 +1710,18 @@
   }
 
   const OPT = {
-    playMode: [['solo', 'Solo'], ['versus', 'Versus 2 Pemain']],
+    playMode: [['solo', 'Solo'], ['versus', 'Versus 2 Pemain'], ['online', 'Versus Online']],
     rounds: [[3, '3'], [5, '5'], [7, '7'], [10, '10'], [15, '15'], [0, 'Semua']],
     timeLimit: [[0, 'Bebas'], [30, '30 dtk'], [60, '60 dtk'], [90, '90 dtk'], [120, '120 dtk']],
     decoy: [[0, 'Mudah'], [1, 'Normal']],
     scope: [[78, 'Juz 30'], [67, 'Juz 29–30'], [1, 'Semua surah']]
   };
-  const isVs = () => G.playMode === 'versus';
+  const isVs = () => G.playMode !== 'solo';
+  const isOnline = () => G.playMode === 'online';
+  const pname = p => (G.pn[p] || '').trim() || 'Pemain ' + (p + 1);
+  const pe = p => esc(pname(p));
+  const ini = p => esc(([...pname(p)][0] || '?').toUpperCase());
+  const cleanName = v => String(v == null ? '' : v).slice(0, 14);
   const decoyOn = () => !!G.hard[S.gameTab];
   const game = () => GAMES[S.gameTab];
 
@@ -1811,6 +1825,251 @@
     return Math.round(basePoints(w, decoy) * (got / (got + miss)) * (got / total + (got === total ? .5 * timeFrac : 0)));
   }
 
+  const guest = () => isOnline() && G.me === 1;
+  const winnerOf = () => {
+    const [a, b] = G.vsScores, [ma, mb] = G.vsMiss;
+    // skor sama: yang salahnya lebih sedikit menang
+    return a !== b ? (a > b ? 1 : 2) : ma !== mb ? (ma < mb ? 1 : 2) : 0;
+  };
+  function setPName(p, v) {
+    G.pn[p] = cleanName(v);
+    try { localStorage.setItem('rl_pn', JSON.stringify(G.pn)); } catch (e) {}
+  }
+
+  // ===== Versus online: Supabase Realtime (broadcast, tanpa tabel). Host = Pemain 1, yang bergabung = Pemain 2 =====
+  const CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const newCode = () => Array.from(crypto.getRandomValues(new Uint8Array(5)), b => CODE_CH[b % 32]).join('');
+  const netSend = m => { if (G.net) G.net.send({ type: 'broadcast', event: 'm', payload: m }); };
+  function netClose() {
+    clearTimeout(G.joinT);
+    const ch = G.net;
+    if (!ch) return;
+    G.net = null;
+    G.pn = loadPN();
+    G.me = 0;
+    G.peer = false;
+    try { ch.send({ type: 'broadcast', event: 'm', payload: { t: 'bye' } }); } catch (e) {}
+    setTimeout(() => { try { sb.removeChannel(ch); } catch (e) {} }, 400);
+  }
+  function netOpen(code, onReady) {
+    netClose();
+    G.code = code;
+    G.net = sb.channel('rl-room-' + code, { config: { broadcast: { self: false } } });
+    G.net.on('broadcast', { event: 'm' }, ({ payload }) => { try { onNet(payload); } catch (e) { gameFail('Pesan room tidak valid.'); } })
+      .subscribe(st => {
+        if (st === 'SUBSCRIBED') onReady();
+        else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') { netClose(); gameFail('Koneksi ke room gagal. Periksa internet lalu coba lagi.'); }
+      });
+  }
+  function createRoom() {
+    if (!sb) return msg('Mode online perlu Supabase aktif');
+    G.me = 0;
+    G.peer = false;
+    G.phase = 'lobby';
+    paintGame();
+    netOpen(newCode(), () => paintGame());
+  }
+  function joinRoom() {
+    const code = (($('#gcode') || {}).value || '').trim().toUpperCase();
+    if (code.length !== 5) return msg('Kode room terdiri dari 5 karakter');
+    if (!sb) return msg('Mode online perlu Supabase aktif');
+    G.phase = 'lobby';
+    paintGame();
+    netOpen(code, () => {
+      G.me = 1;
+      netSend({ t: 'join', name: cleanName(G.pn[0]) });
+      G.joinT = setTimeout(() => {
+        if (G.phase !== 'lobby') return;
+        netClose();
+        gameFail('Room tidak ditemukan. Pastikan kodenya benar dan host sudah membuat room.');
+      }, 10000);
+    });
+  }
+  function onNet(m) {
+    if (!m || typeof m !== 'object') return;
+    const other = 1 - G.me;
+    if (m.t === 'join' && G.me === 0 && G.phase === 'lobby' && !G.peer) {
+      G.peer = true;
+      G.pn[1] = cleanName(m.name);
+      netSend({ t: 'hi' });
+      startGame();
+    } else if (m.t === 'hi' && G.me === 1) clearTimeout(G.joinT);
+    else if (m.t === 'start' && G.me === 1) onStart(m);
+    else if (m.t === 'done' && G.phase === 'wait' && m.qi === G.qi && m.p === other) {
+      const pts = Math.max(0, +m.gained || 0), miss = Math.max(0, +m.miss || 0);
+      G.vsScores[other] += pts;
+      G.vsMiss[other] += miss;
+      G.history.push({ p: other, r: roundNo(), gained: pts, full: !!m.full });
+      G.peerLast = { gained: pts };
+      paintGame();
+    } else if (m.t === 'next' && G.phase === 'wait' && m.qi === G.qi + 1) {
+      G.qi = m.qi;
+      newTurn();
+    } else if (m.t === 'over' && G.phase === 'wait') {
+      G.phase = 'over';
+      paintGame();
+      celebrate();
+    } else if (m.t === 'bye' && G.phase !== 'over') {
+      const who = pname(other);
+      netClose();
+      gameFail(`${who} keluar dari room.`);
+    }
+  }
+  async function onStart(m) {
+    clearTimeout(G.joinT);
+    stopGameTimer();
+    if (!GAMES[m.game] || !Array.isArray(m.queue) || !Array.isArray(m.pool)) return gameFail('Data permainan dari host tidak valid.');
+    S.gameTab = m.game;
+    G.playMode = 'online';
+    Object.assign(G, { surah: +m.surah || 1, scope: +m.scope || 78, rounds: +m.rounds || 5, timeLimit: +m.timeLimit || 0, names: m.names, pn: [cleanName(m.pn && m.pn[0]), cleanName(m.pn && m.pn[1])], phase: 'loading' });
+    G.hard[m.game] = !!m.hard;
+    paintGame();
+    try {
+      if (m.game !== 'surah' && m.game !== 'match') G.ay = await surahText(G.surah);
+    } catch (e) {
+      return gameFail(`Gagal memuat data ayat (${e && e.message ? e.message : e}). ${NET_HINT}`);
+    }
+    if (!G.net) return; // keluar saat memuat
+    G.pool = new Map(m.pool.map(x => [x.i, x]));
+    G.queue = m.queue;
+    resetRun();
+    newTurn();
+  }
+  const onlineActionsHTML = () => sb ? `
+    <button class="btn w gm-go" onclick="createRoom()">${ic('radio', 18)} Buat Room</button>
+    <div class="gm-opt" style="margin-top:14px"><label for="gcode">Atau gabung dengan kode room</label>
+      <div class="row" style="margin:0">
+        <input id="gcode" maxlength="5" placeholder="KODE" autocomplete="off" autocapitalize="characters" style="max-width:150px;text-transform:uppercase;letter-spacing:.2em">
+        <button class="btn s" onclick="joinRoom()">Gabung</button>
+      </div></div>
+    <p class="note">Pembuat room (host) menentukan game, surah, ronde, dan waktu; yang bergabung cukup memasukkan kode. Pemain bergantian di perangkat masing-masing.</p>` : `<p class="note">${ic('wifi-off', 14)} Mode online perlu Supabase aktif (tidak tersedia di mode preview).</p>`;
+  const lobbyHTML = () => `
+    <div class="gm-arena-inner"><div class="gm-card gm-ready">
+      <h2>${G.me === 0 ? 'Room dibuat' : 'Bergabung…'}</h2>
+      <div style="font-size:44px;font-weight:800;letter-spacing:.25em;margin:6px 0">${esc(G.code)}</div>
+      <p class="note">${G.me === 0 ? 'Bagikan kode ini ke temanmu. Permainan mulai otomatis begitu ia bergabung.' : 'Menyambung ke room, menunggu host menyiapkan soal…'}</p>
+      <div class="row" style="justify-content:center">
+        ${G.me === 0 ? `<button class="btn" onclick="copyRoomCode()">${ic('copy', 15)} Salin kode</button>` : ''}
+        <button class="btn s" onclick="gameBack()">${ic('x', 15)} Batal</button>
+      </div></div></div>`;
+  const waitHTML = () => `
+    <div class="gm-card gm-ready ${G.vsTurn ? 'p2' : ''}">
+      <span class="vs-av">${ini(G.vsTurn)}</span>
+      <h2>Giliran ${pe(G.vsTurn)}</h2>
+      <p>Ronde ${roundNo()} dari ${roundTotal()}</p>
+      <p class="note">${G.peerLast ? `${pe(G.vsTurn)} mendapat +${G.peerLast.gained} poin. Menunggu ia melanjutkan…` : 'Menunggu lawan bermain…'}</p>
+    </div>`;
+  const copyRoomCode = () => {
+    const ok = () => msg('Kode room disalin');
+    if (navigator.clipboard) navigator.clipboard.writeText(G.code).then(ok, () => msg('Kode room: ' + G.code));
+    else msg('Kode room: ' + G.code);
+  };
+
+  // ===== Bagikan hasil: kartu PNG 1080×1920 (ukuran story Instagram) =====
+  async function resultCanvas() {
+    const W = 1080, H = 1920, F = "'Plus Jakarta Sans', system-ui, sans-serif";
+    try { await document.fonts.load(`800 40px ${F}`); } catch (e) {}
+    const c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const x = c.getContext('2d');
+    const stops = game().bg.split(',').map(t => t.trim().split(/\s+/));
+    const grad = x.createLinearGradient(0, 0, W, H);
+    stops.forEach(([col, pos], i) => grad.addColorStop(pos ? parseInt(pos, 10) / 100 : i / (stops.length - 1), col));
+    x.fillStyle = grad;
+    x.fillRect(0, 0, W, H);
+    x.fillStyle = 'rgba(255,255,255,.07)';
+    [[900, 300, 420], [140, 1500, 520], [980, 1750, 300]].forEach(([cx, cy, r]) => { x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); });
+    const T = (t, px, py, size, wt = 800, col = '#fff', maxW = 0) => {
+      if (maxW) for (; size > 24; size -= 2) { x.font = `${wt} ${size}px ${F}`; if (x.measureText(t).width <= maxW) break; }
+      x.font = `${wt} ${size}px ${F}`;
+      x.fillStyle = col;
+      x.textAlign = 'center';
+      x.fillText(t, px, py);
+    };
+    const box = (px, py, w, h, a = .14, edge = .35) => {
+      x.beginPath();
+      x.roundRect(px, py, w, h, 48);
+      x.fillStyle = `rgba(255,255,255,${a})`;
+      x.fill();
+      x.strokeStyle = `rgba(255,255,255,${edge})`;
+      x.lineWidth = 3;
+      x.stroke();
+    };
+    const vs = isVs(), n = roundTotal(), soft = 'rgba(255,255,255,.8)';
+    const label = S.gameTab === 'surah' ? (OPT.scope.find(o => o[0] === G.scope) || [0, ''])[1] : 'QS. ' + SURAH_LIST[G.surah - 1][1];
+    T('reLoad', W / 2, 250, 64);
+    T(`Ramadhan ${(S.set && S.set.hijri_year) || ''} H`.replace('  ', ' '), W / 2, 305, 32, 600, soft);
+    T(game().name, W / 2, 440, 84, 800, '#fff', 900);
+    T(`${label} · ${isOnline() ? 'Versus Online' : vs ? 'Versus' : 'Solo'} · ${n} ronde · ${decoyOn() ? 'Normal' : 'Mudah'}`, W / 2, 500, 32, 600, soft, 940);
+    box(70, 560, 940, 690);
+    if (!vs) {
+      T('SKOR', W / 2, 670, 40, 700, soft);
+      T(String(G.score), W / 2, 920, 260);
+      T('poin', W / 2, 995, 44, 600, soft);
+      T(`${G.history.filter(h => h.full).length} dari ${G.history.length} soal terjawab utuh`, W / 2, 1130, 42, 700, '#fff', 860);
+    } else {
+      const win = winnerOf();
+      T(win ? `${pname(win - 1)} menang!` : 'Seri!', W / 2, 680, 92, 800, '#fff', 860);
+      [0, 1].forEach(p => {
+        const px = 100 + p * 450, cx = px + 215;
+        box(px, 740, 430, 470, win === p + 1 ? .3 : .12, win === p + 1 ? .9 : .3);
+        x.beginPath();
+        x.arc(cx, 825, 56, 0, 7);
+        x.fillStyle = 'rgba(255,255,255,.25)';
+        x.fill();
+        T(([...pname(p)][0] || '?').toUpperCase(), cx, 847, 60);
+        T(pname(p), cx, 950, 46, 800, '#fff', 380);
+        T(String(G.vsScores[p]), cx, 1090, 120);
+        T(`salah ${G.vsMiss[p]}`, cx, 1160, 32, 600, soft);
+      });
+    }
+    // poin per ronde
+    box(70, 1300, 940, 340);
+    T('Poin per ronde', W / 2, 1365, 34, 700, soft);
+    const pts = G.history.map(h => h.gained), top = Math.max(1, ...pts), gw = 820 / n, per = vs ? 2 : 1, bw = Math.min(44, gw * .8 / per);
+    for (let r = 1; r <= n; r++) {
+      for (let p = 0; p < per; p++) {
+        const h = G.history.find(v => v.r === r && v.p === p);
+        const bh = h ? Math.max(8, h.gained / top * 150) : 8, bx = 130 + (r - 1) * gw + gw / 2 - bw * per / 2 + p * bw;
+        x.beginPath();
+        x.roundRect(bx + 2, 1580 - bh, bw - 4, bh, 8);
+        x.fillStyle = p ? 'rgba(255,255,255,.5)' : '#fff';
+        x.fill();
+      }
+      if (n <= 10) T(String(r), 130 + (r - 1) * gw + gw / 2, 1620, 24, 600, soft);
+    }
+    T('Main juga di reLoad', W / 2, 1760, 40, 700);
+    T(new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), W / 2, 1808, 28, 600, soft);
+    return c;
+  }
+  async function shareGame() {
+    if (G.phase !== 'over') return;
+    let blob;
+    try {
+      const c = await resultCanvas();
+      blob = await new Promise(r => c.toBlob(r, 'image/png'));
+    } catch (e) {
+      return msg('Gagal membuat gambar hasil');
+    }
+    if (!blob) return msg('Gagal membuat gambar hasil');
+    const file = new File([blob], `reLoad-${S.gameTab}.png`, { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], text: `Hasil ${game().name} di reLoad` });
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+      }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = file.name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    msg('Gambar hasil diunduh');
+  }
+
   function gameSetupHTML() {
     const g = game();
     const seg = (label, key, list, cur) => `
@@ -1829,6 +2088,8 @@
         </div>
         <div class="gm-cfg">
           ${seg('Mode pemain', 'playMode', OPT.playMode, G.playMode)}
+          ${isVs() ? `<div class="gm-opt"><label>${isOnline() ? 'Nama kamu' : 'Nama pemain'}</label><div class="row" style="margin:0">
+            ${(isOnline() ? [0] : [0, 1]).map(p => `<input type="text" maxlength="14" value="${esc(G.pn[p])}" placeholder="Pemain ${p + 1}" oninput="setPName(${p},this.value)" aria-label="Nama pemain ${p + 1}">`).join('')}</div></div>` : ''}
           ${seg(isVs() ? 'Jumlah ronde (tiap pemain 1 soal per ronde)' : 'Jumlah ronde', 'rounds', isVs() ? OPT.rounds.filter(r => r[0]) : OPT.rounds, isVs() ? G.rounds || 5 : G.rounds)}
           ${seg('Waktu per soal', 'timeLimit', OPT.timeLimit, G.timeLimit)}
           ${seg('Tingkat kesulitan', 'hard', OPT.decoy, +decoyOn())}
@@ -1841,7 +2102,7 @@
           </div>`}
         </div>
         <p class="note" style="margin:0 0 12px">${ic('scale', 14)} Poin = 10 × bobot (jumlah kata) × ketepatan, bonus waktu hingga 50%, Normal +20%.${g.choice ? ' Pilihan ganda hanya satu kesempatan.' : ''}${isVs() ? ' Soal diacak dan dipasangkan menurut panjang ayat, bobot tiap ronde sama; giliran pertama bergantian.' : ''}</p>
-        <button class="btn w gm-go" onclick="startGame()">${ic('play', 18)} Mulai Main</button>
+        ${isOnline() ? onlineActionsHTML() : `<button class="btn w gm-go" onclick="startGame()">${ic('play', 18)} Mulai Main</button>`}
       </div>`;
   }
 
@@ -1850,8 +2111,8 @@
   function playersHTML(final) {
     return `<div class="vs-board">${[0, 1].map(p => `
       <div class="vs-card ${p ? 'p2' : ''} ${!final && G.vsTurn === p ? 'turn' : ''}">
-        <span class="vs-av">P${p + 1}</span>
-        <div><b>Pemain ${p + 1}</b><small>${final ? `salah ${G.vsMiss[p]}` : G.vsTurn === p ? 'Sedang giliran' : 'Menunggu'}</small></div>
+        <span class="vs-av">${ini(p)}</span>
+        <div><b>${pe(p)}${isOnline() && p === G.me ? ' (kamu)' : ''}</b><small>${final ? `salah ${G.vsMiss[p]}` : G.vsTurn === p ? 'Sedang giliran' : 'Menunggu'}</small></div>
         <strong>${G.vsScores[p]}</strong>
       </div>`).join('')}</div>`;
   }
@@ -1876,32 +2137,31 @@
     const q = G.queue[G.qi];
     return `
       <div class="gm-card gm-ready ${G.vsTurn ? 'p2' : ''}">
-        <span class="vs-av">P${G.vsTurn + 1}</span>
-        <h2>Giliran Pemain ${G.vsTurn + 1}</h2>
+        <span class="vs-av">${ini(G.vsTurn)}</span>
+        <h2>Giliran ${pe(G.vsTurn)}</h2>
         <p>Ronde ${roundNo()} dari ${roundTotal()} · Bobot ${q.w} ${game().unit} · maks ${Math.round(basePoints(q.w, decoyOn()) * (G.timeLimit ? 1.5 : 1))} poin</p>
         <p class="note">Serahkan perangkat. Soal dan waktu baru muncul setelah tombol ditekan.</p>
         <button class="btn gm-go" onclick="gameReady()">${ic('play', 18)} Saya siap</button>
       </div>`;
   }
   function overHTML() {
-    const [a, b] = G.vsScores, [ma, mb] = G.vsMiss;
-    // skor sama: yang salahnya lebih sedikit menang
-    const win = a !== b ? (a > b ? 1 : 2) : ma !== mb ? (ma < mb ? 1 : 2) : 0;
+    const [a, b] = G.vsScores, win = winnerOf();
     const full = G.history.filter(x => x.full).length;
     return `
       <div class="gm-arena-inner">
         <div class="gm-card">
           <span class="gm-trophy">${ic('trophy', 42)}</span>
-          <h2>${isVs() ? (win ? `Pemain ${win} menang!` : 'Seri!') : `Skor ${G.score}`}</h2>
+          <h2>${isVs() ? (win ? `${esc(pname(win - 1))} menang!` : 'Seri!') : `Skor ${G.score}`}</h2>
           <p>${isVs() ? (a === b && win ? 'Skor sama, dimenangkan dengan kesalahan lebih sedikit.' : `${roundTotal()} ronde selesai`) : `${full} dari ${G.history.length} soal terjawab utuh`}</p>
           ${isVs() ? playersHTML(true) : ''}
           <div class="gm-hist"><table>
-            <tr><th>Ronde</th>${isVs() ? '<th>Pemain 1</th><th>Pemain 2</th>' : '<th>Poin</th>'}</tr>
+            <tr><th>Ronde</th>${isVs() ? `<th>${pe(0)}</th><th>${pe(1)}</th>` : '<th>Poin</th>'}</tr>
             ${Array.from({ length: roundTotal() }, (_, r) => `<tr><td>${r + 1}</td>${(isVs() ? [0, 1] : [0]).map(p => { const x = G.history.find(v => v.r === r + 1 && v.p === p); return `<td>${x ? `${x.gained}${x.full ? ' ✓' : ''}` : '–'}</td>`; }).join('')}</tr>`).join('')}
           </table></div>
           <div class="row" style="justify-content:center">
-            <button class="btn" onclick="startGame()">${ic('rotate-ccw', 15)} Main lagi</button>
-            <button class="btn s" onclick="gameBack()">${ic('settings', 15)} Pengaturan</button>
+            <button class="btn" onclick="shareGame()">${ic('share-2', 15)} Bagikan</button>
+            ${guest() ? '' : `<button class="btn" onclick="startGame()">${ic('rotate-ccw', 15)} Main lagi</button>
+            <button class="btn s" onclick="gameBack()">${ic('settings', 15)} Pengaturan</button>`}
             <button class="btn s" onclick="closeGame()">${ic('x', 15)} Keluar</button>
           </div>
         </div>
@@ -1915,18 +2175,19 @@
         <div class="gm-arena-inner">
           <p class="em">${esc(G.err)}</p>
           <div class="row" style="justify-content:center">
-            <button class="btn" onclick="startGame()">${ic('rotate-ccw', 15)} Coba Lagi</button>
-            <button class="btn s" onclick="gameBack()">${ic('settings', 15)} Ubah Pengaturan</button>
+            ${guest() ? '' : `<button class="btn" onclick="startGame()">${ic('rotate-ccw', 15)} Coba Lagi</button>
+            <button class="btn s" onclick="gameBack()">${ic('settings', 15)} Ubah Pengaturan</button>`}
             <button class="btn s" onclick="closeGame()">${ic('x', 15)} Keluar</button>
           </div>
         </div>`;
     }
     if (G.phase === 'over') return overHTML();
-    if (G.phase !== 'play' && G.phase !== 'ready') return gameSetupHTML();
+    if (G.phase === 'lobby') return lobbyHTML();
+    if (G.phase !== 'play' && G.phase !== 'ready' && G.phase !== 'wait') return gameSetupHTML();
     return `
       <div class="gm-arena-inner">
         ${gameTopBarHTML()}
-        ${G.phase === 'ready' ? readyHTML() : game().html()}
+        ${G.phase === 'ready' ? readyHTML() : G.phase === 'wait' ? waitHTML() : game().html()}
       </div>`;
   }
 
@@ -1946,7 +2207,9 @@
     paintGame();
   }
 
+  const resetRun = () => Object.assign(G, { qi: 0, score: 0, streak: 0, vsScores: [0, 0], vsMiss: [0, 0], history: [], peerLast: null });
   async function startGame() {
+    if (guest() || (isOnline() && !G.peer)) return;
     const st = $('#gst');
     if (st) G.start = Math.max(1, +st.value || 1);
     G.phase = 'loading';
@@ -1962,9 +2225,10 @@
     G.pool = new Map(pool.map(x => [x.i, x]));
     G.queue = buildQueue(pool);
     if (!G.queue.length) return gameFail('Soal tidak cukup untuk pengaturan ini. Pilih surah lain atau ubah ayat awal.');
-    Object.assign(G, { qi: 0, score: 0, streak: 0, vsScores: [0, 0], vsMiss: [0, 0], history: [] });
+    resetRun();
     const asked = isVs() ? G.rounds || 5 : G.rounds;
     if (asked && roundTotal() < asked) msg(`Soal hanya cukup untuk ${roundTotal()} ronde`);
+    if (isOnline()) netSend({ t: 'start', game: S.gameTab, surah: G.surah, scope: G.scope, rounds: G.rounds, timeLimit: G.timeLimit, hard: decoyOn(), queue: G.queue, pool: [...G.pool.values()], names: G.names, pn: G.pn });
     newTurn();
   }
   function newTurn() {
@@ -1972,7 +2236,14 @@
     G.vsTurn = isVs() ? ((G.qi + 1) >> 1) % 2 : 0;
     G.timeLeft = G.timeLimit;
     G.done = false;
+    G.peerLast = null;
     if (!isVs()) return beginTurn();
+    if (isOnline()) {
+      if (G.vsTurn === G.me) return beginTurn();
+      stopGameTimer();
+      G.phase = 'wait';
+      return paintGame();
+    }
     G.phase = 'ready';
     paintGame();
   }
@@ -1999,6 +2270,7 @@
       G.vsMiss[G.vsTurn] += G.miss;
     } else G.score += G.gained;
     G.history.push({ p: G.vsTurn, r: roundNo(), gained: G.gained, full });
+    if (isOnline()) netSend({ t: 'done', qi: G.qi, p: G.vsTurn, gained: G.gained, miss: G.miss, full });
     paintGame();
     if (full) celebrate();
   }
@@ -2007,10 +2279,12 @@
     if (!G.done) return finishTurn(); // "Lewati": tampilkan jawaban dulu
     if (G.qi + 1 >= G.queue.length) {
       G.phase = 'over';
+      if (isOnline()) netSend({ t: 'over' });
       paintGame();
       return celebrate();
     }
     G.qi++;
+    if (isOnline()) netSend({ t: 'next', qi: G.qi });
     newTurn();
   }
   function turnFootHTML() {
@@ -3453,6 +3727,7 @@
     },
     setGameOpt(key, v) {
       stopGameTimer();
+      netClose();
       if (key === 'hard') G.hard[S.gameTab] = !!v;
       else G[key] = v;
       G.phase = 'idle';
@@ -3460,6 +3735,7 @@
     },
     openGame(k) {
       stopGameTimer();
+      netClose();
       S.gameTab = k;
       G.phase = 'idle';
       G.fullscreen = true;
@@ -3469,12 +3745,13 @@
     },
     closeGame() {
       stopGameTimer();
+      netClose();
       G.fullscreen = false;
       G.phase = 'idle';
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
       paintGame();
     },
-    gameBack() { G.phase = 'idle'; paintGame(); },
+    gameBack() { netClose(); G.phase = 'idle'; paintGame(); },
     setGameStart(v) { G.start = Math.max(1, +v || 1); },
     openMushaf,
     closeMushaf,
@@ -3487,11 +3764,17 @@
     mushafLog,
     gameSurah(v) {
       stopGameTimer();
+      netClose();
       G.surah = +v;
       G.phase = 'idle';
       paintGame();
     },
     startGame,
+    setPName,
+    createRoom,
+    joinRoom,
+    copyRoomCode,
+    shareGame,
     gameReady,
     gamePick,
     gameNext,
