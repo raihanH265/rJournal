@@ -2,7 +2,7 @@
 // Jalankan di komputer Anda (butuh Node 18+ dan internet):
 //   node bundle-quran.mjs rjournal.html        -> menghasilkan rjournal.offline.html
 // Hasilnya tidak lagi memanggil API saat berjalan, jadi tetap bisa dipakai di pratinjau/sandbox.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
 const src = process.argv[2] || 'rjournal.html';
 const out = src.replace(/\.html$/, '') + '.offline.html';
@@ -11,19 +11,22 @@ const plain = s => s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '').re
 const words = t => t.split(/\s+/).filter(Boolean);
 const arDigits = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-async function getJSON(url, tries = 4) {
+async function getJSON(url, tries = 6) {
   for (let i = 1; ; i++) {
     try {
       const r = await fetch(url);
+      if (r.status === 429) { await sleep(Number(r.headers.get('retry-after') || 0) * 1000 || 2000 * i); throw new Error('HTTP 429 (dibatasi server)'); }
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return await r.json();
     } catch (e) {
-      if (i >= tries) throw new Error(`${url}: ${e.message}`);
-      await sleep(600 * i);
+      if (i >= tries) throw new Error(`${url} -> ${e.message}`);
+      await sleep(800 * i);
     }
   }
 }
 
+async function main() {
+if (!existsSync(src)) throw new Error(`File "${src}" tidak ditemukan. Periksa nama file di repo (harus sama dengan argumen).`);
 console.log('1/3 Teks ayat (alquran.cloud)…');
 const q = await getJSON('https://api.alquran.cloud/v1/quran/quran-uthmani');
 const ay = {};
@@ -63,7 +66,7 @@ for (let n = 1; n <= 604; n++) {
   }
   pg[n] = { j: j.verses[0].juz_number, l };
   if (n % 50 === 0) console.log(`  ${n}/604`);
-  await sleep(120);
+  await sleep(250);
 }
 
 const total = Object.values(ay).reduce((a, x) => a + x.length, 0);
@@ -71,8 +74,11 @@ if (total !== 6236) throw new Error(`Jumlah ayat ${total}, seharusnya 6236`);
 const json = JSON.stringify({ v: 1, ay, nm, pg }).replace(/</g, '\\u003c');
 let html = readFileSync(src, 'utf8');
 html = html.replace(/<script id="quran-data">[\s\S]*?<\/script>\n?/, '');
-const marker = '<script>\n(() => {';
-if (!html.includes(marker)) throw new Error('Skrip utama tidak ditemukan di ' + src);
-html = html.replace(marker, `<script id="quran-data">window.QURAN_DATA=${json};</script>\n` + marker);
+const re = /<script>(\s*)\(\(\) => \{/;
+if (!re.test(html)) throw new Error('Skrip utama (<script> lalu (() => {) tidak ditemukan di ' + src + '. Pastikan file adalah rjournal.html terbaru.');
+html = html.replace(re, m => `<script id="quran-data">window.QURAN_DATA=${json};</script>\n` + m);
 writeFileSync(out, html);
 console.log(`Selesai: ${out} (${(html.length / 1048576).toFixed(1)} MB, ${total} ayat, 604 halaman)`);
+}
+
+main().catch(e => { console.error('::error::' + e.message); process.exit(1); });
