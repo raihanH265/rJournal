@@ -220,7 +220,7 @@
     .pv .btn{flex:1;padding:9px 6px;font-size:12px}
     .bar2{position:relative;z-index:2;display:flex;justify-content:center;gap:10px;align-items:center;padding:9px 14px;background:var(--card-g);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);color:var(--h);font-size:13px;flex-wrap:wrap}
     .bar2 .btn{padding:6px 12px;font-size:12.5px}
-    #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--h);color:var(--bg);padding:11px 20px;border-radius:14px;z-index:1000000;display:none;max-width:90%;font-weight:600;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--h);color:var(--bg);padding:11px 20px;border-radius:14px;z-index:1000003;font-family:'Plus Jakarta Sans',system-ui,sans-serif;display:none;max-width:90%;font-weight:600;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
     .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600}
     .badge.on{background:rgba(29,154,100,.14);color:var(--ok)}
     .badge.off{background:var(--s);color:var(--m)}
@@ -335,25 +335,39 @@
     @keyframes cf{to{transform:translateY(560px) rotate(560deg);opacity:0}}
     .til-head b{flex:1;min-width:150px}
     .slot-box .slot-q{width:100%;justify-content:center;padding:6px 8px;font-size:11.5px;border-radius:10px;gap:5px;margin-top:2px}
-    #mf{display:none;position:fixed;inset:0;z-index:1000002;flex-direction:column;color:var(--b);font:14px/1.55 'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(circle at 15% 8%,rgba(123,108,246,.22),transparent 46%),radial-gradient(circle at 85% 92%,rgba(236,72,153,.16),transparent 46%),var(--bg)}
+    #mf{display:none;position:fixed;inset:0;z-index:1000002;flex-direction:column;color:var(--b);font:14px/1.55 'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(circle at 18% 18%,rgba(123,108,246,.48),transparent 42%),radial-gradient(circle at 82% 80%,rgba(236,72,153,.34),transparent 44%),radial-gradient(circle at 72% 12%,rgba(96,165,250,.30),transparent 36%),var(--bg)}
     #mf.on{display:flex}
-    .mf-bar,.mf-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--card-g);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .mf-bar{border-bottom:1px solid var(--bd);padding-top:calc(10px + env(safe-area-inset-top,0px))}
-    .mf-nav{border-top:1px solid var(--bd);padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
-    .mf-bar b{color:var(--h);font-size:14px}
-    .mf-nav small{color:var(--m);text-align:center;font-size:11px}
-    .mf-jump{display:inline-flex;align-items:center;gap:6px;color:var(--m)}
-    .mf-jump input{width:74px;padding:7px 10px;border-radius:12px}
-    .mf-body{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:14px}
-    .mf-page{container-type:inline-size;display:grid;direction:rtl;width:min(96vw,calc((100dvh - 190px) * .68),540px);aspect-ratio:.68;padding:12px 14px;border-radius:8px;background:#FFFBF1;color:#1E1A12;border:1px solid #E7D9B0;box-shadow:inset 0 0 0 4px #F6EBCB,inset 0 0 0 5px #D8C48A,var(--sh);animation:pageFadeIn .3s both}
-    :root[data-theme=dark] .mf-page{background:#1B1830;color:#F1ECFF;border-color:#3A3566;box-shadow:inset 0 0 0 4px #221F3C,inset 0 0 0 5px #4B4580,var(--sh)}
-    @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .mf-page{background:#1B1830;color:#F1ECFF;border-color:#3A3566;box-shadow:inset 0 0 0 4px #221F3C,inset 0 0 0 5px #4B4580,var(--sh)}}
-    .mf-line{display:flex;justify-content:space-between;align-items:center;white-space:nowrap;font:500 calc(5.1cqw * var(--k,1))/1 'Scheherazade New','Amiri','Noto Naskh Arabic',serif}
+    .mf-bar,.mf-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;background:var(--card-g);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .mf-bar{border-bottom:1px solid var(--bd);padding-top:calc(8px + env(safe-area-inset-top,0px))}
+    .mf-nav{border-top:1px solid var(--bd);padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+    .mf-bar .btn,.mf-nav .btn{flex:none}
+    .mf-bar b{color:var(--h);font-size:14px;flex:1;min-width:0;text-align:center}
+    .mf-mid{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+    .mf-mid small{color:var(--m);text-align:center;font-size:11px}
+    #mf-mark{max-width:100%;padding:6px 12px;font-size:12px}
+    #mf-mark[hidden]{display:none}
+    .mf-jump{display:inline-flex;align-items:center;gap:6px;color:var(--m);white-space:nowrap}
+    .mf-jump input{width:68px;padding:7px 10px;border-radius:12px}
+    .mf-body{flex:1;min-height:0;container-type:size;overflow:auto;display:flex;padding:12px}
+    .mf-body>.em,.mf-body>.row{margin:auto}
+    .mf-spread{display:flex;direction:rtl;gap:3px;margin:auto}
+    .mf-page{position:relative;container-type:inline-size;display:grid;grid-template-columns:minmax(0,1fr);direction:rtl;flex:none;width:min(100cqw,100cqh * .64,720px);aspect-ratio:.64;padding:14px 14px 26px;border-radius:20px;background:var(--card-g);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);color:var(--h);border:1px solid var(--bd);box-shadow:var(--sh);animation:pageFadeIn .3s both}
+    .mf-spread.two .mf-page{width:min(50cqw - 2px,100cqh * .64,720px)}
+    .mf-spread.two .mf-page:first-child{border-radius:20px 4px 4px 20px;box-shadow:inset 18px 0 22px -20px rgba(42,32,115,.45),var(--sh)}
+    .mf-spread.two .mf-page:last-child{border-radius:4px 20px 20px 4px;box-shadow:inset -18px 0 22px -20px rgba(42,32,115,.45),var(--sh)}
+    .mf-no{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:11px;color:var(--m)}
+    .mf-line{min-width:0;display:flex;justify-content:space-between;align-items:center;white-space:nowrap;font:500 calc(5.1cqw * var(--k,1))/1 'Scheherazade New','Amiri','Noto Naskh Arabic',serif}
     .mf-line.c{justify-content:center;gap:.4em}
-    .mf-line span{flex:none}
-    .mf-e{color:#B47808;font-size:.85em}
-    .mf-surah{display:grid;place-items:center;margin:2px 0;border-radius:8px;border:1.5px solid #C9B06A;background:linear-gradient(90deg,transparent,rgba(201,176,106,.24),transparent);font:700 calc(4.6cqw * var(--k,1))/1 'Scheherazade New','Amiri',serif;color:#9A7414}
+    .mf-line>*{flex:none}
+    .mf-e{position:relative;background:none;border:0;padding:0;font:inherit;font-size:.85em;color:var(--p);border-radius:999px;cursor:pointer}
+    .mf-e::after{content:'';position:absolute;inset:-6px -3px}
+    .mf-e:hover{background:var(--pl)}
+    .mf-e.on{background:var(--p);color:#fff;box-shadow:0 0 0 2px var(--p)}
+    .mf-surah{display:grid;place-items:center;margin:2px 0;border-radius:12px;border:1px solid var(--bd-s);background:linear-gradient(90deg,transparent,var(--pl),transparent);font:700 calc(4.6cqw * var(--k,1))/1 'Scheherazade New','Amiri',serif;color:var(--p)}
     .mf-bsm{display:grid;place-items:center;font:500 calc(4.8cqw * var(--k,1))/1 'Scheherazade New','Amiri',serif}
+    @media (max-width:520px){.mf-t{display:none}.mf-body{padding:8px}.mf-page{padding:10px 8px 24px}.mf-bar,.mf-nav{padding-left:10px;padding-right:10px}}
+    /* layar pendek (HP miring): satu halaman selebar layar, digulir */
+    @media (max-height:499px){.mf-page{width:min(100cqw,560px)}.mf-mid small{display:none}}
     @media (max-width:800px){
       .side{display:none}
       .shell{margin:0;border-radius:0;border:0;min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
@@ -2231,23 +2245,63 @@
     return page;
   }
 
+  // halaman awal tiap surah (mushaf Madinah 604 halaman); dipakai bila halaman tidak memuat judul surah
+  const SURAH_PAGE = [1,2,50,77,106,128,151,177,187,208,221,235,249,255,262,267,282,293,305,312,322,332,342,350,359,367,377,385,396,404,411,415,418,428,434,440,446,453,458,467,477,483,489,496,499,502,507,511,515,518,520,523,526,528,531,534,537,542,545,549,551,553,554,556,558,560,562,564,566,568,570,572,574,575,577,578,580,582,583,585,586,587,587,589,590,591,591,592,593,594,595,595,596,596,597,597,598,598,599,599,600,600,601,601,601,602,602,602,603,603,603,604,604,604];
+  const markKey = () => 'rj_mark_' + (S.user ? S.user.id || S.user.username : 'tamu');
+  const getMark = () => { try { return JSON.parse(localStorage.getItem(markKey())); } catch (e) { return null; } };
+  const isMark = (m, s, a) => !!m && m.s === s && m.a === a;
+
+  function mfPaintMark() {
+    const m = getMark(), btn = $('#mf-mark');
+    mfEl.querySelectorAll('.mf-e').forEach(el => el.classList.toggle('on', isMark(m, +el.dataset.s, +el.dataset.a)));
+    if (!btn) return;
+    btn.hidden = !(m && SURAH_LIST[m.s - 1]);
+    if (!btn.hidden) $('#mf-mark-t').textContent = `${SURAH_LIST[m.s - 1][1]} : ${m.a}`;
+  }
+  function mushafMark(s, a, p) {
+    const off = isMark(getMark(), s, a);
+    try {
+      if (off) localStorage.removeItem(markKey());
+      else localStorage.setItem(markKey(), JSON.stringify({ s, a, p }));
+    } catch (e) { return msg('Penyimpanan browser tidak tersedia, tanda tidak tersimpan.'); }
+    mfPaintMark();
+    msg(off ? 'Tanda terakhir dibaca dihapus' : `Terakhir dibaca: ${SURAH_LIST[s - 1][1]} ayat ${a}`);
+  }
+  const mushafGoMark = () => { const m = getMark(); if (m) mfShow(m.p); };
+
   function mfRender(p, names) {
-    return `<div class="mf-page" style="grid-template-rows:repeat(${Math.max(15, p.lines.length)},1fr)">${p.lines.map(l => l.kind === 'surah'
-      ? `<div class="mf-surah">${names[l.sn] ? 'سُورَةُ ' + esc(names[l.sn]) : esc(SURAH_LIST[l.sn - 1][1])}</div>`
-      : l.kind === 'bsm' ? `<div class="mf-bsm">${BISMILLAH}</div>`
-      : `<div class="mf-line ${l.center ? 'c' : ''}">${l.w.map(w => `<span class="${w.e ? 'mf-e' : ''}">${esc(w.t)}</span>`).join('')}</div>`).join('')}</div>`;
+    const head = p.lines.find(l => l.kind === 'surah');
+    let sn = head ? head.sn - 1 : SURAH_PAGE.filter(x => x <= p.n).length;
+    const short = p.n <= 2; // dua halaman pembuka: baris sedikit, diletakkan di tengah
+    const rows = short ? `grid-template-rows:repeat(${p.lines.length},calc(100% / 15));align-content:center` : `grid-template-rows:repeat(${Math.max(15, p.lines.length)},minmax(0,1fr))`;
+    const word = w => {
+      if (!w.e) return `<span>${esc(w.t)}</span>`;
+      const a = +w.t.replace(/[^٠-٩]/g, '').replace(/./g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+      return `<button type="button" class="mf-e" data-s="${sn}" data-a="${a}" title="Tandai terakhir dibaca" aria-label="Tandai ayat ${a} terakhir dibaca" onclick="mushafMark(${sn},${a},${p.n})">${esc(w.t)}</button>`;
+    };
+    return `<div class="mf-page" style="${rows}">${p.lines.map(l => {
+      if (l.kind === 'surah') { sn = l.sn; return `<div class="mf-surah">${names[l.sn] ? 'سُورَةُ ' + esc(names[l.sn]) : esc(SURAH_LIST[l.sn - 1][1])}</div>`; }
+      if (l.kind === 'bsm') return `<div class="mf-bsm">${BISMILLAH}</div>`;
+      return `<div class="mf-line ${l.center ? 'c' : ''}">${l.w.map(word).join('')}</div>`;
+    }).join('')}<span class="mf-no">${p.n}</span></div>`;
+  }
+
+  // dua halaman di desktop/landscape: genap di kanan, ganjil di kiri; halaman 1 dan 604 sendirian
+  const mfWide = window.matchMedia('(orientation:landscape) and (min-width:700px) and (min-height:500px)');
+  function mfPair(n) {
+    if (!mfWide.matches || n === 1) return [n];
+    const r = n - n % 2;
+    return r < 604 ? [r, r + 1] : [r];
   }
 
   // kecilkan huruf secukupnya agar baris terpanjang muat tanpa terpotong
   function mfFit() {
-    const pg = document.querySelector('#mf .mf-page');
-    if (!pg) return;
-    const run = () => {
+    const run = () => mfEl.querySelectorAll('.mf-page').forEach(pg => {
       pg.style.setProperty('--k', 1);
       let k = 1;
       pg.querySelectorAll('.mf-line').forEach(l => { if (l.scrollWidth > l.clientWidth + 1) k = Math.min(k, l.clientWidth / l.scrollWidth); });
-      pg.style.setProperty('--k', (k * .98).toFixed(3));
-    };
+      pg.style.setProperty('--k', (k * .97).toFixed(3));
+    });
     run();
     if (document.fonts) document.fonts.ready.then(run);
   }
@@ -2260,13 +2314,16 @@
     $('#mf-in').value = MF.page;
     body.innerHTML = '<p class="em">Memuat halaman…</p>';
     try {
-      const [p, names] = await Promise.all([mfPage(MF.page), mfNames()]);
+      const pair = mfPair(MF.page);
+      const [names, ...ps] = await Promise.all([mfNames(), ...pair.map(mfPage)]);
       if (my !== MF.busy) return;
-      body.innerHTML = mfRender(p, names);
-      $('#mf-title').textContent = `Juz ${p.juz} · Halaman ${p.n}`;
+      body.innerHTML = `<div class="mf-spread ${ps.length > 1 ? 'two' : ''}">${ps.map(p => mfRender(p, names)).join('')}</div>`;
+      $('#mf-title').textContent = `Juz ${ps[0].juz} · Hal ${pair.join('–')}`;
       body.scrollTop = 0;
       mfFit();
-      if (MF.page < 604) mfPage(MF.page + 1).catch(() => {});
+      mfPaintMark();
+      const next = pair[pair.length - 1] + 1;
+      if (next <= 604) mfPair(next).forEach(x => mfPage(x).catch(() => {}));
     } catch (e) {
       if (my === MF.busy) body.innerHTML = `<p class="em">Gagal memuat halaman mushaf (${esc(e && e.message ? e.message : e)}). ${NET_HINT}</p><div class="row" style="justify-content:center"><button class="btn" onclick="mushafJump(${MF.page})">Coba Lagi</button></div>`;
     }
@@ -2288,16 +2345,19 @@
       </div>
       <div class="mf-body" id="mf-body"></div>
       <div class="mf-nav">
-        <button class="btn s" onclick="mushafStep(1)">${ic('chevron-left', 16)} Berikutnya</button>
-        <small>Mushaf Madinah · 114 surah · 6.236 ayat · 604 halaman<br>Teks &amp; tata letak: Quran.com API v4</small>
-        <button class="btn s" onclick="mushafStep(-1)">Sebelumnya ${ic('chevron-right', 16)}</button>
+        <button class="btn s" aria-label="Berikutnya" onclick="mushafStep(1)">${ic('chevron-left', 16)} <span class="mf-t">Berikutnya</span></button>
+        <div class="mf-mid">
+          <button id="mf-mark" class="btn s" title="Buka ayat terakhir dibaca" onclick="mushafGoMark()" hidden>${ic('bookmark', 14)} <span id="mf-mark-t"></span></button>
+          <small>Klik nomor ayat untuk menandai · Teks &amp; tata letak: Quran.com API v4</small>
+        </div>
+        <button class="btn s" aria-label="Sebelumnya" onclick="mushafStep(-1)"><span class="mf-t">Sebelumnya</span> ${ic('chevron-right', 16)}</button>
       </div>`;
     mfEl.classList.add('on');
     if (window.lucide) lucide.createIcons();
     mfShow(MF.page);
   }
   function closeMushaf() { mfEl.classList.remove('on'); }
-  const mushafStep = d => mfShow(MF.page + d);
+  const mushafStep = d => { const p = mfPair(MF.page); mfShow(d > 0 ? p[p.length - 1] + 1 : p[0] - 1); };
   const mushafJump = v => mfShow(v);
 
   document.addEventListener('keydown', e => {
@@ -2315,6 +2375,7 @@
     if (Math.abs(dx) > 70) mushafStep(dx > 0 ? 1 : -1);
   });
   window.addEventListener('resize', () => { if (mfEl.classList.contains('on')) mfFit(); });
+  mfWide.addEventListener('change', () => { if (mfEl.classList.contains('on')) mfShow(MF.page); });
 
   const annBanner = () => {
     let seen = '';
@@ -3306,6 +3367,8 @@
     closeMushaf,
     mushafStep,
     mushafJump,
+    mushafMark,
+    mushafGoMark,
     gameSurah(v) {
       stopGameTimer();
       G.surah = +v;
