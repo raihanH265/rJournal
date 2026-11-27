@@ -438,9 +438,9 @@
   'use strict';
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
+  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "URL_SUPABASE_ANDA";
+  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
@@ -1587,7 +1587,15 @@
     history: []
   };
   const plain = s => s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '').replace(/\u0671/g, '\u0627');
-  const wordsOf = t => t.split(/\s+/).filter(Boolean);
+  // token tanpa huruf (tanda waqaf, sajdah, hizb) bukan kata: gabungkan ke kata sebelumnya, atau berikutnya bila di awal
+  const HURUF = /[\u0621-\u063A\u0641-\u064A\u066E-\u06D3\u06D5]/;
+  const wordsOf = t => t.split(/\s+/).filter(Boolean).reduce((out, w) => {
+    const last = out.length - 1;
+    if (last >= 0 && (!HURUF.test(w) || !HURUF.test(out[last]))) out[last] += w;
+    else out.push(w);
+    return out;
+  }, []);
+  const bare = w => w.replace(/[\u06D6-\u06DC\u06DE\u06E9]/g, ''); // kata sama walau beda tanda waqaf
   const vibe = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
   function celebrate() {
     const host = document.querySelector('#gm-fs.on .gm-arena-inner');
@@ -1843,6 +1851,10 @@
     const fs = $('#gm-fs');
     fs.classList.toggle('on', G.fullscreen);
     fs.innerHTML = G.fullscreen ? gameHTML() : '';
+    fs.querySelectorAll('.mz-t span').forEach(s => {
+      const room = s.parentElement.clientWidth - 4;
+      if (s.offsetWidth > room) s.style.fontSize = parseFloat(getComputedStyle(s).fontSize) * room / s.offsetWidth + 'px';
+    });
     if (window.lucide) lucide.createIcons();
   }
   function gameFail(text) {
@@ -1938,8 +1950,8 @@
     G.target = wordsOf(G.ay[G.idx + 1]);
     const tiles = G.target.map(w => ({ w, used: false }));
     if (G.wordDecoy) {
-      const targetSet = new Set(G.target);
-      const others = shuffle([...new Set(G.ay.filter((_, i) => i !== G.idx + 1).flatMap(wordsOf).filter(w => !targetSet.has(w)))]);
+      const targetSet = new Set(G.target.map(bare));
+      const others = shuffle([...new Set(G.ay.filter((_, i) => i !== G.idx + 1).flatMap(wordsOf).filter(w => !targetSet.has(bare(w))))]);
       // jumlah pengecoh mengikuti bobot ronde, sama untuk kedua pemain
       const n = Math.max(2, Math.min(4, Math.ceil(G.queue[G.qi].w * 0.4)));
       others.slice(0, n).forEach(w => tiles.push({ w, used: false }));
@@ -1969,9 +1981,10 @@
   function gamePick(i) {
     const t = G.tiles[i];
     if (!t || t.used || G.done || G.phase !== 'play') return;
-    if (t.w !== G.target[G.got.length]) return wrongPick(i);
+    const want = G.target[G.got.length];
+    if (bare(t.w) !== bare(want)) return wrongPick(i);
     t.used = true;
-    G.got.push(t.w);
+    G.got.push(want);
     G.shake = -1;
     if (G.got.length === G.target.length) finishTurn();
     else paintGame();
