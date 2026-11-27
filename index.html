@@ -337,6 +337,10 @@
     .slot-box .slot-q{width:100%;justify-content:center;padding:6px 8px;font-size:11.5px;border-radius:10px;gap:5px;margin-top:2px}
     #mf{display:none;position:fixed;inset:0;z-index:1000002;flex-direction:column;color:var(--b);font:14px/1.55 'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(circle at 18% 18%,rgba(123,108,246,.48),transparent 42%),radial-gradient(circle at 82% 80%,rgba(236,72,153,.34),transparent 44%),radial-gradient(circle at 72% 12%,rgba(96,165,250,.30),transparent 36%),var(--bg)}
     #mf.on{display:flex}
+    .mf-bar{flex-wrap:wrap}
+    .mf-pick{display:flex;align-items:center;gap:8px}
+    .mf-pick select{width:auto;max-width:180px;padding:7px 10px;border-radius:12px}
+    @media (max-width:699px){.mf-pick{width:100%}.mf-pick select{flex:1;min-width:0}}
     .mf-bar,.mf-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;background:var(--card-g);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
     .mf-bar{border-bottom:1px solid var(--bd);padding-top:calc(8px + env(safe-area-inset-top,0px))}
     .mf-nav{border-top:1px solid var(--bd);padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -356,9 +360,8 @@
     .mf-spread.two .mf-page:first-child{border-radius:20px 4px 4px 20px;box-shadow:inset 18px 0 22px -20px rgba(42,32,115,.45),var(--sh)}
     .mf-spread.two .mf-page:last-child{border-radius:4px 20px 20px 4px;box-shadow:inset -18px 0 22px -20px rgba(42,32,115,.45),var(--sh)}
     .mf-no{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:11px;color:var(--m)}
-    .mf-line{min-width:0;display:flex;justify-content:space-between;align-items:center;white-space:nowrap;font:500 calc(5.1cqw * var(--k,1))/1 'Scheherazade New','Amiri','Noto Naskh Arabic',serif}
-    .mf-line.c{justify-content:center;gap:.4em}
-    .mf-line>*{flex:none}
+    .mf-line{min-width:0;display:flex;justify-content:center;align-items:center;font:500 calc(5.1cqw * var(--k,1))/1 'Scheherazade New','Amiri','Noto Naskh Arabic',serif}
+    .mf-tx{flex:none;white-space:nowrap}
     .mf-e{position:relative;background:none;border:0;padding:0;font:inherit;font-size:.85em;color:var(--p);border-radius:999px;cursor:pointer}
     .mf-e::after{content:'';position:absolute;inset:-6px -3px}
     .mf-e:hover{background:var(--pl)}
@@ -366,8 +369,8 @@
     .mf-surah{display:grid;place-items:center;margin:2px 0;border-radius:12px;border:1px solid var(--bd-s);background:linear-gradient(90deg,transparent,var(--pl),transparent);font:700 calc(4.6cqw * var(--k,1))/1 'Scheherazade New','Amiri',serif;color:var(--p)}
     .mf-bsm{display:grid;place-items:center;font:500 calc(4.8cqw * var(--k,1))/1 'Scheherazade New','Amiri',serif}
     @media (max-width:520px){.mf-t{display:none}.mf-body{padding:8px}.mf-page{padding:10px 8px 24px}.mf-bar,.mf-nav{padding-left:10px;padding-right:10px}}
-    /* layar pendek (HP miring): satu halaman selebar layar, digulir */
-    @media (max-height:499px){.mf-page{width:min(100cqw,560px)}.mf-mid small{display:none}}
+    /* layar pendek (HP miring): halaman selebar ruang yang ada, digulir */
+    @media (max-height:499px){.mf-page{width:min(100cqw,560px)}.mf-spread.two .mf-page{width:min(50cqw - 2px,560px)}.mf-mid small{display:none}}
     @media (max-width:800px){
       .side{display:none}
       .shell{margin:0;border-radius:0;border:0;min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
@@ -1109,11 +1112,12 @@
       <div class="card">
         <div class="row til-head">
           <b style="margin:0">${ic('book-open', 17)} Sesuai Target Khatam</b>
-          <button class="btn s" onclick="openMushaf(${((startPageBase - 1) % 604) + 1})">${ic('book-open-text', 15)} Buka Qur'an</button>
+          <button class="btn s" onclick="openMushaf(0,${((startPageBase - 1) % 604) + 1})">${ic('book-open-text', 15)} Buka Qur'an</button>
           <select style="max-width:155px" onchange="savePref({target_khatam:+this.value})">
             ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === t ? 'selected' : ''}>${n}x Khatam</option>`).join('')}
           </select>
         </div>
+        <p style="margin:6px 0 0">${ic('bookmark', 14)} <span class="mark-info">${esc(markText())}</span></p>
         <p style="margin:6px 0 10px">Hari ke-${dayIdx + 1} · Target <b>${pagesPerPrayer} halaman</b> per waktu shalat (${pagesPerDay} hal/hari) · Progres total <b>${kp}%</b></p>
         <div class="bar"><i style="width:${kp}%"></i></div>
         <div class="slot-grid">
@@ -2247,16 +2251,24 @@
 
   // halaman awal tiap surah (mushaf Madinah 604 halaman); dipakai bila halaman tidak memuat judul surah
   const SURAH_PAGE = [1,2,50,77,106,128,151,177,187,208,221,235,249,255,262,267,282,293,305,312,322,332,342,350,359,367,377,385,396,404,411,415,418,428,434,440,446,453,458,467,477,483,489,496,499,502,507,511,515,518,520,523,526,528,531,534,537,542,545,549,551,553,554,556,558,560,562,564,566,568,570,572,574,575,577,578,580,582,583,585,586,587,587,589,590,591,591,592,593,594,595,595,596,596,597,597,598,598,599,599,600,600,601,601,601,602,602,602,603,603,603,604,604,604];
+  const JUZ_PAGE = [1,22,42,62,82,102,121,142,162,182,201,222,242,262,282,302,322,342,362,382,402,422,442,462,482,502,522,542,562,582];
+  const upTo = (list, n) => list.filter(x => x <= n).length;
   const markKey = () => 'rj_mark_' + (S.user ? S.user.id || S.user.username : 'tamu');
   const getMark = () => { try { return JSON.parse(localStorage.getItem(markKey())); } catch (e) { return null; } };
   const isMark = (m, s, a) => !!m && m.s === s && m.a === a;
+
+  const markText = () => {
+    const m = getMark();
+    return m && SURAH_LIST[m.s - 1] ? `Terakhir dibaca: QS. ${SURAH_LIST[m.s - 1][1]} ayat ${m.a} · Hal ${m.p}` : 'Belum ada tanda terakhir dibaca';
+  };
 
   function mfPaintMark() {
     const m = getMark(), btn = $('#mf-mark');
     mfEl.querySelectorAll('.mf-e').forEach(el => el.classList.toggle('on', isMark(m, +el.dataset.s, +el.dataset.a)));
     if (!btn) return;
     btn.hidden = !(m && SURAH_LIST[m.s - 1]);
-    if (!btn.hidden) $('#mf-mark-t').textContent = `${SURAH_LIST[m.s - 1][1]} : ${m.a}`;
+    if (!btn.hidden) $('#mf-mark-t').textContent = markText();
+    document.querySelectorAll('.mark-info').forEach(el => { el.textContent = markText(); });
   }
   function mushafMark(s, a, p) {
     const off = isMark(getMark(), s, a);
@@ -2267,7 +2279,7 @@
     mfPaintMark();
     msg(off ? 'Tanda terakhir dibaca dihapus' : `Terakhir dibaca: ${SURAH_LIST[s - 1][1]} ayat ${a}`);
   }
-  const mushafGoMark = () => { const m = getMark(); if (m) mfShow(m.p); };
+  const mushafGoMark = () => { const m = getMark(); if (m) { MF.surah = m.s; mfShow(m.p); } };
 
   function mfRender(p, names) {
     const head = p.lines.find(l => l.kind === 'surah');
@@ -2275,36 +2287,45 @@
     const short = p.n <= 2; // dua halaman pembuka: baris sedikit, diletakkan di tengah
     const rows = short ? `grid-template-rows:repeat(${p.lines.length},calc(100% / 15));align-content:center` : `grid-template-rows:repeat(${Math.max(15, p.lines.length)},minmax(0,1fr))`;
     const word = w => {
-      if (!w.e) return `<span>${esc(w.t)}</span>`;
+      if (!w.e) return esc(w.t);
       const a = +w.t.replace(/[^٠-٩]/g, '').replace(/./g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
       return `<button type="button" class="mf-e" data-s="${sn}" data-a="${a}" title="Tandai terakhir dibaca" aria-label="Tandai ayat ${a} terakhir dibaca" onclick="mushafMark(${sn},${a},${p.n})">${esc(w.t)}</button>`;
     };
     return `<div class="mf-page" style="${rows}">${p.lines.map(l => {
       if (l.kind === 'surah') { sn = l.sn; return `<div class="mf-surah">${names[l.sn] ? 'سُورَةُ ' + esc(names[l.sn]) : esc(SURAH_LIST[l.sn - 1][1])}</div>`; }
       if (l.kind === 'bsm') return `<div class="mf-bsm">${BISMILLAH}</div>`;
-      return `<div class="mf-line ${l.center ? 'c' : ''}">${l.w.map(word).join('')}</div>`;
+      return `<div class="mf-line ${l.center || short ? 'c' : ''}"><span class="mf-tx">${l.w.map(word).join(' ')}</span></div>`;
     }).join('')}<span class="mf-no">${p.n}</span></div>`;
   }
 
-  // dua halaman di desktop/landscape: genap di kanan, ganjil di kiri; halaman 1 dan 604 sendirian
-  const mfWide = window.matchMedia('(orientation:landscape) and (min-width:700px) and (min-height:500px)');
+  // dua halaman saat landscape: ganjil di kanan, genap di kiri (mushaf Madinah)
+  const mfWide = window.matchMedia('(orientation:landscape) and (min-width:600px)');
   function mfPair(n) {
-    if (!mfWide.matches || n === 1) return [n];
-    const r = n - n % 2;
-    return r < 604 ? [r, r + 1] : [r];
+    if (!mfWide.matches) return [n];
+    const r = n - (n + 1) % 2;
+    return [r, r + 1];
   }
 
-  // kecilkan huruf secukupnya agar baris terpanjang muat tanpa terpotong
+  // satu ukuran huruf per halaman, lalu tiap baris dilebarkan/dirapatkan agar rata kanan-kiri
+  // shortcut: peregangan huruf (maks 1,35x), bukan kashida; untuk persis cetakan perlu font QCF per halaman
   function mfFit() {
     const run = () => mfEl.querySelectorAll('.mf-page').forEach(pg => {
+      const lines = [...pg.querySelectorAll('.mf-line')];
+      if (!lines.length) return;
       pg.style.setProperty('--k', 1);
-      let k = 1;
-      pg.querySelectorAll('.mf-line').forEach(l => { if (l.scrollWidth > l.clientWidth + 1) k = Math.min(k, l.clientWidth / l.scrollWidth); });
-      pg.style.setProperty('--k', (k * .97).toFixed(3));
+      const room = lines[0].clientWidth;
+      const w = lines.map(l => l.firstElementChild.offsetWidth).sort((a, b) => a - b);
+      const k = Math.min(1.2, room / w[w.length >> 1], room / (w[w.length - 1] * .88));
+      pg.style.setProperty('--k', k.toFixed(3));
+      lines.forEach(l => {
+        const t = l.firstElementChild, x = l.clientWidth / t.offsetWidth;
+        t.style.transform = `scaleX(${Math.min(x, l.classList.contains('c') ? 1 : 1.35)})`;
+      });
     });
     run();
     if (document.fonts) document.fonts.ready.then(run);
   }
+  if (document.fonts) document.fonts.addEventListener('loadingdone', () => mfFit());
 
   async function mfShow(n) {
     MF.page = Math.min(604, Math.max(1, Math.round(+n) || 1));
@@ -2318,10 +2339,18 @@
       const [names, ...ps] = await Promise.all([mfNames(), ...pair.map(mfPage)]);
       if (my !== MF.busy) return;
       body.innerHTML = `<div class="mf-spread ${ps.length > 1 ? 'two' : ''}">${ps.map(p => mfRender(p, names)).join('')}</div>`;
-      $('#mf-title').textContent = `Juz ${ps[0].juz} · Hal ${pair.join('–')}`;
+      const juz = upTo(JUZ_PAGE, MF.page);
+      // surah pilihan dipertahankan bila memang tampil; selain itu surah pertama di halaman yang diminta
+      const shown = MF.surah >= upTo(SURAH_PAGE, pair[0] - 1) && MF.surah <= upTo(SURAH_PAGE, pair[pair.length - 1]);
+      if (!shown || !MF.surah) MF.surah = SURAH_PAGE.indexOf(MF.page) + 1 || upTo(SURAH_PAGE, MF.page);
+      $('#mf-surah').value = MF.surah;
+      $('#mf-juz').value = juz;
+      $('#mf-title').textContent = `Juz ${juz} · Hal ${pair.join('–')}`;
       body.scrollTop = 0;
       mfFit();
       mfPaintMark();
+      const marked = body.querySelector('.mf-e.on');
+      if (marked) marked.scrollIntoView({ block: 'nearest' });
       const next = pair[pair.length - 1] + 1;
       if (next <= 604) mfPair(next).forEach(x => mfPage(x).catch(() => {}));
     } catch (e) {
@@ -2333,15 +2362,21 @@
   mfEl.id = 'mf';
   document.body.appendChild(mfEl);
 
-  function openMushaf(p) {
-    let n = +p;
+  function openMushaf(p, fallback) {
+    const m = getMark();
+    let n = +p || (m && m.p) || +fallback;
+    MF.surah = !+p && m ? m.s : 0;
     if (!n) { try { n = +localStorage.getItem('rj_mf'); } catch (e) {} }
     MF.page = n || 1;
     mfEl.innerHTML = `
       <div class="mf-bar">
         <button class="btn s" onclick="closeMushaf()">${ic('x', 15)} Tutup</button>
         <b id="mf-title">Mushaf</b>
-        <span class="mf-jump"><input id="mf-in" type="number" min="1" max="604" value="${MF.page}" onkeydown="if(event.key==='Enter')mushafJump(this.value)"> / 604</span>
+        <div class="mf-pick">
+          <select id="mf-surah" aria-label="Pilih surah" onchange="mushafSurah(this.value)">${SURAH_LIST.map(s => `<option value="${s[0]}">${s[0]}. ${esc(s[1])}</option>`).join('')}</select>
+          <select id="mf-juz" aria-label="Pilih juz" onchange="mushafJuz(this.value)">${JUZ_PAGE.map((_, i) => `<option value="${i + 1}">Juz ${i + 1}</option>`).join('')}</select>
+          <span class="mf-jump"><input id="mf-in" type="number" min="1" max="604" aria-label="Nomor halaman" value="${MF.page}" onkeydown="if(event.key==='Enter')mushafJump(this.value)"> / 604</span>
+        </div>
       </div>
       <div class="mf-body" id="mf-body"></div>
       <div class="mf-nav">
@@ -2359,9 +2394,11 @@
   function closeMushaf() { mfEl.classList.remove('on'); }
   const mushafStep = d => { const p = mfPair(MF.page); mfShow(d > 0 ? p[p.length - 1] + 1 : p[0] - 1); };
   const mushafJump = v => mfShow(v);
+  const mushafSurah = v => { MF.surah = +v; mfShow(SURAH_PAGE[v - 1]); };
+  const mushafJuz = v => { MF.surah = 0; mfShow(JUZ_PAGE[v - 1]); };
 
   document.addEventListener('keydown', e => {
-    if (!mfEl.classList.contains('on') || e.target.tagName === 'INPUT') return;
+    if (!mfEl.classList.contains('on') || /INPUT|SELECT/.test(e.target.tagName)) return;
     if (e.key === 'Escape') closeMushaf();
     else if (e.key === 'ArrowLeft') mushafStep(1);
     else if (e.key === 'ArrowRight') mushafStep(-1);
@@ -3367,6 +3404,8 @@
     closeMushaf,
     mushafStep,
     mushafJump,
+    mushafSurah,
+    mushafJuz,
     mushafMark,
     mushafGoMark,
     gameSurah(v) {
