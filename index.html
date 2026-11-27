@@ -346,10 +346,38 @@
     .vs-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--p);color:#fff}
     .vs-card.p2 .vs-tag{background:var(--pink)}
 
-    .gm-prev{padding:12px 14px;border-radius:16px;background:var(--input-g);border:1px solid var(--bd);margin:12px 0}
+    .gm-rules{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:14px;background:var(--input-g);border:1px solid var(--bd);font-size:12px;color:var(--b);margin-bottom:12px}
+    .gm-rules b{color:var(--h)}
+    .gm-ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    .gm-ctrl select{flex:1;min-width:190px}
+    .gm-notice{display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:14px;background:rgba(229,72,77,.12);border:1px solid rgba(229,72,77,.32);color:var(--er);font-size:13px;font-weight:600;margin-bottom:10px}
+    .gm-notice.info{background:var(--pl);border-color:rgba(79,63,201,.3);color:var(--p)}
+    .gm-score-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;background:rgba(29,154,100,.14);color:var(--ok);font-size:12px;font-weight:700}
+
+    .gm-arena{position:relative;border-radius:20px;padding:14px;background:var(--s);border:1px solid var(--bd);transition:all .2s ease}
+    .gm-arena.fs,.gm-arena:fullscreen,.gm-arena:-webkit-full-screen{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;z-index:1000001;background:var(--bg);padding:12px 16px 20px;overflow-y:auto;border-radius:0;border:0;display:flex;flex-direction:column;justify-content:flex-start}
+    .gm-arena.fs .gm-arena-inner,.gm-arena:fullscreen .gm-arena-inner,.gm-arena:-webkit-full-screen .gm-arena-inner{max-width:740px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:8px;flex:none}
+    .gm-arena.fs .gm-prev,.gm-arena:fullscreen .gm-prev,.gm-arena:-webkit-full-screen .gm-prev{padding:8px 12px;margin:0}
+    .gm-arena.fs .gm-topbar,.gm-arena:fullscreen .gm-topbar,.gm-arena:-webkit-full-screen .gm-topbar{padding:8px 12px;margin-bottom:4px}
+    body.gm-fs-open #app{overflow:hidden}
+    body.gm-fs-open .shell,body.gm-fs-open .main,body.gm-fs-open .card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transform:none!important;animation:none!important;overflow:visible!important}
+    body.gm-fs-open .bn{display:none!important}
+    .gm-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:16px;background:var(--input-g);border:1px solid var(--bd);margin-bottom:10px}
+    .gm-timer-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;background:var(--pl);color:var(--p)}
+    .gm-timer-pill.low{background:rgba(229,72,77,.16);color:var(--er);animation:pulseT .8s infinite}
+    @keyframes pulseT{50%{opacity:.55}}
+
+    .vs-board{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .vs-card{padding:10px 14px;border-radius:16px;border:1.5px solid var(--bd);background:var(--input-g);display:flex;align-items:center;justify-content:space-between;transition:.2s}
+    .vs-card.turn{border-color:var(--p);background:linear-gradient(135deg,var(--input-g),var(--pl));box-shadow:0 4px 14px rgba(79,63,201,.18)}
+    .vs-card.p2.turn{border-color:var(--pink);background:linear-gradient(135deg,var(--input-g),var(--pink-l))}
+    .vs-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--p);color:#fff}
+    .vs-card.p2 .vs-tag{background:var(--pink)}
+
+    .gm-prev{padding:12px 14px;border-radius:16px;background:var(--input-g);border:1px solid var(--bd);margin:8px 0}
     .gm-ar{font-family:'Scheherazade New','Amiri','Noto Naskh Arabic',serif;font-size:26px;line-height:2;direction:rtl;text-align:right;color:var(--h)}
     .gm-slots,.gm-tiles{display:flex;flex-wrap:wrap;gap:8px;direction:rtl}
-    .gm-slots{min-height:56px;padding:10px;border-radius:16px;border:1.5px dashed var(--bd-s);margin:8px 0 14px}
+    .gm-slots{min-height:56px;padding:10px;border-radius:16px;border:1.5px dashed var(--bd-s);margin:8px 0 12px;background:var(--input-g)}
     .gm-tiles{justify-content:center}
     .gm-w,.gm-tile{font-family:'Scheherazade New','Amiri',serif;font-size:24px;line-height:1.6;padding:2px 14px;border-radius:14px}
     .gm-tile{border:1.5px solid var(--bd);background:var(--input-g);color:var(--h);cursor:pointer;transition:.18s}
@@ -358,8 +386,8 @@
     .gm-w.ok{background:var(--pl);color:var(--p);border:1.5px solid var(--p)}
     .shake{animation:shk .36s}
     @keyframes shk{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-    .mz{display:block;width:100%;max-width:440px;aspect-ratio:1;margin:12px auto;touch-action:none;border-radius:20px;background:var(--input-g);border:1px solid var(--bd);cursor:crosshair}
-    .gm-arena.fs .mz{max-width:min(74vh,520px)}
+    .mz{display:block;width:100%;max-width:420px;aspect-ratio:1/1;margin:6px auto;touch-action:none;border-radius:22px;background:var(--input-g);border:1.5px solid var(--bd);box-shadow:var(--card-sh);cursor:crosshair}
+    .gm-arena.fs .mz,.gm-arena:fullscreen .mz,.gm-arena:-webkit-full-screen .mz{width:min(86vw,48dvh,420px);height:min(86vw,48dvh,420px);max-width:none;max-height:none;margin:4px auto}
     @media (max-width:800px){
       .side{display:none}
       .shell{margin:0;border-radius:0;border:0;min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
@@ -393,9 +421,9 @@
   'use strict';
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
+  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "URL_SUPABASE_ANDA";
+  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
@@ -456,6 +484,7 @@
     kajianCat: 'Semua',
     activeVid: null,
     gameTab: 'words',
+    gameOpen: false,
     hafSurah2: '',
     mushafOpen: false,
     mushafPage: 1,
@@ -1673,25 +1702,129 @@
     miss: 0,
     done: false,
     shake: -1,
-    score: 0,
-    streak: 0,
+    scores: { words: 0, maze: 0 },
+    streaks: { words: 0, maze: 0 },
     mz: null,
     ayat: 0,
     fontOk: false,
     fullscreen: false,
     playMode: 'solo',
+    maxRounds: 3,
     timeLimit: 60,
     timeLeft: 0,
     timerId: null,
     wordDecoy: false,
     mazeDecoy: false,
-    vsScores: [0, 0],
+    vsPairs: [],
+    vsMazePairs: [],
+    vsScoresByGame: { words: [0, 0], maze: [0, 0] },
     vsTurn: 0,
-    vsRounds: [0, 0]
+    vsRounds: [0, 0],
+    vsPassed: false,
+    vsBothFailed: false,
+    vsNotice: '',
+    lastGainText: ''
   };
+  const gScore = (tab = S.gameTab) => G.scores[tab] || 0;
+  const setGScore = (val, tab = S.gameTab) => { G.scores[tab] = val; };
+  const gStreak = (tab = S.gameTab) => G.streaks[tab] || 0;
+  const setGStreak = (val, tab = S.gameTab) => { G.streaks[tab] = val; };
+  const gVsScores = (tab = S.gameTab) => G.vsScoresByGame[tab] || (G.vsScoresByGame[tab] = [0, 0]);
   const plain = s => s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '').replace(/\u0671/g, '\u0627');
   const wordsOf = t => t.split(/\s+/).filter(Boolean);
   const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  function syncFullscreenBodyClass() {
+    document.body.classList.toggle('gm-fs-open', !!G.fullscreen);
+  }
+
+  // Susun pasangan soal berbobot sama (jumlah kata setara) untuk Pemain 1 dan Pemain 2 di mode Versus
+  function buildVersusWordPairs(ayList, startOneBased, maxRounds) {
+    const total = ayList.length - 1;
+    if (total <= 0) return [];
+    const start0 = Math.min(Math.max(0, startOneBased - 1), total - 1);
+    const ordered = [];
+    for (let i = start0; i < total; i++) ordered.push(i);
+    for (let i = 0; i < start0; i++) ordered.push(i);
+
+    const byLen = new Map();
+    ordered.forEach(idx => {
+      const len = wordsOf(ayList[idx + 1]).length;
+      if (!byLen.has(len)) byLen.set(len, []);
+      byLen.get(len).push(idx);
+    });
+
+    const exactPairs = [];
+    const leftovers = [];
+    byLen.forEach(list => {
+      for (let i = 0; i + 1 < list.length; i += 2) {
+        exactPairs.push([list[i], list[i + 1]]);
+      }
+      if (list.length % 2 === 1) leftovers.push(list[list.length - 1]);
+    });
+
+    leftovers.sort((a, b) => wordsOf(ayList[a + 1]).length - wordsOf(ayList[b + 1]).length);
+    const nearPairs = [];
+    for (let i = 0; i + 1 < leftovers.length; i += 2) {
+      nearPairs.push(nearPairs.length % 2 === 0 ? [leftovers[i], leftovers[i + 1]] : [leftovers[i + 1], leftovers[i]]);
+    }
+
+    const allPairs = [...exactPairs, ...nearPairs];
+    if (!allPairs.length) return [[0, 0]];
+    const result = [];
+    for (let r = 0; r < maxRounds; r++) {
+      result.push(allPairs[r % allPairs.length]);
+    }
+    return result;
+  }
+
+  function buildVersusMazePairs(pool, maxRounds) {
+    if (!pool.length) return [];
+    const byLen = new Map();
+    shuffle([...pool]).forEach(words => {
+      const len = words.length;
+      if (!byLen.has(len)) byLen.set(len, []);
+      byLen.get(len).push(words);
+    });
+
+    const exactPairs = [];
+    const leftovers = [];
+    byLen.forEach(list => {
+      for (let i = 0; i + 1 < list.length; i += 2) {
+        exactPairs.push([list[i], list[i + 1]]);
+      }
+      if (list.length % 2 === 1) leftovers.push(list[list.length - 1]);
+    });
+
+    leftovers.sort((a, b) => a.length - b.length);
+    const nearPairs = [];
+    for (let i = 0; i + 1 < leftovers.length; i += 2) {
+      nearPairs.push(nearPairs.length % 2 === 0 ? [leftovers[i], leftovers[i + 1]] : [leftovers[i + 1], leftovers[i]]);
+    }
+
+    const allPairs = shuffle([...exactPairs, ...nearPairs]);
+    if (!allPairs.length) return [[pool[0], pool[0]]];
+    const result = [];
+    for (let r = 0; r < maxRounds; r++) {
+      result.push(allPairs[r % allPairs.length]);
+    }
+    return result;
+  }
+
+  function isVersusMatchComplete() {
+    return G.playMode === 'versus' && G.vsRounds[0] >= G.maxRounds && G.vsRounds[1] >= G.maxRounds;
+  }
+
+  function finishVersusMatch() {
+    stopGameTimer();
+    G.phase = 'idle';
+    const vs = gVsScores();
+    const w = vs[0] === vs[1]
+      ? 'Hasil Seri!'
+      : (vs[0] > vs[1] ? 'Pemain 1 Menang!' : 'Pemain 2 Menang!');
+    msg(`Pertandingan ${G.maxRounds} Ronde selesai! ${w} (P1: ${vs[0]} poin · P2: ${vs[1]} poin)`);
+    paintGame();
+  }
 
   function stopGameTimer() {
     if (G.timerId) {
@@ -1712,7 +1845,7 @@
         stopGameTimer();
         return;
       }
-      if ((S.gameTab === 'words' && G.done) || (S.gameTab === 'maze' && G.mz && G.mz.state === 'win')) {
+      if ((S.gameTab === 'words' && G.done) || (S.gameTab === 'maze' && G.mz && (G.mz.state === 'win' || G.mz.turnLost))) {
         stopGameTimer();
         return;
       }
@@ -1737,16 +1870,43 @@
 
   function handleRoundTimeout() {
     if (S.gameTab === 'words') {
+      if (G.playMode === 'versus') {
+        const failedPlayer = G.vsTurn + 1;
+        G.vsRounds[G.vsTurn]++;
+        const nextTurn = (G.vsTurn + 1) % 2;
+        if (!G.vsPassed && G.vsRounds[nextTurn] < G.maxRounds) {
+          G.vsPassed = true;
+          G.vsTurn = nextTurn;
+          G.got = [];
+          G.miss = 0;
+          G.shake = -1;
+          G.tiles.forEach(t => { t.used = false; });
+          shuffle(G.tiles);
+          G.vsNotice = `Waktu Pemain ${failedPlayer} habis! Kesempatan hangus, ayat yang sama dilempar ke Pemain ${nextTurn + 1}.`;
+          startRoundTimer();
+          return paintGame();
+        }
+        G.done = true;
+        G.vsBothFailed = true;
+        G.vsNotice = `Waktu habis! Ronde selesai tanpa poin (0 poin).`;
+        return paintGame();
+      }
       G.done = true;
-      G.streak = 0;
-      if (G.playMode === 'versus') G.vsRounds[G.vsTurn]++;
-      msg(`Waktu habis!${G.playMode === 'versus' ? ` Giliran Pemain ${G.vsTurn + 1} selesai.` : ''}`);
+      setGStreak(0);
+      G.lastGainText = '+0 poin (waktu habis)';
+      msg('Waktu habis!');
       paintGame();
     } else if (S.gameTab === 'maze' && G.mz) {
       G.mz.drawing = false;
       G.mz.state = 'timeout';
-      if (G.playMode === 'versus') G.vsRounds[G.vsTurn]++;
-      msg('Waktu habis untuk ronde labirin ini!');
+      if (G.playMode === 'versus') {
+        const failedPlayer = G.vsTurn + 1;
+        G.vsRounds[G.vsTurn]++;
+        G.mz.turnLost = true;
+        G.vsNotice = `Waktu Pemain ${failedPlayer} habis (0 poin)! Giliran dilanjut ke Pemain ${((G.vsTurn + 1) % 2) + 1}.`;
+      } else {
+        msg('Waktu habis untuk ronde labirin ini!');
+      }
       paintGame();
     }
   }
@@ -1765,9 +1925,10 @@
       : `<span class="gm-timer-pill">${ic('infinity', 15)} Tanpa Batas</span>`;
 
     const modeBadge = G.playMode === 'versus'
-      ? `<span class="chip" style="font-size:12px;padding:4px 10px">${ic('users', 14)} Versus 1 Perangkat</span>`
-      : `<span class="chip" style="font-size:12px;padding:4px 10px">${ic('user', 14)} Solo</span>`;
+      ? `<span class="chip" style="font-size:12px;padding:4px 10px">${ic('users', 14)} Versus · ${G.maxRounds} Ronde/Pemain</span>`
+      : `<span class="chip" style="font-size:12px;padding:4px 10px">${ic('user', 14)} Solo · Skor ${gScore()}</span>`;
 
+    const vs = gVsScores();
     return `
       <div class="gm-topbar">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1783,14 +1944,14 @@
           <div class="vs-card ${G.vsTurn === 0 ? 'turn' : ''}">
             <div>
               <b style="color:var(--h);font-size:13.5px;display:block">Pemain 1</b>
-              <small style="color:var(--m)">Skor: <b style="color:var(--p)">${G.vsScores[0]}</b> · Ronde ${G.vsRounds[0]}</small>
+              <small style="color:var(--m)">Poin: <b style="color:var(--p)">${vs[0]}</b> · Ronde ${Math.min(G.maxRounds, G.vsRounds[0] + (G.vsTurn === 0 && !G.done && !(G.mz && (G.mz.state === 'win' || G.mz.turnLost)) ? 1 : 0))}/${G.maxRounds}</small>
             </div>
             ${G.vsTurn === 0 ? '<span class="vs-tag">Giliran</span>' : ''}
           </div>
           <div class="vs-card p2 ${G.vsTurn === 1 ? 'turn' : ''}">
             <div>
               <b style="color:var(--h);font-size:13.5px;display:block">Pemain 2</b>
-              <small style="color:var(--m)">Skor: <b style="color:var(--pink)">${G.vsScores[1]}</b> · Ronde ${G.vsRounds[1]}</small>
+              <small style="color:var(--m)">Poin: <b style="color:var(--pink)">${vs[1]}</b> · Ronde ${Math.min(G.maxRounds, G.vsRounds[1] + (G.vsTurn === 1 && !G.done && !(G.mz && (G.mz.state === 'win' || G.mz.turnLost)) ? 1 : 0))}/${G.maxRounds}</small>
             </div>
             ${G.vsTurn === 1 ? '<span class="vs-tag">Giliran</span>' : ''}
           </div>
@@ -1799,16 +1960,35 @@
 
   function gameHTML() {
     if (G.phase === 'loading') return '<p class="em">Memuat teks ayat…</p>';
-    if (G.phase === 'error') return `<p class="em">${esc(G.err)}</p>`;
-    if (G.phase !== 'play') {
+    if (G.phase === 'error') {
       return `
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">
-          <p class="em" style="text-align:left;padding:8px 0;flex:1">${S.gameTab === 'words'
-            ? 'Pilih surat dan pengaturan di atas lalu tekan <b>Mulai</b>. Susun kata-kata ayat berikutnya sesuai urutan.'
-            : 'Pilih surat dan pengaturan di atas lalu tekan <b>Mulai</b>. Gambar garis dari awal ke akhir ayat tanpa menyentuh dinding.'}</p>
-          <button class="btn s" style="padding:7px 12px;font-size:12px" onclick="toggleGameFullscreen()">
-            ${ic(G.fullscreen ? 'minimize-2' : 'maximize-2', 14)} ${G.fullscreen ? 'Keluar Fullscreen' : 'Fullscreen'}
-          </button>
+        <div class="gm-arena-inner">
+          <p class="em">${esc(G.err)}</p>
+          <div class="row" style="justify-content:center">
+            <button class="btn" onclick="startGame()">${ic('rotate-ccw', 15)} Coba Lagi</button>
+            ${G.fullscreen ? `<button class="btn s" onclick="toggleGameFullscreen()">${ic('minimize-2', 15)} Keluar Fullscreen</button>` : ''}
+          </div>
+        </div>`;
+    }
+    if (G.phase !== 'play') {
+      const vs = gVsScores();
+      const vsSummary = (G.playMode === 'versus' && (G.vsRounds[0] > 0 || G.vsRounds[1] > 0))
+        ? `<div class="gm-notice info" style="margin-bottom:10px">${ic('trophy', 17)} Skor Akhir Versus (${S.gameTab === 'words' ? 'Susun Kata' : 'Labirin Ayat'}): <b>Pemain 1 (${vs[0]} poin)</b> vs <b>Pemain 2 (${vs[1]} poin)</b></div>`
+        : '';
+      return `
+        <div class="gm-arena-inner">
+          ${vsSummary}
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <p class="em" style="text-align:left;padding:6px 0;flex:1">${S.gameTab === 'words'
+              ? 'Pilih surat dan pengaturan di atas lalu tekan <b>Mulai</b>. Susun kata-kata ayat berikutnya sesuai urutan.'
+              : 'Pilih surat dan pengaturan di atas lalu tekan <b>Mulai</b>. Tarik garis dari awal (▶) ke akhir ayat (★) melewati kata ayat secara berurutan.'}</p>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              ${G.fullscreen ? `<button class="btn" onclick="startGame()">${ic('play', 15)} Mulai</button>` : ''}
+              <button class="btn s" style="padding:7px 12px;font-size:12px" onclick="toggleGameFullscreen()">
+                ${ic(G.fullscreen ? 'minimize-2' : 'maximize-2', 14)} ${G.fullscreen ? 'Keluar Fullscreen' : 'Fullscreen'}
+              </button>
+            </div>
+          </div>
         </div>`;
     }
     return `
@@ -1819,6 +1999,7 @@
   }
 
   function paintGame() {
+    syncFullscreenBodyClass();
     const arena = $('#game-area');
     if (!arena) return;
     arena.className = `gm-arena ${G.fullscreen ? 'fs' : ''}`;
@@ -1841,20 +2022,38 @@
       G.err = 'Gagal memuat teks ayat. Periksa koneksi internet lalu coba lagi.';
       return paintGame();
     }
-    G.score = 0;
-    G.streak = 0;
-    G.vsScores = [0, 0];
+    setGScore(0);
+    setGStreak(0);
+    G.vsScoresByGame[S.gameTab] = [0, 0];
     G.vsTurn = 0;
     G.vsRounds = [0, 0];
+    G.vsPassed = false;
+    G.vsBothFailed = false;
+    G.vsNotice = '';
+    G.lastGainText = '';
     if (S.gameTab === 'words') {
       if (G.ay.length < 2) {
         G.phase = 'error';
         G.err = 'Surat ini hanya memiliki 1 ayat. Pilih surat lain.';
         return paintGame();
       }
-      G.idx = Math.min(G.start, G.ay.length - 1) - 1;
+      if (G.playMode === 'versus') {
+        G.vsPairs = buildVersusWordPairs(G.ay, G.start, G.maxRounds);
+        G.idx = G.vsPairs[0][0];
+      } else {
+        G.idx = Math.min(G.start, G.ay.length - 1) - 1;
+      }
       roundWords();
     } else {
+      if (G.playMode === 'versus') {
+        const pool = G.ay.map(wordsOf).filter(w => w.length >= 3 && w.length <= 9);
+        if (!pool.length) {
+          G.phase = 'error';
+          G.err = 'Surat ini tidak punya ayat pendek (3–9 kata). Pilih surat lain.';
+          return paintGame();
+        }
+        G.vsMazePairs = buildVersusMazePairs(pool, G.maxRounds);
+      }
       roundMaze();
     }
   }
@@ -1866,19 +2065,23 @@
     G.miss = 0;
     G.done = false;
     G.shake = -1;
+    G.vsPassed = false;
+    G.vsBothFailed = false;
+    G.vsNotice = '';
+    G.lastGainText = '';
 
-    const baseTiles = G.target.map(w => ({ w, used: false, decoy: false }));
+    const baseTiles = G.target.map(w => ({ w, used: false }));
     if (G.wordDecoy) {
       const targetSet = new Set(G.target);
-      const otherWords = G.ay
-        .filter((_, idx) => idx !== G.idx + 1)
-        .flatMap(wordsOf)
-        .filter(w => !targetSet.has(w));
-      const uniqueOthers = shuffle([...new Set(otherWords)]);
-      const decoyCount = Math.min(uniqueOthers.length, Math.max(2, Math.min(4, Math.ceil(G.target.length * 0.4))));
-      uniqueOthers.slice(0, decoyCount).forEach(w => {
-        baseTiles.push({ w, used: false, decoy: true });
-      });
+      const otherWords = shuffle(
+        G.ay.filter((_, ai) => ai !== G.idx + 1)
+          .flatMap(wordsOf)
+          .filter(w => !targetSet.has(w))
+      );
+      const extraCount = Math.min(otherWords.length, Math.max(2, Math.min(4, Math.ceil(G.target.length * 0.4))));
+      for (let k = 0; k < extraCount; k++) {
+        baseTiles.push({ w: otherWords[k], used: false });
+      }
     }
 
     G.tiles = shuffle(baseTiles);
@@ -1887,30 +2090,40 @@
     paintGame();
   }
   function wordsHTML() {
-    const last = G.idx + 2 >= G.ay.length;
+    const lastAyah = G.playMode === 'solo' && (G.idx + 2 >= G.ay.length);
+    const matchEnd = isVersusMatchComplete();
     const timedOut = G.timeLimit > 0 && G.timeLeft <= 0 && G.got.length < G.target.length;
+    const nextPlayerNum = ((G.vsTurn + 1) % 2) + 1;
+    const vs = gVsScores('words');
     return `
+      ${G.vsNotice ? `<div class="gm-notice ${G.vsPassed && !G.done ? 'info' : ''}">${ic(G.vsPassed && !G.done ? 'repeat' : 'alert-circle', 17)} <span>${esc(G.vsNotice)}</span></div>` : ''}
       <div class="gm-prev">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <small>Ayat ${G.idx + 1}</small>
-          <span class="chip" style="font-size:11px;padding:3px 9px;color:${G.wordDecoy ? 'var(--pink)' : 'var(--p)'}">${ic('sparkles', 12)} Mode ${G.wordDecoy ? 'Normal' : 'Mudah'}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <small>Ayat ${G.idx + 1}${G.vsPassed ? ` · <b>Ayat Lemparan (Kesempatan Pemain ${G.vsTurn + 1})</b>` : ''}</small>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="chip" style="font-size:11px;padding:3px 9px;color:${G.wordDecoy ? 'var(--pink)' : 'var(--p)'}">${ic('sparkles', 12)} Mode ${G.wordDecoy ? 'Normal' : 'Mudah'}</span>
+            <span class="chip" style="font-size:11px;padding:3px 9px;color:var(--p)">${ic('layers', 12)} ${G.target.length} Kata</span>
+          </div>
         </div>
         <div class="gm-ar">${esc(G.ay[G.idx])}</div>
       </div>
-      <small>Sambungkan ayat ${G.idx + 2}: tekan kata sesuai urutan${G.wordDecoy ? ' (abaikan kata pengecoh dari ayat lain)' : ''}</small>
+      <small>Sambungkan ayat ${G.idx + 2}: tekan kata sesuai urutan</small>
       <div class="gm-slots">${G.got.length ? G.got.map(w => `<span class="gm-w ok">${esc(w)}</span>`).join('') : '<span class="note">…</span>'}</div>
       ${G.done ? `
-        <div class="ann" style="margin:12px auto">
-          ${ic(timedOut ? 'clock-alert' : 'trophy', 18)}
-          <span>${timedOut
-            ? `Waktu habis! Jawaban: <b style="font-family:'Scheherazade New',serif;font-size:20px">${esc(G.target.join(' '))}</b>`
+        <div class="ann" style="margin:10px auto">
+          ${ic(timedOut || G.vsBothFailed ? 'alert-triangle' : 'trophy', 18)}
+          <span>${timedOut || G.vsBothFailed
+            ? `Jawaban benar: <b style="font-family:'Scheherazade New',serif;font-size:20px">${esc(G.target.join(' '))}</b>`
             : (G.playMode === 'versus'
-              ? `Pemain ${G.vsTurn + 1} Benar! Skor P1: ${G.vsScores[0]} · P2: ${G.vsScores[1]}`
-              : `Benar! Skor ${G.score} · beruntun ${G.streak}`)}</span>
+              ? `Pemain ${G.vsTurn + 1} Benar! ${esc(G.lastGainText)} · Total P1: ${vs[0]} · P2: ${vs[1]}`
+              : `Benar! ${esc(G.lastGainText)} · Total Skor ${gScore('words')} (beruntun ${gStreak('words')})`)}</span>
         </div>
-        <button class="btn" onclick="gameNext()">${last ? 'Selesai' : (G.playMode === 'versus' ? `Lanjut Giliran Pemain ${((G.vsTurn + 1) % 2) + 1}` : 'Ayat berikutnya')} ${ic('arrow-right', 16)}</button>` : `
+        <button class="btn" onclick="gameNext()">${matchEnd ? 'Lihat Hasil Akhir' : (lastAyah ? 'Selesai' : (G.playMode === 'versus' ? `Lanjut Giliran Pemain ${nextPlayerNum}` : 'Ayat berikutnya'))} ${ic('arrow-right', 16)}</button>` : `
         <div class="gm-tiles">${G.tiles.map((t, i) => `<button class="gm-tile ${t.used ? 'used' : ''} ${G.shake === i ? 'shake' : ''}" onclick="gamePick(${i})">${esc(t.w)}</button>`).join('')}</div>
-        <div class="row" style="margin-top:12px"><small style="color:var(--m)">${G.playMode === 'versus' ? `Giliran Pemain ${G.vsTurn + 1}` : `Skor ${G.score}`} · salah ${G.miss}</small><button class="btn s" style="margin-left:auto" onclick="gameNext()">Lewati</button></div>`}`;
+        <div class="row" style="margin-top:12px">
+          <small style="color:var(--m)">${G.playMode === 'versus' ? `Giliran Pemain ${G.vsTurn + 1} (1x kesempatan)` : `Skor ${gScore('words')} · salah ${G.miss} (-${G.miss * 5} poin)`}</small>
+          <button class="btn s" style="margin-left:auto" onclick="gameNext()">Lewati</button>
+        </div>`}`;
   }
   function gamePick(i) {
     const t = G.tiles[i];
@@ -1922,45 +2135,89 @@
       if (G.got.length === G.target.length) {
         G.done = true;
         stopGameTimer();
-        const gained = Math.max(10, G.target.length * 10 - G.miss * 5 + (G.wordDecoy ? 15 : 0));
+        const wordPts = G.target.length * 10;
+        const normalBonus = G.wordDecoy ? 15 : 0;
+        const cleanBonus = (G.playMode === 'solo' && G.miss === 0) ? 10 : 0;
+        const missPenalty = (G.playMode === 'solo') ? G.miss * 5 : 0;
+        const gained = Math.max(10, wordPts + normalBonus + cleanBonus - missPenalty);
+        const parts = [`${G.target.length} kata × 10`];
+        if (normalBonus) parts.push(`+${normalBonus} Normal`);
+        if (cleanBonus) parts.push(`+${cleanBonus} Tanpa Salah`);
+        if (missPenalty) parts.push(`-${missPenalty} Salah`);
+        G.lastGainText = `+${gained} poin (${parts.join(', ')})`;
+
         if (G.playMode === 'versus') {
-          G.vsScores[G.vsTurn] += gained;
-          G.vsRounds[G.vsTurn]++;
+          const vs = gVsScores('words');
+          vs[G.vsTurn] += gained;
+          if (!G.vsPassed) G.vsRounds[G.vsTurn]++;
+          G.vsNotice = '';
         } else {
-          if (!G.miss) G.streak++;
-          G.score += gained;
+          if (!G.miss) setGStreak(gStreak('words') + 1, 'words');
+          setGScore(gScore('words') + gained, 'words');
         }
       }
-    } else {
-      G.miss++;
-      G.streak = 0;
-      G.shake = i;
+      return paintGame();
     }
+
+    // Kata yang dipilih SALAH
+    if (G.playMode === 'versus') {
+      stopGameTimer();
+      const failedPlayer = G.vsTurn + 1;
+      if (!G.vsPassed) G.vsRounds[G.vsTurn]++;
+      const nextTurn = (G.vsTurn + 1) % 2;
+      if (!G.vsPassed) {
+        // Lempar ayat yang sama ke pemain lain sebagai kesempatan tambahan
+        G.vsPassed = true;
+        G.vsTurn = nextTurn;
+        G.got = [];
+        G.miss = 0;
+        G.shake = -1;
+        G.tiles.forEach(tile => { tile.used = false; });
+        shuffle(G.tiles);
+        G.vsNotice = `Pemain ${failedPlayer} salah memilih kata! Kesempatan hilang, ayat dilempar ke Pemain ${nextTurn + 1}.`;
+        startRoundTimer();
+      } else {
+        // Kedua pemain sudah mencoba ayat ini dan sama-sama gagal
+        G.done = true;
+        G.vsBothFailed = true;
+        G.vsNotice = `Pemain ${failedPlayer} juga salah memilih kata! Kedua pemain gagal pada ayat ini (0 poin).`;
+      }
+      return paintGame();
+    }
+
+    G.miss++;
+    setGStreak(0, 'words');
+    G.shake = i;
     paintGame();
   }
   function gameNext() {
     stopGameTimer();
     if (!G.done) {
-      G.streak = 0;
-      if (G.playMode === 'versus') G.vsRounds[G.vsTurn]++;
+      setGStreak(0, 'words');
+      if (G.playMode === 'versus' && !G.vsPassed) G.vsRounds[G.vsTurn]++;
     }
-    if (G.idx + 2 >= G.ay.length) {
+    if (isVersusMatchComplete()) {
+      return finishVersusMatch();
+    }
+    if (G.playMode === 'solo' && G.idx + 2 >= G.ay.length) {
       G.phase = 'idle';
-      if (G.playMode === 'versus') {
-        const w = G.vsScores[0] === G.vsScores[1] ? 'Seri!' : (G.vsScores[0] > G.vsScores[1] ? 'Pemain 1 Menang!' : 'Pemain 2 Menang!');
-        msg(`Surat selesai! ${w} (P1: ${G.vsScores[0]} - P2: ${G.vsScores[1]})`);
-      } else {
-        msg(`Surat selesai! Skor ${G.score}`);
-      }
+      msg(`Surat selesai! Skor ${gScore('words')}`);
       return paintGame();
     }
-    if (G.playMode === 'versus') G.vsTurn = (G.vsTurn + 1) % 2;
-    G.idx++;
+    if (G.playMode === 'versus') {
+      const nextTurn = G.vsPassed ? G.vsTurn : ((G.vsTurn + 1) % 2);
+      const targetPlayer = G.vsRounds[nextTurn] < G.maxRounds ? nextTurn : (G.vsRounds[0] < G.maxRounds ? 0 : 1);
+      G.vsTurn = targetPlayer;
+      const rIdx = Math.min(G.maxRounds - 1, G.vsRounds[targetPlayer]);
+      G.idx = G.vsPairs[rIdx][targetPlayer];
+    } else {
+      G.idx++;
+    }
     roundWords();
   }
 
   // --- Labirin ---
-  function makeMaze(N) {
+  function makeMaze(N, braidRatio = 0) {
     const M = Array.from({ length: N * N }, () => ({ w: [true, true, true, true] }));
     const D = [[0, -1, 0, 2], [1, 0, 1, 3], [0, 1, 2, 0], [-1, 0, 3, 1]];
     const seen = new Set([0]), st = [0];
@@ -1973,6 +2230,24 @@
       M[n].w[b] = false;
       seen.add(n);
       st.push(n);
+    }
+    // Tambahkan percabangan & lorong memutar pengecoh pada tingkat Normal
+    if (braidRatio > 0) {
+      const candidates = shuffle(Array.from({ length: N * N }, (_, i) => i));
+      candidates.forEach(c => {
+        if (Math.random() > braidRatio) return;
+        const x = c % N, y = Math.floor(c / N);
+        const closed = shuffle(D.filter(([dx, dy, a]) => {
+          const nx = x + dx, ny = y + dy;
+          return nx >= 0 && ny >= 0 && nx < N && ny < N && M[c].w[a];
+        }));
+        if (closed.length) {
+          const [dx, dy, a, b] = closed[0];
+          const n = (y + dy) * N + x + dx;
+          M[c].w[a] = false;
+          M[n].w[b] = false;
+        }
+      });
     }
     return M;
   }
@@ -1990,6 +2265,21 @@
     for (let c = N * N - 1; c !== -1; c = prev.get(c)) p.unshift(c);
     return p;
   }
+  function solveMazeTo(M, N, startCell, targetCell) {
+    const prev = new Map([[startCell, -1]]), q = [startCell], D = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    while (q.length) {
+      const c = q.shift();
+      if (c === targetCell) break;
+      D.forEach(([dx, dy], k) => {
+        const x = (c % N) + dx, y = Math.floor(c / N) + dy, n = y * N + x;
+        if (x >= 0 && y >= 0 && x < N && y < N && !M[c].w[k] && !prev.has(n)) { prev.set(n, c); q.push(n); }
+      });
+    }
+    if (!prev.has(targetCell)) return [];
+    const p = [];
+    for (let c = targetCell; c !== -1; c = prev.get(c)) p.unshift(c);
+    return p;
+  }
   function roundMaze() {
     const pool = G.ay.map(wordsOf).filter(w => w.length >= 3 && w.length <= 9);
     if (!pool.length) {
@@ -1997,45 +2287,88 @@
       G.err = 'Surat ini tidak punya ayat pendek (3–9 kata). Pilih surat lain.';
       return paintGame();
     }
-    const words = pool[Math.floor(Math.random() * pool.length)], N = words.length <= 6 ? 6 : 7;
+    let words;
+    if (G.playMode === 'versus' && G.vsMazePairs.length) {
+      const rIdx = Math.min(G.maxRounds - 1, G.vsRounds[G.vsTurn]);
+      words = G.vsMazePairs[rIdx][G.vsTurn];
+    } else {
+      words = pool[Math.floor(Math.random() * pool.length)];
+    }
+    const isNormal = !!G.mazeDecoy;
+    const N = isNormal ? 7 : (words.length <= 6 ? 6 : 7);
     let M, path;
-    for (let t = 0; t < 80; t++) { M = makeMaze(N); path = solveMaze(M, N); if (path.length >= words.length + 2) break; }
-    const L = path.length, lab = {};
-    words.forEach((w, k) => { lab[path[words.length > 1 ? Math.round(k * (L - 1) / (words.length - 1)) : 0]] = w; });
-    const onPath = new Set(path), pick = G.ay.flatMap(wordsOf).filter(w => !words.includes(w));
-    const deadEnds = shuffle(M.map((c, k) => k).filter(k => k !== 0 && k !== N * N - 1 && !onPath.has(k) && M[k].w.filter(Boolean).length === 3));
+    for (let t = 0; t < 120; t++) {
+      M = makeMaze(N, isNormal ? 0.22 : 0);
+      path = solveMaze(M, N);
+      if (path.length >= words.length + 2) break;
+    }
+    // Pastikan panjang jalur cukup menampung seluruh kata pada sel interior (bukan di ▶ atau ★)
+    if (path.length < words.length + 2) {
+      words = words.slice(0, Math.max(3, path.length - 2));
+    }
+    const interiorPath = path.slice(1, path.length - 1);
+    const lab = {};
+    const orderedWordCells = [];
+    words.forEach((w, k) => {
+      const posIdx = words.length > 1
+        ? Math.round(k * (interiorPath.length - 1) / (words.length - 1))
+        : Math.floor(interiorPath.length / 2);
+      const cellIdx = interiorPath[posIdx];
+      lab[cellIdx] = w;
+      orderedWordCells.push(cellIdx);
+    });
+    const onPath = new Set(path);
+    const offPathCells = shuffle(M.map((c, k) => k).filter(k => k !== 0 && k !== N * N - 1 && !onPath.has(k)));
+    const deadEnds = offPathCells.filter(k => M[k].w.filter(Boolean).length >= 2);
 
     let decoyGoalCell = -1;
-    let decoyEndingWord = '';
-    if (G.mazeDecoy && deadEnds.length) {
-      decoyGoalCell = deadEnds.shift();
-      const otherEndings = G.ay
-        .map(wordsOf)
-        .filter(w => w.join(' ') !== words.join(' '))
-        .map(w => w[w.length - 1])
-        .filter(w => w && w !== words[words.length - 1]);
-      decoyEndingWord = otherEndings.length
-        ? otherEndings[Math.floor(Math.random() * otherEndings.length)]
-        : (pick[0] || 'خَتْمٌ');
-      lab[decoyGoalCell] = decoyEndingWord;
+
+    if (isNormal && (deadEnds.length || offPathCells.length)) {
+      // Pilih 1 tujuan ★ alternatif pada ujung cabang lain beserta kata-kata tambahan di luar jalur utama
+      const candidates = (deadEnds.length ? deadEnds : offPathCells)
+        .map(k => ({ k, altPath: solveMazeTo(M, N, 0, k) }))
+        .filter(item => item.altPath.length >= 4)
+        .sort((a, b) => b.altPath.length - a.altPath.length);
+
+      const chosen = candidates[0] || { k: (deadEnds[0] ?? offPathCells[0]), altPath: [] };
+      decoyGoalCell = chosen.k;
+
+      const usedWords = new Set(words);
+      const otherWords = shuffle(
+        G.ay.filter(t => wordsOf(t).join(' ') !== words.join(' '))
+          .flatMap(wordsOf)
+          .filter(w => !usedWords.has(w))
+      );
+
+      const branchCells = chosen.altPath.filter(c => c !== 0 && c !== decoyGoalCell && !onPath.has(c) && !lab[c]);
+      const branchSlots = branchCells.length
+        ? branchCells.filter((_, idx) => idx % 2 === 0 || branchCells.length <= 3).slice(0, 3)
+        : offPathCells.filter(c => c !== decoyGoalCell && !lab[c]).slice(0, 2);
+
+      branchSlots.forEach((cellIdx, i) => {
+        if (otherWords[i]) lab[cellIdx] = otherWords[i];
+      });
     }
 
-    deadEnds.slice(0, 5)
-      .forEach(k => { if (pick.length) lab[k] = pick[Math.floor(Math.random() * pick.length)]; });
-
     G.ayat = G.ay.findIndex(t => wordsOf(t).join(' ') === words.join(' ')) + 1;
+    G.vsNotice = '';
+    G.lastGainText = '';
     G.mz = {
       N,
       M,
       lab,
       words,
       pts: [],
+      visitedCells: [],
+      orderedWordCells,
+      wordProgress: 0,
       drawing: false,
       state: 'idle',
+      turnLost: false,
+      mistakes: 0,
       walls: [],
       cs: 0,
-      decoyGoalCell,
-      decoyEndingWord
+      decoyGoalCell
     };
     G.phase = 'play';
     startRoundTimer();
@@ -2044,31 +2377,50 @@
   function mazeMsg() {
     const s = G.mz.state;
     if (s === 'win') {
+      const vs = gVsScores('maze');
       const info = G.playMode === 'versus'
-        ? `Pemain ${G.vsTurn + 1} Menang Ronde! Skor P1: ${G.vsScores[0]} · P2: ${G.vsScores[1]}`
-        : `Selamat! Ayat tersambung. Skor ${G.score}`;
+        ? `Pemain ${G.vsTurn + 1} Menang Ronde! ${esc(G.lastGainText)} · P1: ${vs[0]} · P2: ${vs[1]}`
+        : `Selamat! Ayat tersambung. ${esc(G.lastGainText)} · Total Skor ${gScore('maze')}`;
       return `<div class="gm-ar" style="text-align:center">${esc(G.mz.words.join(' '))}</div><b style="color:var(--ok)">${info}</b>`;
     }
-    if (s === 'decoy') return '<b style="color:var(--er)">Tujuan pengecoh! Itu akhir dari ayat lain. Mulai lagi dari ▶.</b>';
-    if (s === 'fail') return '<b style="color:var(--er)">Menyentuh dinding! Mulai lagi dari ▶.</b>';
+    if (s === 'incomplete') return '<b style="color:var(--er)">Jalur belum melewati seluruh kata ayat! Ikuti lorong kata secara lengkap menuju ★.</b>';
+    if (s === 'wrongword') return '<b style="color:var(--er)">Salah jalur/kata ayat! Kata tersebut bukan bagian urutan ayat yang benar.</b>';
+    if (s === 'decoy') return '<b style="color:var(--er)">Tujuan ★ salah! Itu akhir dari jalur cabang ayat lain.</b>';
+    if (s === 'fail') return '<b style="color:var(--er)">Menyentuh dinding labirin!</b>';
+    if (s === 'broken') return '<b style="color:var(--er)">Garis terputus sebelum mencapai tujuan ★!</b>';
     if (s === 'timeout') return `<b style="color:var(--er)">Waktu habis! Akhir ayat yang benar: ${esc(G.mz.words[G.mz.words.length - 1])}</b>`;
     return G.mz.decoyGoalCell >= 0
-      ? 'Tekan sel ▶ lalu geser ke ★ akhir ayat yang TEPAT (waspadai 1 ★ tujuan pengecoh!).'
-      : 'Tekan sel ▶ lalu geser tanpa melepas jari.';
+      ? 'Tarik garis tanpa putus dari ▶ ke ★ melewati seluruh kata ayat secara berurutan.'
+      : 'Tekan sel ▶ lalu tarik garis menuju ★ melewati seluruh kata ayat tanpa menyentuh dinding.';
   }
   function mazeStatus() { const el = $('#mz-msg'); if (el && G.mz) el.innerHTML = mazeMsg(); }
   function mazeHTML() {
     const hasDecoy = G.mz && G.mz.decoyGoalCell >= 0;
+    const ended = G.mz && (G.mz.state === 'win' || G.mz.turnLost);
+    const matchEnd = isVersusMatchComplete();
+    const nextPlayerNum = ((G.vsTurn + 1) % 2) + 1;
     return `
-      <p class="note" style="margin-bottom:6px">
-        Ayat ke-${G.ayat}: tarik garis dari ▶ (awal ayat) ke ★ (akhir ayat) tanpa menyentuh dinding.
-        ${hasDecoy ? '<b>Perhatian:</b> terdapat 1 tujuan ★ pengecoh dari ayat lain!' : 'Lewati kata sesuai urutan ayat; kata lain hanya pengecoh.'}
-      </p>
+      ${G.vsNotice ? `<div class="gm-notice">${ic('alert-circle', 17)} <span>${esc(G.vsNotice)}</span></div>` : ''}
+      <div class="gm-prev" style="margin-top:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <small><b>Ayat ke-${G.ayat}</b> (${G.mz.words.length} kata)${G.playMode === 'versus' ? ` · Giliran Pemain ${G.vsTurn + 1}` : ''}</small>
+          <span class="chip" style="font-size:11px;padding:3px 9px;color:${hasDecoy ? 'var(--pink)' : 'var(--p)'}">${ic('sparkles', 12)} Mode ${hasDecoy ? 'Normal' : 'Mudah'}</span>
+        </div>
+        <p class="note" style="text-align:left;margin-top:4px">
+          ${hasDecoy
+            ? 'Ikuti urutan kata ayat di lorong menuju <b>★</b> yang tepat. Hati-hati jalur cabang & kata dari ayat lain!'
+            : 'Tarik garis menyambung dari <b>▶</b> (awal ayat) ke <b>★</b> (akhir ayat) tanpa menyentuh dinding.'}
+        </p>
+      </div>
       <canvas id="mz" class="mz"></canvas>
-      <div id="mz-msg" class="note" style="min-height:44px">${mazeMsg()}</div>
-      <div class="row" style="justify-content:center">
-        <button class="btn s" onclick="mazeReset()">${ic('rotate-ccw', 15)} Ulangi</button>
-        <button class="btn" onclick="mazeNew()">${ic(G.playMode === 'versus' ? 'arrow-right' : 'shuffle', 15)} ${G.playMode === 'versus' ? `Giliran Pemain ${((G.vsTurn + 1) % 2) + 1}` : 'Ayat baru'}</button>
+      <div id="mz-msg" class="note" style="min-height:42px">${mazeMsg()}</div>
+      <div class="row" style="justify-content:center;margin-top:8px">
+        ${G.playMode === 'solo' ? `<button class="btn s" onclick="mazeReset()">${ic('rotate-ccw', 15)} Ulangi</button>` : ''}
+        ${G.playMode === 'versus'
+          ? (ended
+            ? `<button class="btn" onclick="mazeNew()">${matchEnd ? 'Lihat Hasil Akhir' : `Lanjut Giliran Pemain ${nextPlayerNum}`} ${ic('arrow-right', 15)}</button>`
+            : `<button class="btn s" onclick="mazeForfeitTurn()">${ic('skip-forward', 15)} Menyerah / Ganti Giliran</button>`)
+          : `<button class="btn" onclick="mazeNew()">${ic('shuffle', 15)} Ayat baru</button>`}
       </div>`;
   }
   function drawMaze() {
@@ -2078,27 +2430,51 @@
       G.fontOk = true;
       document.fonts.load("700 20px 'Scheherazade New'").then(() => { if ($('#mz')) drawMaze(); });
     }
-    const W = cv.clientWidth || 340, N = m.N, cs = W / N, dpr = window.devicePixelRatio || 1, px = Math.round(W * dpr);
+    const W = cv.clientWidth || 360, N = m.N, cs = W / N, dpr = window.devicePixelRatio || 1, px = Math.round(W * dpr);
     if (cv.width !== px) cv.width = cv.height = px;
     const g = cv.getContext('2d'), css = getComputedStyle(document.documentElement), c = n => css.getPropertyValue(n).trim();
+    const isDark = document.documentElement.dataset.theme === 'dark' ||
+      (!document.documentElement.dataset.theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, W, W);
     m.cs = cs;
     m.walls = [];
-    g.globalAlpha = .16;
-    g.fillStyle = c('--ok');
-    g.fillRect(0, 0, cs, cs);
-    g.fillStyle = c('--gold');
-    g.fillRect((N - 1) * cs, (N - 1) * cs, cs, cs);
-    if (m.decoyGoalCell >= 0) {
-      const dx = (m.decoyGoalCell % N) * cs;
-      const dy = Math.floor(m.decoyGoalCell / N) * cs;
-      g.fillStyle = c('--gold');
-      g.fillRect(dx, dy, cs, cs);
+
+    // 1. Latar papan labirin bergaya lembut & ubin sel berpola halus
+    const bgGrad = g.createLinearGradient(0, 0, W, W);
+    bgGrad.addColorStop(0, isDark ? 'rgba(30,26,64,0.92)' : 'rgba(255,255,255,0.94)');
+    bgGrad.addColorStop(1, isDark ? 'rgba(20,17,46,0.96)' : 'rgba(242,239,252,0.96)');
+    g.fillStyle = bgGrad;
+    g.fillRect(0, 0, W, W);
+
+    const visitedSet = new Set(m.visitedCells || []);
+    for (let r = 0; r < N; r++) {
+      for (let col = 0; col < N; col++) {
+        const idx = r * N + col;
+        const x = col * cs + 2, y = r * N === idx ? r * cs + 2 : r * cs + 2, sz = cs - 4;
+        g.beginPath();
+        g.roundRect(x, y, sz, sz, Math.max(6, cs * 0.16));
+        if (idx === 0) {
+          g.fillStyle = 'rgba(29, 154, 100, 0.22)';
+        } else if (idx === N * N - 1 || idx === m.decoyGoalCell) {
+          g.fillStyle = 'rgba(229, 161, 36, 0.22)';
+        } else if (visitedSet.has(idx)) {
+          g.fillStyle = isDark ? 'rgba(123, 108, 246, 0.22)' : 'rgba(79, 63, 201, 0.11)';
+        } else {
+          g.fillStyle = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(79, 63, 201, 0.03)';
+        }
+        g.fill();
+      }
     }
-    g.globalAlpha = 1;
-    g.strokeStyle = c('--h');
-    g.lineWidth = 3;
+
+    // 2. Dinding labirin tebal dengan bayangan lembut
+    g.save();
+    g.shadowColor = isDark ? 'rgba(0,0,0,0.45)' : 'rgba(42,32,115,0.18)';
+    g.shadowBlur = 4;
+    g.shadowOffsetY = 1.5;
+    g.strokeStyle = isDark ? '#CFCBFF' : '#26205A';
+    g.lineWidth = Math.max(3, cs * 0.075);
     g.lineCap = 'round';
     g.beginPath();
     m.M.forEach((cell, k) => {
@@ -2108,52 +2484,121 @@
       });
     });
     g.stroke();
+    g.restore();
+
+    // 3. Lencana Kata Arab pada setiap sel kata (berubah warna saat dilewati)
     g.textAlign = 'center';
     g.textBaseline = 'middle';
-    g.fillStyle = c('--p');
     Object.entries(m.lab).forEach(([k, w]) => {
-      let f = Math.round(cs * .36);
+      const cellIdx = +k;
+      const cx = (cellIdx % N + 0.5) * cs;
+      const cy = (Math.floor(cellIdx / N) + 0.48) * cs;
+      const isPassed = visitedSet.has(cellIdx);
+
+      let f = Math.round(cs * 0.34);
       const font = s => `700 ${s}px 'Scheherazade New','Amiri',serif`;
       g.font = font(f);
-      while (g.measureText(w).width > cs * .86 && f > 9) g.font = font(--f);
-      g.fillText(w, (k % N + .5) * cs, (Math.floor(k / N) + .5) * cs);
+      while (g.measureText(w).width > cs * 0.78 && f > 9) g.font = font(--f);
+      const tw = Math.min(cs * 0.84, g.measureText(w).width + 12);
+      const th = Math.min(cs * 0.54, f * 1.35);
+
+      g.beginPath();
+      g.roundRect(cx - tw / 2, cy - th / 2, tw, th, 8);
+      g.fillStyle = isPassed
+        ? (isDark ? 'rgba(29,154,100,0.34)' : 'rgba(29,154,100,0.18)')
+        : (isDark ? 'rgba(38,33,78,0.92)' : 'rgba(255,255,255,0.92)');
+      g.fill();
+      g.lineWidth = 1.2;
+      g.strokeStyle = isPassed ? c('--ok') : (isDark ? 'rgba(255,255,255,0.16)' : 'rgba(79,63,201,0.22)');
+      g.stroke();
+
+      g.fillStyle = isPassed ? c('--ok') : c('--p');
+      g.fillText(w, cx, cy + 1);
     });
-    g.font = `700 ${Math.round(cs * .24)}px system-ui,sans-serif`;
+
+    // 4. Penanda Mulai (▶) dan Tujuan (★)
+    g.font = `800 ${Math.round(cs * 0.22)}px 'Plus Jakarta Sans',system-ui,sans-serif`;
     g.fillStyle = c('--ok');
-    g.fillText('▶', cs * .22, cs * .8);
+    g.fillText('▶', cs * 0.22, cs * 0.82);
+
     g.fillStyle = c('--gold');
-    g.fillText('★', N * cs - cs * .22, N * cs - cs * .2);
+    g.fillText('★', N * cs - cs * 0.22, N * cs - cs * 0.2);
     if (m.decoyGoalCell >= 0) {
       const dx = (m.decoyGoalCell % N) * cs;
       const dy = Math.floor(m.decoyGoalCell / N) * cs;
-      g.fillText('★', dx + cs * .78, dy + cs * .8);
+      g.fillText('★', dx + cs * 0.78, dy + cs * 0.8);
     }
+
+    // 5. Jejak Garis Pemain dengan Efek Gradasi & Cahaya
     if (m.pts.length > 1) {
-      g.strokeStyle = (m.state === 'fail' || m.state === 'decoy' || m.state === 'timeout') ? c('--er') : c('--pink');
-      g.lineWidth = 5;
+      const isBad = m.state === 'fail' || m.state === 'decoy' || m.state === 'wrongword' || m.state === 'incomplete' || m.state === 'broken' || m.state === 'timeout';
+      g.save();
+      g.lineWidth = Math.max(5, cs * 0.11);
       g.lineJoin = 'round';
-      g.globalAlpha = .9;
+      g.lineCap = 'round';
+      if (isBad) {
+        g.strokeStyle = c('--er');
+        g.shadowColor = 'rgba(229,72,77,0.45)';
+      } else {
+        const lineGrad = g.createLinearGradient(0, 0, W, W);
+        lineGrad.addColorStop(0, '#1D9A64');
+        lineGrad.addColorStop(0.5, '#7B6CF6');
+        lineGrad.addColorStop(1, '#EC4899');
+        g.strokeStyle = lineGrad;
+        g.shadowColor = 'rgba(123,108,246,0.45)';
+      }
+      g.shadowBlur = 8;
       g.beginPath();
       m.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
       g.stroke();
-      g.globalAlpha = 1;
+
+      // Titik ujung garis
+      const lastPt = m.pts[m.pts.length - 1];
+      g.beginPath();
+      g.arc(lastPt[0], lastPt[1], Math.max(4.5, cs * 0.09), 0, Math.PI * 2);
+      g.fillStyle = isBad ? c('--er') : '#EC4899';
+      g.fill();
+      g.restore();
     }
     bindMaze(cv);
+  }
+  function handleMazeFailure(reasonState, versusReasonText) {
+    const m = G.mz;
+    if (!m) return;
+    m.drawing = false;
+    m.state = reasonState;
+    if (G.playMode === 'versus') {
+      stopGameTimer();
+      const failedPlayer = G.vsTurn + 1;
+      const nextPlayer = ((G.vsTurn + 1) % 2) + 1;
+      G.vsRounds[G.vsTurn]++;
+      m.turnLost = true;
+      G.vsNotice = `${versusReasonText} Kesempatan Pemain ${failedPlayer} hilang (0 poin), dilanjut ke Pemain ${nextPlayer}.`;
+      paintGame();
+      return;
+    }
+    m.mistakes = (m.mistakes || 0) + 1;
+    mazeStatus();
+    drawMaze();
   }
   function bindMaze(cv) {
     if (cv.dataset.bound) return;
     cv.dataset.bound = '1';
     const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-    const cellOf = ([x, y]) => Math.floor(y / G.mz.cs) * G.mz.N + Math.floor(x / G.mz.cs);
+    const cellOf = ([x, y]) => {
+      const col = Math.min(G.mz.N - 1, Math.max(0, Math.floor(x / G.mz.cs)));
+      const row = Math.min(G.mz.N - 1, Math.max(0, Math.floor(y / G.mz.cs)));
+      return row * G.mz.N + col;
+    };
     const hit = ([x, y]) => G.mz.walls.some(([x1, y1, x2, y2]) => {
       const dx = Math.max(Math.min(x1, x2) - x, 0, x - Math.max(x1, x2)), dy = Math.max(Math.min(y1, y2) - y, 0, y - Math.max(y1, y2));
-      return dx * dx + dy * dy < 36;
+      return dx * dx + dy * dy < 32;
     });
     cv.addEventListener('pointerdown', e => {
       const m = G.mz, p = pos(e);
-      if (m.state === 'win' || m.state === 'timeout' || cellOf(p) !== 0) return;
+      if (m.state === 'win' || m.state === 'timeout' || m.turnLost || cellOf(p) !== 0) return;
       cv.setPointerCapture(e.pointerId);
-      Object.assign(m, { drawing: true, pts: [p], state: 'idle' });
+      Object.assign(m, { drawing: true, pts: [p], visitedCells: [0], wordProgress: 0, state: 'idle' });
       mazeStatus();
       drawMaze();
     });
@@ -2164,25 +2609,56 @@
       for (let i = 1; i <= n; i++) {
         const p = [px + (x - px) * i / n, py + (y - py) * i / n];
         m.pts.push(p);
-        if (hit(p)) { m.drawing = false; m.state = 'fail'; break; }
-        const cIdx = cellOf(p);
-        if (m.decoyGoalCell >= 0 && cIdx === m.decoyGoalCell) {
-          m.drawing = false;
-          m.state = 'decoy';
-          break;
+        if (hit(p)) {
+          return handleMazeFailure('fail', 'Menyentuh dinding labirin!');
         }
+        const cIdx = cellOf(p);
+        if (!m.visitedCells.includes(cIdx)) {
+          m.visitedCells.push(cIdx);
+        }
+        // Cek apakah menyentuh tujuan cabang yang salah ★
+        if (m.decoyGoalCell >= 0 && cIdx === m.decoyGoalCell) {
+          return handleMazeFailure('decoy', 'Memilih tujuan ★ cabang yang salah!');
+        }
+
+        // Cek apakah melewati kata yang bukan urutan ayat yang benar (termasuk kata dari ayat lain)
+        if (m.lab && m.lab[cIdx]) {
+          const orderIdx = m.orderedWordCells ? m.orderedWordCells.indexOf(cIdx) : -1;
+          if (orderIdx < 0) {
+            return handleMazeFailure('wrongword', 'Melewati kata dari ayat lain!');
+          } else if (orderIdx === m.wordProgress) {
+            m.wordProgress++;
+          } else if (orderIdx > m.wordProgress) {
+            return handleMazeFailure('wrongword', 'Urutan kata ayat salah / melompati kata!');
+          }
+        }
+
+        // Mencapai tujuan akhir yang benar ★
         if (cIdx === m.N * m.N - 1) {
+          if (m.orderedWordCells && m.wordProgress < m.orderedWordCells.length) {
+            return handleMazeFailure('incomplete', 'Melewati jalan pintas tanpa menyambung semua kata ayat!');
+          }
           m.drawing = false;
           m.state = 'win';
           stopGameTimer();
-          const gained = 10 + m.words.length * 5 + (m.decoyGoalCell >= 0 ? 15 : 0);
+          const basePts = 20;
+          const wordPts = m.words.length * 5;
+          const normalBonus = m.decoyGoalCell >= 0 ? 20 : 0;
+          const retryPenalty = G.playMode === 'solo' ? (m.mistakes || 0) * 5 : 0;
+          const gained = Math.max(10, basePts + wordPts + normalBonus - retryPenalty);
+          const parts = [`${basePts} dasar`, `${m.words.length} kata × 5`];
+          if (normalBonus) parts.push(`+${normalBonus} Normal`);
+          if (retryPenalty) parts.push(`-${retryPenalty} ulang`);
+          G.lastGainText = `+${gained} poin (${parts.join(', ')})`;
+
           if (G.playMode === 'versus') {
-            G.vsScores[G.vsTurn] += gained;
+            const vs = gVsScores('maze');
+            vs[G.vsTurn] += gained;
             G.vsRounds[G.vsTurn]++;
           } else {
-            G.score += gained;
+            setGScore(gScore('maze') + gained, 'maze');
           }
-          break;
+          return paintGame();
         }
       }
       mazeStatus();
@@ -2190,7 +2666,11 @@
     });
     const up = () => {
       const m = G.mz;
-      if (m && m.drawing) { m.drawing = false; m.pts = []; drawMaze(); }
+      if (!m || !m.drawing) return;
+      m.drawing = false;
+      if (m.state !== 'win') {
+        handleMazeFailure('broken', 'Garis terputus sebelum mencapai tujuan ★!');
+      }
     };
     cv.addEventListener('pointerup', up);
     cv.addEventListener('pointercancel', up);
@@ -2220,74 +2700,102 @@
       </svg>`;
   }
 
-  V.game = () => `
-    <div class="card">
-      <b>${ic('gamepad-2', 17)} Pilih Permainan Sambung Ayat</b>
-      <div class="gm-thumbs">
-        <div class="gm-thumb ${S.gameTab === 'words' ? 'on' : ''}" onclick="setGameTab('words')">
-          <div class="gm-thumb-art w-art">
-            <span class="gm-thumb-badge">${S.gameTab === 'words' ? 'Dipilih' : 'Pilih'}</span>
-            ${gameThumbSVG('words')}
+  V.game = () => {
+    if (!S.gameOpen) {
+      return `
+        <div class="card">
+          <b>${ic('gamepad-2', 17)} Pilih Permainan Sambung Ayat</b>
+          <p style="font-size:13px;color:var(--m);margin-bottom:14px">Klik salah satu kartu permainan di bawah untuk membuka pengaturan dan mulai bermain.</p>
+          <div class="gm-thumbs" style="margin-bottom:0">
+            <div class="gm-thumb" onclick="openGame('words')">
+              <div class="gm-thumb-art w-art">
+                <span class="gm-thumb-badge">Buka Games</span>
+                ${gameThumbSVG('words')}
+              </div>
+              <div class="gm-thumb-body">
+                <b>Susun Kata Ayat</b>
+                <small>Rangkai potongan kata Arab menjadi sambungan ayat yang utuh secara berurutan.</small>
+              </div>
+            </div>
+            <div class="gm-thumb" onclick="openGame('maze')">
+              <div class="gm-thumb-art m-art">
+                <span class="gm-thumb-badge">Buka Games</span>
+                ${gameThumbSVG('maze')}
+              </div>
+              <div class="gm-thumb-body">
+                <b>Labirin Ayat</b>
+                <small>Telusuri jalur labirin dari awal hingga akhir ayat yang tepat tanpa menyentuh dinding.</small>
+              </div>
+            </div>
           </div>
-          <div class="gm-thumb-body">
-            <b>Susun Kata Ayat</b>
-            <small>Rangkai potongan kata Arab menjadi sambungan ayat yang utuh secara berurutan.</small>
-          </div>
-        </div>
-        <div class="gm-thumb ${S.gameTab === 'maze' ? 'on' : ''}" onclick="setGameTab('maze')">
-          <div class="gm-thumb-art m-art">
-            <span class="gm-thumb-badge">${S.gameTab === 'maze' ? 'Dipilih' : 'Pilih'}</span>
-            ${gameThumbSVG('maze')}
-          </div>
-          <div class="gm-thumb-body">
-            <b>Labirin Ayat</b>
-            <small>Telusuri jalur labirin dari awal hingga akhir ayat yang tepat tanpa menyentuh dinding.</small>
-          </div>
-        </div>
-      </div>
+        </div>`;
+    }
 
-      <div class="gm-cfg">
-        <div>
-          <label>Mode Pemain</label>
-          <select onchange="setGamePlayMode(this.value)">
-            <option value="solo" ${G.playMode === 'solo' ? 'selected' : ''}>Solo (1 Pemain)</option>
-            <option value="versus" ${G.playMode === 'versus' ? 'selected' : ''}>Versus (2 Pemain · 1 Device)</option>
-          </select>
+    const isWords = S.gameTab === 'words';
+    return `
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button class="btn s" style="padding:8px 13px" onclick="closeGame()">${ic('arrow-left', 16)} Pilih Games Lain</button>
+            <b style="margin:0;font-size:16px">${ic(isWords ? 'puzzle' : 'compass', 17)} ${isWords ? 'Susun Kata Ayat' : 'Labirin Ayat'}</b>
+          </div>
+          <span class="chip" style="font-size:12px">${ic('trophy', 14)} Skor ${isWords ? 'Susun Kata' : 'Labirin'}: <b>${gScore()}</b></span>
         </div>
-        <div>
-          <label>Batas Waktu / Ronde</label>
-          <select onchange="setGameTimeLimit(this.value)">
-            <option value="0" ${G.timeLimit === 0 ? 'selected' : ''}>Tanpa Batas Waktu</option>
-            <option value="30" ${G.timeLimit === 30 ? 'selected' : ''}>30 Detik</option>
-            <option value="60" ${G.timeLimit === 60 ? 'selected' : ''}>60 Detik</option>
-            <option value="90" ${G.timeLimit === 90 ? 'selected' : ''}>90 Detik</option>
-            <option value="120" ${G.timeLimit === 120 ? 'selected' : ''}>120 Detik</option>
-          </select>
-        </div>
-        ${S.gameTab === 'words' ? `
+
+        <div class="gm-cfg">
+          <div>
+            <label>Mode Pemain</label>
+            <select onchange="setGamePlayMode(this.value)">
+              <option value="solo" ${G.playMode === 'solo' ? 'selected' : ''}>Solo (1 Pemain)</option>
+              <option value="versus" ${G.playMode === 'versus' ? 'selected' : ''}>Versus (2 Pemain · 1 Device)</option>
+            </select>
+          </div>
+          ${G.playMode === 'versus' ? `
+            <div>
+              <label>Jumlah Ronde (Versus)</label>
+              <select onchange="setGameMaxRounds(this.value)">
+                <option value="3" ${G.maxRounds === 3 ? 'selected' : ''}>3 Ronde / Pemain</option>
+                <option value="5" ${G.maxRounds === 5 ? 'selected' : ''}>5 Ronde / Pemain</option>
+                <option value="7" ${G.maxRounds === 7 ? 'selected' : ''}>7 Ronde / Pemain</option>
+                <option value="10" ${G.maxRounds === 10 ? 'selected' : ''}>10 Ronde / Pemain</option>
+              </select>
+            </div>` : ''}
+          <div>
+            <label>Batas Waktu / Ronde</label>
+            <select onchange="setGameTimeLimit(this.value)">
+              <option value="0" ${G.timeLimit === 0 ? 'selected' : ''}>Tanpa Batas Waktu</option>
+              <option value="30" ${G.timeLimit === 30 ? 'selected' : ''}>30 Detik</option>
+              <option value="60" ${G.timeLimit === 60 ? 'selected' : ''}>60 Detik</option>
+              <option value="90" ${G.timeLimit === 90 ? 'selected' : ''}>90 Detik</option>
+              <option value="120" ${G.timeLimit === 120 ? 'selected' : ''}>120 Detik</option>
+            </select>
+          </div>
           <div>
             <label>Tingkat Kesulitan</label>
-            <select onchange="setWordDecoy(this.value)">
-              <option value="0" ${!G.wordDecoy ? 'selected' : ''}>Mudah</option>
-              <option value="1" ${G.wordDecoy ? 'selected' : ''}>Normal</option>
+            <select onchange="setGameDifficulty(this.value)">
+              <option value="0" ${!(isWords ? G.wordDecoy : G.mazeDecoy) ? 'selected' : ''}>Mudah</option>
+              <option value="1" ${(isWords ? G.wordDecoy : G.mazeDecoy) ? 'selected' : ''}>Normal</option>
             </select>
-          </div>` : `
-          <div>
-            <label>Tingkat Kesulitan</label>
-            <select onchange="setMazeDecoy(this.value)">
-              <option value="0" ${!G.mazeDecoy ? 'selected' : ''}>Mudah</option>
-              <option value="1" ${G.mazeDecoy ? 'selected' : ''}>Normal</option>
-            </select>
-          </div>`}
-      </div>
+          </div>
+        </div>
 
-      <div class="row">
-        <select onchange="gameSurah(this.value)">${SURAH_LIST.map(([no, nm, ay]) => `<option value="${no}" ${G.surah === no ? 'selected' : ''}>${no}. ${esc(nm)} (${ay} ayat)</option>`).join('')}</select>
-        ${S.gameTab === 'words' ? `<input id="gst" type="number" min="1" value="${G.start}" placeholder="Mulai dari ayat" style="max-width:150px">` : ''}
-        <button class="btn" onclick="startGame()">${ic('play', 16)} Mulai</button>
-      </div>
-      <div id="game-area" class="gm-arena ${G.fullscreen ? 'fs' : ''}">${gameHTML()}</div>
-    </div>`;
+        <div class="gm-rules">
+          <span>
+            ${ic('calculator', 14)} <b>Perhitungan Poin (${isWords ? 'Susun Kata' : 'Labirin Ayat'}):</b>
+            ${isWords
+              ? `+10 poin/kata${G.wordDecoy ? ' + 15 bonus Normal' : ''}${G.playMode === 'solo' ? ' (+10 jika tanpa salah, -5 per salah)' : ' · Versus: bobot jumlah kata sama, salah kata langsung dilempar ke lawan'}`
+              : `+20 dasar + 5 poin/kata${G.mazeDecoy ? ' + 20 bonus Normal' : ''}${G.playMode === 'solo' ? ' (-5 per ulang)' : ' · Versus: bobot jumlah kata sama, 1x tarik garis tanpa putus'}`}
+          </span>
+        </div>
+
+        <div class="gm-ctrl">
+          <select onchange="gameSurah(this.value)">${SURAH_LIST.map(([no, nm, ay]) => `<option value="${no}" ${G.surah === no ? 'selected' : ''}>${no}. ${esc(nm)} (${ay} ayat)</option>`).join('')}</select>
+          ${isWords ? `<input id="gst" type="number" min="1" value="${G.start}" placeholder="Mulai dari ayat" style="max-width:155px">` : ''}
+          <button class="btn" onclick="startGame()">${ic('play', 16)} Mulai</button>
+        </div>
+        <div id="game-area" class="gm-arena ${G.fullscreen ? 'fs' : ''}">${gameHTML()}</div>
+      </div>`;
+  };
 
   const annBanner = () => {
     let seen = '';
@@ -3302,13 +3810,34 @@
     },
     setGameTab(k) {
       stopGameTimer();
-      return soft(() => { S.gameTab = k; G.phase = 'idle'; });
+      return soft(() => { S.gameTab = k; S.gameOpen = true; G.phase = 'idle'; G.vsNotice = ''; });
+    },
+    openGame(k) {
+      stopGameTimer();
+      return soft(() => { S.gameTab = k; S.gameOpen = true; G.phase = 'idle'; G.vsNotice = ''; });
+    },
+    closeGame() {
+      stopGameTimer();
+      if (G.fullscreen) {
+        G.fullscreen = false;
+        syncFullscreenBodyClass();
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      }
+      return soft(() => { S.gameOpen = false; G.phase = 'idle'; G.vsNotice = ''; });
     },
     setGamePlayMode(m) {
       stopGameTimer();
       G.playMode = m;
       G.phase = 'idle';
-      paintGame();
+      G.vsNotice = '';
+      render();
+    },
+    setGameMaxRounds(r) {
+      stopGameTimer();
+      G.maxRounds = Math.max(1, +r || 3);
+      G.phase = 'idle';
+      G.vsNotice = '';
+      render();
     },
     setGameTimeLimit(sec) {
       stopGameTimer();
@@ -3316,20 +3845,17 @@
       G.phase = 'idle';
       paintGame();
     },
-    setWordDecoy(v) {
+    setGameDifficulty(v) {
       stopGameTimer();
-      G.wordDecoy = v === '1';
+      const isNormal = v === '1';
+      if (S.gameTab === 'words') G.wordDecoy = isNormal;
+      else G.mazeDecoy = isNormal;
       G.phase = 'idle';
-      paintGame();
-    },
-    setMazeDecoy(v) {
-      stopGameTimer();
-      G.mazeDecoy = v === '1';
-      G.phase = 'idle';
-      paintGame();
+      render();
     },
     toggleGameFullscreen() {
       G.fullscreen = !G.fullscreen;
+      syncFullscreenBodyClass();
       const arena = $('#game-area');
       if (G.fullscreen && arena && arena.requestFullscreen && !document.fullscreenElement) {
         arena.requestFullscreen().catch(() => {});
@@ -3337,6 +3863,8 @@
         document.exitFullscreen().catch(() => {});
       }
       paintGame();
+      setTimeout(() => { if (S.gameTab === 'maze' && G.phase === 'play') drawMaze(); }, 60);
+      setTimeout(() => { if (S.gameTab === 'maze' && G.phase === 'play') drawMaze(); }, 220);
     },
     gameSurah(v) {
       stopGameTimer();
@@ -3347,13 +3875,23 @@
     startGame,
     gamePick,
     gameNext,
+    mazeForfeitTurn() {
+      if (G.playMode !== 'versus' || !G.mz || G.mz.turnLost || G.mz.state === 'win') return;
+      handleMazeFailure('fail', `Pemain ${G.vsTurn + 1} menyerah!`);
+    },
     mazeNew() {
-      if (G.playMode === 'versus') G.vsTurn = (G.vsTurn + 1) % 2;
+      if (isVersusMatchComplete()) {
+        return finishVersusMatch();
+      }
+      if (G.playMode === 'versus') {
+        const nextTurn = (G.vsTurn + 1) % 2;
+        if (G.vsRounds[nextTurn] < G.maxRounds) G.vsTurn = nextTurn;
+      }
       roundMaze();
     },
     mazeReset() {
-      if (!G.mz) return;
-      Object.assign(G.mz, { pts: [], drawing: false, state: 'idle' });
+      if (!G.mz || G.playMode === 'versus') return;
+      Object.assign(G.mz, { pts: [], visitedCells: [], wordProgress: 0, drawing: false, state: 'idle' });
       mazeStatus();
       drawMaze();
     },
@@ -3423,7 +3961,10 @@
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement && G.fullscreen) {
       G.fullscreen = false;
+      syncFullscreenBodyClass();
       paintGame();
+    } else if (S.page === 'game' && S.gameTab === 'maze' && G.phase === 'play') {
+      requestAnimationFrame(() => drawMaze());
     }
   });
 
