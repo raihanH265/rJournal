@@ -3766,13 +3766,20 @@
       if (f.size > 2e6) return msg('Ukuran maksimal 2 MB');
       msg('Mengunggah ke GitHub…');
       try {
-        let path, chk, purge;
+        let path, chk, purge, pwa = false;
         if (kind === 'icon') {
           chk = await iconPng(f, 192);
           await ghPut('icon-192.png', chk, 'Ikon aplikasi 192');
           await ghPut('icon-512.png', await iconPng(f, 512), 'Ikon aplikasi 512');
           path = 'icon-192.png';
-          purge = ['icon-192.png', 'icon-512.png'];
+          purge = ['icon-192.png', 'icon-512.png', 'manifest.json'];
+          // Manifest statis: tanpa perubahan di berkasnya, browser tidak tahu ikon PWA berganti. Beri versi (?v=) pada alamat ikon.
+          try {
+            const m = await (await fetch('manifest.json?_=' + Date.now(), { cache: 'no-store' })).json(), st = Date.now();
+            (m.icons || []).forEach(i => { i.src = String(i.src).split('?')[0] + '?v=' + st; });
+            await ghPut('manifest.json', btoa(unescape(encodeURIComponent(JSON.stringify(m, null, 2)))), 'Versi ikon di manifest');
+            pwa = true;
+          } catch (e) {}
         } else {
           let b64, x = ext;
           if (kind !== 'logo' && !/^(svg|gif)$/.test(ext)) try { const t = await (kind === 'thumb' ? thumbImg(f) : fitImg(f, 512)); b64 = t.b64; x = t.ext; } catch (_) {}
@@ -3787,7 +3794,7 @@
         const a = { ...AS() }, v = path + '?v=' + Date.now();
         if (kind === 'thumb') a.thumbs = { ...a.thumbs, [key]: v }; else a[kind] = v;
         await saveAssets(a);
-        msg(live ? 'Tersimpan dan sudah tampil.' : 'Tersimpan, tetapi deploy belum selesai. Muat ulang beberapa menit lagi.');
+        msg((live ? 'Tersimpan dan sudah tampil.' : 'Tersimpan, tetapi deploy belum selesai. Muat ulang beberapa menit lagi.') + (kind === 'icon' ? (pwa ? ' Ikon PWA terpasang berubah setelah dicopot dan dipasang ulang.' : ' Manifest tidak bisa diperbarui otomatis.') : ''));
       } catch (e) { msg('Gagal: ' + (e.message || e)); }
     },
     async assetClear(kind, key) {
