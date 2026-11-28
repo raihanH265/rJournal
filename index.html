@@ -438,7 +438,10 @@
       .hd{gap:10px;margin-bottom:14px;flex-wrap:nowrap}
       .hd>div:first-of-type{min-width:0;flex:1}
       .hd h1{font-size:19px}
-      .hd p,.hd .chip{display:none}
+      .hd p{display:none}
+      .hd .chip{max-width:118px;padding:6px 10px;font-size:12px;gap:5px}
+      .hd .chip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .hd .r{gap:6px}
       .hd .r{width:auto;flex:none}
       .grid,.vid-grid{grid-template-columns:1fr}
       .gm-thumbs{gap:10px}
@@ -650,21 +653,20 @@
 
   // ===== Streak, lencana & ringkasan mingguan =====
   const dayOk = d => pct('ibadah', d) >= 70;
-  const avgPct = ds => ds.length ? Math.round(ds.reduce((a, d) => a + pct('ibadah', d), 0) / ds.length) : null;
+  const avgPct = ds => { const a = ds.filter(d => !isUzur(d)); return a.length ? Math.round(a.reduce((s, d) => s + pct('ibadah', d), 0) / a.length) : null; };
+  // Hari uzur dilewati (tidak menambah, tidak memutus). Hari ini yang belum 70% belum memutus sampai hari berganti.
   function streakInfo() {
-    const D = days(), t = today(), last = D.filter(d => d <= t).length - 1;
-    let best = 0, run = 0;
-    D.forEach(d => { if (d <= t && dayOk(d)) best = Math.max(best, ++run); else run = 0; });
-    let i = last;
-    if (i >= 0 && !dayOk(D[i])) i--;
-    let cur = 0;
-    while (i >= 0 && dayOk(D[i])) { cur++; i--; }
-    const week = last >= 0 ? avgPct(D.slice(Math.max(0, last - 6), last + 1)) : null;
-    const prev = last >= 7 ? avgPct(D.slice(Math.max(0, last - 13), last - 6)) : null;
-    return { cur, best, week, prev };
+    const D = days(), t = today(), P = D.filter(d => d <= t), last = P.length - 1;
+    let best = 0, run = 0, cur = 0, i = last;
+    P.forEach(d => { if (isUzur(d)) return; if (dayOk(d)) best = Math.max(best, ++run); else run = 0; });
+    if (i >= 0 && P[i] === t && !isUzur(t) && !dayOk(t)) i--;
+    for (; i >= 0 && (isUzur(P[i]) || dayOk(P[i])); i--) if (!isUzur(P[i])) cur++;
+    const week = last >= 0 ? avgPct(P.slice(Math.max(0, last - 6))) : null;
+    const prev = last >= 7 ? avgPct(P.slice(Math.max(0, last - 13), last - 6)) : null;
+    return { cur, best, week, prev, now: P[last] === t && !isUzur(t) ? pct('ibadah', t) : null };
   }
   function insightCard() {
-    const { cur, best, week, prev } = streakInfo();
+    const { cur, best, week, prev, now } = streakInfo();
     const pages = S.til.reduce((a, r) => a + (+r.pages || 0), 0);
     const zi = S.haf.filter(r => r.type === 'ziyadah').reduce((a, r) => a + Math.max(0, r.ayat_to - r.ayat_from + 1), 0);
     const B = [
@@ -678,7 +680,8 @@
     return `
       <div class="card">
         <b>${ic('flame', 17)} Streak & Lencana</b>
-        <p style="margin-bottom:10px"><b style="color:var(--p);font-size:20px">${cur}</b> hari beruntun (ibadah ≥70%) · terbaik ${best} hari${week != null ? `<br>Minggu ini rata-rata <b>${week}%</b>${delta}` : ''}</p>
+        <p style="margin-bottom:10px"><b style="color:var(--p);font-size:20px">${cur}</b> hari beruntun (ibadah ≥70%) · terbaik ${best} hari${now != null ? `<br>Hari ini <b>${now}%</b>${now >= 70 ? ' · streak aman ✓' : ' · capai 70% agar streak bertambah'}` : ''}${week != null ? `<br>Minggu ini rata-rata <b>${week}%</b>${delta}` : ''}</p>
+        <p class="note" style="text-align:left;margin:0 0 10px">Sehari dihitung bila ceklis ibadah ≥70%. Hari uzur dilewati: tidak menambah dan tidak memutus.</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           ${B.map(([i, n, ok]) => `<span class="chip" style="font-size:12px;${ok ? '' : 'opacity:.4'}">${ic(i, 14)} ${n}</span>`).join('')}
         </div>
@@ -2064,7 +2067,7 @@
   };
 
   // ===== Bagikan hasil: kartu PNG 1080×1920 (ukuran story Instagram) =====
-  async function resultCanvas() {
+  async function resultCanvas(me = 0) {
     const W = 1080, H = 1920, F = "'Plus Jakarta Sans', system-ui, sans-serif";
     try { await document.fonts.load(`800 40px ${F}`); } catch (e) {}
     const c = document.createElement('canvas');
@@ -2107,10 +2110,10 @@
       T('poin', W / 2, 995, 44, 600, soft);
       T(`${G.history.filter(h => h.full).length} dari ${G.history.length} soal terjawab utuh`, W / 2, 1130, 42, 700, '#fff', 860);
     } else {
-      const win = winnerOf();
-      T(win ? `${pname(win - 1)} menang!` : 'Seri!', W / 2, 680, 92, 800, '#fff', 860);
-      [0, 1].forEach(p => {
-        const px = 100 + p * 450, cx = px + 215;
+      const win = winnerOf(), opp = pname(1 - me);
+      T(win ? `Saya ${win - 1 === me ? 'menang' : 'kalah'} dari ${opp}` : `Saya seri dengan ${opp}`, W / 2, 665, 84, 800, '#fff', 860);
+      [me, 1 - me].forEach((p, k) => {
+        const px = 100 + k * 450, cx = px + 215;
         box(px, 740, 430, 470, win === p + 1 ? .3 : .12, win === p + 1 ? .9 : .3);
         x.beginPath();
         x.arc(cx, 825, 56, 0, 7);
@@ -2118,7 +2121,7 @@
         x.fill();
         T(([...pname(p)][0] || '?').toUpperCase(), cx, 847, 60);
         T(pname(p), cx, 950, 46, 800, '#fff', 380);
-        T(String(G.vsScores[p]), cx, 1090, 120);
+        T(String(G.vsScores[p]), cx, 1090, 120, 800, '#fff', 370);
         T(`salah ${G.vsMiss[p]}`, cx, 1160, 32, 600, soft);
       });
     }
@@ -2141,11 +2144,19 @@
     T(new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), W / 2, 1808, 28, 600, soft);
     return c;
   }
-  async function shareGame() {
+  function shareText(me) {
+    const url = /^https?:/.test(location.href) ? ' ' + location.href.split(/[?#]/)[0].replace(/index\.html$/, '') : '';
+    if (!isVs()) return `Skor saya ${G.score} di ${game().name}. Main juga di reLoad:${url}`;
+    const win = winnerOf(), opp = pname(1 - me), sc = `${G.vsScores[me]}–${G.vsScores[1 - me]}`;
+    if (!win) return `Saya seri dengan ${opp} di ${game().name} (${sc}). Main juga di reLoad:${url}`;
+    return win - 1 === me ? `Saya menang dari ${opp} di ${game().name} (${sc}). Coba kalahkan saya di reLoad:${url}` : `Saya kalah dari ${opp} di ${game().name} (${sc}). Mau balas dendam? Main di reLoad:${url}`;
+  }
+  const shareBtns = () => (isVs() && !isOnline() ? [0, 1] : [isOnline() ? G.me : 0]).map(p => `<button class="btn" onclick="shareGame(${p})">${ic('share-2', 15)} ${isVs() && !isOnline() ? 'Bagikan: ' + esc(pname(p)) : 'Bagikan'}</button>`).join('');
+  async function shareGame(me = 0) {
     if (G.phase !== 'over') return;
     let blob;
     try {
-      const c = await resultCanvas();
+      const c = await resultCanvas(me);
       blob = await new Promise(r => c.toBlob(r, 'image/png'));
     } catch (e) {
       return msg('Gagal membuat gambar hasil');
@@ -2154,7 +2165,7 @@
     const file = new File([blob], `reLoad-${S.gameTab}.png`, { type: 'image/png' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await navigator.share({ files: [file], text: `Hasil ${game().name} di reLoad` });
+        await navigator.share({ files: [file], text: shareText(me) });
         return;
       } catch (e) {
         if (e && e.name === 'AbortError') return;
@@ -2165,7 +2176,7 @@
     a.download = file.name;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    msg('Gambar hasil diunduh');
+    try { await navigator.clipboard.writeText(shareText(me)); msg('Gambar diunduh, caption disalin'); } catch (e) { msg('Gambar hasil diunduh'); }
   }
 
   function gameSetupHTML() {
@@ -2257,7 +2268,7 @@
             ${Array.from({ length: roundTotal() }, (_, r) => `<tr><td>${r + 1}</td>${(isVs() ? [0, 1] : [0]).map(p => { const x = G.history.find(v => v.r === r + 1 && v.p === p); return `<td>${x ? `${x.gained}${x.full ? ' ✓' : ''}` : '–'}</td>`; }).join('')}</tr>`).join('')}
           </table></div>
           <div class="row" style="justify-content:center">
-            <button class="btn" onclick="shareGame()">${ic('share-2', 15)} Bagikan</button>
+            ${shareBtns()}
             ${guest() ? '' : `<button class="btn" onclick="startGame()">${ic('rotate-ccw', 15)} Main lagi</button>
             <button class="btn s" onclick="gameBack()">${ic('settings', 15)} Pengaturan</button>`}
             <button class="btn s" onclick="closeGame()">${ic('x', 15)} Keluar</button>
@@ -3133,7 +3144,7 @@
             ${AS().logo ? `<img class="lg-img" src="${esc(AS().logo)}" alt="" onerror="this.remove()">` : ''}
             <div><h1>${t[0]}</h1><p>${t[1]}</p></div>
             <div class="r">
-              ${S.user ? `<span class="chip">${ic('user', 15)} ${esc(S.user.full_name || S.user.username)}</span><button class="btn s" onclick="logout()">${ic('log-out', 15)} Keluar</button>` : `<button class="btn" onclick="openM('login')">${ic('log-in', 16)} Masuk</button>`}
+              ${S.user ? `<span class="chip">${ic('user', 15)}<span class="nm">${esc(S.user.full_name || S.user.username)}</span></span><button class="btn s" onclick="logout()">${ic('log-out', 15)} Keluar</button>` : `<button class="btn" onclick="openM('login')">${ic('log-in', 16)} Masuk</button>`}
             </div>
           </header>
           ${(V[S.page] || V.home)()}
