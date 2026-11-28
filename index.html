@@ -1542,8 +1542,12 @@
     const g = ghCfg();
     if (!g.repo || !g.token) throw new Error('isi koneksi GitHub dulu');
     const u = `https://api.github.com/repos/${g.repo}/contents/${path}`, h = { Authorization: 'Bearer ' + g.token, Accept: 'application/vnd.github+json' };
-    const cur = await fetch(u + '?ref=' + encodeURIComponent(g.branch), { headers: h });
-    const w = await fetch(u, { method: 'PUT', headers: h, body: JSON.stringify({ message: note, content, branch: g.branch, sha: cur.ok ? (await cur.json()).sha : undefined }) });
+    // GET sering diberi cache oleh browser/GitHub (sha basi -> "does not match"): no-store + cap waktu, ulangi sekali bila bentrok
+    for (let n = 0; ; n++) {
+      const cur = await fetch(u + '?ref=' + encodeURIComponent(g.branch) + '&_=' + Date.now(), { headers: h, cache: 'no-store' });
+      var w = await fetch(u, { method: 'PUT', headers: h, body: JSON.stringify({ message: note, content, branch: g.branch, sha: cur.ok ? (await cur.json()).sha : undefined }) });
+      if (w.ok || n || ![409, 422].includes(w.status)) break;
+    }
     if (!w.ok) throw new Error((await w.json().catch(() => ({}))).message || 'HTTP ' + w.status);
   }
   async function saveAssets(a) {
