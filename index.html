@@ -463,9 +463,9 @@
   try { Object.keys(localStorage).filter(k => k.startsWith('rj_')).forEach(k => { const n = 'rl_' + k.slice(3); if (localStorage.getItem(n) === null) localStorage.setItem(n, localStorage.getItem(k)); localStorage.removeItem(k); }); } catch (e) {}
 
   // KONFIGURASI APLIKASI
-  const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
-  const SUPABASE_URL = "URL_SUPABASE_ANDA";
-  const SUPABASE_ANON_KEY = "ANON_KEY_ANDA";
+  const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+  const SUPABASE_URL = "https://qaogqkltcgjaycazmlym.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_xBZJe9R_-R4SdqlpycO4Qw_nA6V3lYc";
 
   const $ = s => document.querySelector(s);
   const ic = (name, size = 18, cls = '') => `<i data-lucide="${name}" style="width:${size}px;height:${size}px" class="${cls}"></i>`;
