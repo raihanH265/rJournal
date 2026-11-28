@@ -1512,7 +1512,7 @@
     const g = ghCfg(), a = AS();
     const row = (label, kind, key, cur) => `<div class="as-row">${cur ? `<img src="${esc(cur)}" alt="" onerror="this.style.visibility='hidden'">` : `<img alt="" style="visibility:hidden">`}<label>${label}</label>
       <input type="file" accept="image/*" id="f-${kind}-${key}" hidden onchange="assetUpload('${kind}','${key}',this)">
-      <button class="btn s" onclick="$('#f-${kind}-${key}').click()">${ic('upload', 15)} Unggah</button>${cur && kind !== 'icon' ? `<button class="btn s" onclick="assetClear('${kind}','${key}')">${ic('x', 15)}</button>` : ''}</div>`;
+      <button class="btn s" onclick="document.getElementById('f-${kind}-${key}').click()">${ic('upload', 15)} Unggah</button>${cur && kind !== 'icon' ? `<button class="btn s" onclick="assetClear('${kind}','${key}')">${ic('x', 15)}</button>` : ''}</div>`;
     return `
       <div class="card"><b>${ic('github', 17)} Koneksi GitHub</b>
         <p class="note" style="text-align:left">Berkas disimpan (commit) ke repositori Anda dan tampil setelah deploy selesai. Token hanya disimpan di browser ini, tidak di database. Pakai fine-grained token dengan izin Contents: Read and write untuk repo ini saja.</p>
