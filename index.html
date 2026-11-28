@@ -1478,6 +1478,7 @@
   };
 
   // ===== Dashboard Admin: ringkasan | konten | pengaturan (unggah aset ke GitHub) =====
+  const BUILD = '28nov-c';
   const AS = () => S.assets || {};
   // Pengaturan logo/ikon/thumbnail disimpan di repo (assets/config.json), dibaca semua pengguna tanpa database. null = belum ada.
   const loadCfg = async () => { try { const r = await fetch('assets/config.json?_=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch (e) { return null; } };
@@ -1533,6 +1534,8 @@
       <div class="card"><b>${ic('image', 17)} Tampilan Aplikasi</b>
         <p class="note" style="text-align:left">Format png, jpg, svg, webp, gif, avif, atau ico. Maks 2 MB. Ikon aplikasi otomatis dibuat 192 dan 512 px (pasang ulang PWA agar berubah). Favicon: ideal SVG, atau PNG persegi (otomatis 192×192, latar transparan); atau pilih gambar yang sudah ada di repo. Ikon beranda diperkecil otomatis (maks 512×512, transparansi png/webp dipertahankan); ukuran ideal 512×512. GIF diunggah apa adanya, jadi buat ≤512×512 dan <1 MB.</p>
         ${row('Logo header', 'logo', 'logo', a.logo)}${row('Ikon beranda (tanpa lingkaran)', 'hero', 'hero', a.hero)}${row('Ikon aplikasi (widget/PWA)', 'icon', 'icon', a.icon)}${row('Favicon (tab browser)', 'fav', 'fav', a.fav)}
+        <div class="row"><button class="btn s" onclick="diagAssets()">${ic('activity', 15)} Periksa tampilan</button><small>Versi kode: ${BUILD}</small></div>
+        ${S.diag ? `<pre class="note" style="text-align:left;white-space:pre-wrap;word-break:break-all">${esc(S.diag.join('\n'))}</pre>` : ''}
         <div class="row"><button class="btn s" onclick="favList()">${ic('github', 15)} Pakai gambar yang sudah ada di GitHub</button>${S.ghImgs && S.ghImgs.length ? `<select id="pk-t" style="max-width:190px">${[['logo', 'Logo header'], ['hero', 'Ikon beranda'], ['fav', 'Favicon'], ...Object.entries(GAMES).map(([k, gm]) => ['thumb:' + k, 'Thumbnail ' + gm.name])].map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('')}</select><select id="fav-sel" style="max-width:220px">${S.ghImgs.map(p => `<option>${esc(p)}</option>`).join('')}</select><button class="btn" onclick="favUse()">${ic('check', 15)} Pakai</button>` : ''}</div>
       </div>
       <div class="card"><b>${ic('gamepad-2', 17)} Thumbnail Games</b>
@@ -3323,10 +3326,11 @@
   }
 
   async function boot() {
+    S.assets = (await loadCfg()) || {};
+    applyIcon();
     const st = await T.sel('app_settings');
     if (st[0]) S.set = st[0];
-    S.assets = (await loadCfg()) || (st[0] && st[0].assets) || {};
-    applyIcon();
+    if (!Object.keys(S.assets).length && st[0] && st[0].assets) { S.assets = st[0].assets; applyIcon(); }
     S.tpls = await T.sel('templates').catch(() => []);
     S.anns = await T.sel('announcements').catch(() => []);
     S.doas = await T.sel('doa_custom').catch(() => []);
@@ -3814,6 +3818,18 @@
         await saveAssets(a);
         msg((live ? 'Tersimpan dan sudah tampil.' : 'Tersimpan, tetapi deploy belum selesai. Muat ulang beberapa menit lagi.') + (kind === 'icon' ? (pwa ? ' Ikon PWA terpasang berubah setelah dicopot dan dipasang ulang.' : ' Manifest tidak bisa diperbarui otomatis.') : ''));
       } catch (e) { msg('Gagal: ' + (e.message || e)); }
+    },
+    async diagAssets() {
+      const a = AS(), L = [`Versi kode: ${BUILD}`, `Halaman: ${location.pathname}`];
+      const cfg = await loadCfg();
+      L.push('config.json: ' + (cfg ? 'terbaca' : 'TIDAK terbaca (404 atau format salah)'));
+      L.push('Dipakai aplikasi sekarang: ' + JSON.stringify(a));
+      for (const [n, u] of [['logo', a.logo], ['hero', a.hero], ['fav', a.fav], ['icon', a.icon], ...Object.entries(a.thumbs || {}).map(([k, v]) => ['thumb ' + k, v])]) {
+        if (!u) { L.push(n + ': belum diatur'); continue; }
+        try { const r = await fetch(u.split('?')[0] + '?_=' + Date.now(), { cache: 'no-store' }); L.push(`${n}: ${r.ok ? 'OK' : 'GAGAL'} (${r.status}${r.ok ? ' ' + (r.headers.get('content-type') || '') : ''}) ${u.split('?')[0]}`); } catch (e) { L.push(`${n}: GAGAL (${e.message})`); }
+      }
+      S.diag = L;
+      render();
     },
     async favList() {
       const g = ghCfg();
