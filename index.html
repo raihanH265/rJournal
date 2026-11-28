@@ -1547,7 +1547,10 @@
     if (!w.ok) throw new Error((await w.json().catch(() => ({}))).message || 'HTTP ' + w.status);
   }
   async function saveAssets(a) {
-    await T.upd('app_settings', 1, { assets: a });
+    try { await T.upd('app_settings', 1, { assets: a }); } catch (e) {
+      if (/assets/.test(e.message || '')) throw new Error('Berkas sudah masuk GitHub, tetapi kolom "assets" belum ada di database. Jalankan supabase-assets.sql sekali di Supabase, lalu unggah ulang.');
+      throw e;
+    }
     S.assets = a;
     applyIcon();
     render();
