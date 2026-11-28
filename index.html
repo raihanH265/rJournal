@@ -423,10 +423,19 @@
       .side{display:none}
       .shell{margin:0;border-radius:0;border:0;min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
       .main{padding:16px 14px 108px;width:100%;max-width:100%}
-      .hd{gap:10px;margin-bottom:16px}
+      .hd{gap:10px;margin-bottom:14px;flex-wrap:nowrap}
+      .hd>div:first-child{min-width:0;flex:1}
       .hd h1{font-size:19px}
-      .hd .r{width:100%;justify-content:space-between}
-      .grid,.vid-grid,.gm-thumbs{grid-template-columns:1fr}
+      .hd p,.hd .chip{display:none}
+      .hd .r{width:auto;flex:none}
+      .grid,.vid-grid{grid-template-columns:1fr}
+      .gm-thumbs{gap:10px}
+      .gm-thumb-art{height:84px;padding:8px}
+      .gm-thumb-badge{top:6px;right:6px;padding:2px 8px;font-size:10px}
+      .gm-thumb-body{padding:9px 11px}
+      .gm-thumb-body b{font-size:13.5px}
+      .gm-thumb-body small{font-size:11px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+      .row>select{flex:1 1 100%;max-width:none!important;min-width:0}
       .hero h2{font-size:26px}
       .pill{padding:12px 14px 12px 18px;font-size:13.5px}
       .slot-grid{grid-template-columns:repeat(2,1fr)}
@@ -757,7 +766,7 @@
             ${ic('heart-handshake', 18)}
             <div>
               <b style="font-size:13.5px;display:block">Mode Uzur Syar'i (Haid / Nifas)</b>
-              <small style="color:var(--b)">${uz ? 'Hari ini ditandai uzur & otomatis tercatat di daftar Qadha puasa.' : 'Aktifkan jika sedang berhalangan agar grafik ibadah tetap terjaga.'}</small>
+              <small style="color:var(--b)">${uz ? 'Hari ini ditandai uzur & otomatis tercatat di daftar Qadha puasa.' : 'Aktifkan saat berhalangan; grafik tetap terjaga.'}</small>
             </div>
           </div>
           <label class="ck"><input type="checkbox" ${uz ? 'checked' : ''} onchange="togUzur('${d}')"> Uzur hari ini</label>
@@ -1114,7 +1123,7 @@
         <div id="city-results" class="drag-scroll" data-lenis-prevent style="max-height:210px;overflow-y:auto;${cityList.length ? 'margin-top:6px' : ''}">
           ${cityList.map(cityLink).join('')}
         </div>
-        <p class="note" style="text-align:left;margin-top:10px">Sumber data: Direktorat Jenderal Bimbingan Masyarakat Islam (Bimas Islam) Kementerian Agama Republik Indonesia melalui layanan terbuka API MyQuran.</p>
+        <p class="note" style="text-align:left;margin-top:10px">Sumber: Bimas Islam Kemenag RI (via API MyQuran).</p>
       </div>
       <div id="imsak-table-wrap" class="card scroll drag-scroll" data-lenis-prevent>
         ${imsakTableHTML()}
@@ -1262,7 +1271,7 @@
             <option value="murojaah">Muroja’ah (Mengulang)</option>
           </select>
           <select id="hs" onchange="onSelectSurah(this.value)">
-            <option value="">-- Surah awal (1–114) --</option>
+            <option value="">Surah awal</option>
             ${SURAH_LIST.map(([no, nm, ay]) => {
               const val = `${no}. ${nm}`;
               return `<option value="${esc(val)}" ${S.hafSurah === val ? 'selected' : ''}>${no}. ${esc(nm)} (${ay} ayat)</option>`;
@@ -1271,7 +1280,7 @@
         </div>
         <div class="row">
           <select id="hs2" onchange="onSelectSurah2(this.value)">
-            <option value="">Sampai surah (opsional, bila setoran mencakup beberapa surah berurutan)</option>
+            <option value="">Sampai surah (opsional)</option>
             ${SURAH_LIST.map(([no, nm]) => {
               const val = `${no}. ${nm}`;
               return `<option value="${esc(val)}" ${S.hafSurah2 === val ? 'selected' : ''}>${no}. ${esc(nm)}</option>`;
@@ -1425,7 +1434,7 @@
     return `
       <div class="card">
         <b>${ic('sparkles', 17)} Kartu Ringkasan Ramadhan ${S.set.hijri_year} H</b>
-        <p style="margin-bottom:16px">Bagikan perjalanan ibadah dan refleksi Ramadhanmu kepada keluarga atau sahabat.</p>
+        <p style="margin-bottom:16px">Bagikan ringkasan Ramadhanmu ke keluarga atau sahabat.</p>
         <div id="recap-card" class="recap-poster">
           <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
             <div>
@@ -2619,7 +2628,17 @@
   const JUZ_PAGE = [1,22,42,62,82,102,121,142,162,182,201,222,242,262,282,302,322,342,362,382,402,422,442,462,482,502,522,542,562,582];
   const upTo = (list, n) => list.filter(x => x <= n).length;
   const markKey = () => 'rl_mark_' + (S.user ? S.user.id || S.user.username : 'tamu');
-  const getMark = () => { try { return JSON.parse(localStorage.getItem(markKey())); } catch (e) { return null; } };
+  // tanda terakhir dibaca disimpan di akun (prefs.last_read) agar tilawah bisa dilanjutkan di perangkat lain; localStorage hanya cadangan
+  const localMark = () => { try { return JSON.parse(localStorage.getItem(markKey())); } catch (e) { return null; } };
+  const onAcct = () => !!S.user && !S.admin && !!S.prefs && 'last_read' in S.prefs;
+  const getMark = () => onAcct() ? S.prefs.last_read : localMark();
+  async function syncMark() {
+    if (IS_PREVIEW || !S.user || S.admin || !onAcct()) return;
+    try {
+      const r = await Promise.race([T.sel('prefs', { user_id: S.user.id }), new Promise((_, no) => setTimeout(no, 1500))]);
+      if (r[0] && 'last_read' in r[0]) S.prefs.last_read = r[0].last_read;
+    } catch (e) {}
+  }
   const isMark = (m, s, a) => !!m && m.s === s && m.a === a;
 
   const markText = () => {
@@ -2636,11 +2655,13 @@
     document.querySelectorAll('.mark-info').forEach(el => { el.textContent = markText(); });
   }
   function mushafMark(s, a, p) {
-    const off = isMark(getMark(), s, a);
+    const off = isMark(getMark(), s, a), m = off ? null : { s, a, p };
     try {
-      if (off) localStorage.removeItem(markKey());
-      else localStorage.setItem(markKey(), JSON.stringify({ s, a, p }));
-    } catch (e) { return msg('Penyimpanan browser tidak tersedia, tanda tidak tersimpan.'); }
+      if (m) localStorage.setItem(markKey(), JSON.stringify(m));
+      else localStorage.removeItem(markKey());
+    } catch (e) {}
+    if (S.user && !S.admin) persistPref({ last_read: m }).catch(() => msg('Tanda belum tersinkron ke akun, coba lagi.'));
+    else if (!localMark() && m) return msg('Penyimpanan browser tidak tersedia, tanda tidak tersimpan.');
     mfPaintMark();
     msg(off ? 'Tanda terakhir dibaca dihapus' : `Terakhir dibaca: ${SURAH_LIST[s - 1][1]} ayat ${a}`);
   }
@@ -2749,7 +2770,8 @@
   mfEl.id = 'mf';
   document.body.appendChild(mfEl);
 
-  function openMushaf(p, fallback) {
+  async function openMushaf(p, fallback) {
+    await syncMark();
     const m = getMark();
     let n = +p || (m && m.p) || +fallback;
     MF.surah = !+p && m ? m.s : 0;
@@ -3141,6 +3163,11 @@
         const savedUzur = JSON.parse(localStorage.getItem('rl_uzur_' + id) || 'null');
         if (Array.isArray(savedUzur) && !Array.isArray(S.prefs.uzur_days)) S.prefs.uzur_days = savedUzur;
       } catch (e) {}
+      if ('last_read' in S.prefs) { // kolom ada: pindahkan tanda lama dari perangkat ini ke akun (sekali), lalu bersihkan
+        const lm = localMark();
+        if (lm) persistPref({ last_read: lm }).catch(() => {});
+        try { localStorage.removeItem(markKey()); } catch (e) {}
+      }
       await loadData();
       if (IS_PREVIEW && !S.prefs.city_id) {
         S.prefs.city_id = '1301';
@@ -3222,7 +3249,7 @@
     try {
       await T.up('prefs', S.prefs, 'user_id');
     } catch (err) {
-      const { uzur_days, ...corePrefs } = S.prefs;
+      const { uzur_days, last_read, ...corePrefs } = S.prefs;
       await T.up('prefs', corePrefs, 'user_id');
     }
   }
