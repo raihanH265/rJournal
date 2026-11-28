@@ -1481,7 +1481,15 @@
   const AS = () => S.assets || {};
   const logoHTML = () => AS().logo ? `<img src="${esc(AS().logo)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display=''"><span style="display:none">${ic('moon', 22)}</span>` : ic('moon', 22);
   function applyIcon() {
-    if (AS().icon) document.querySelectorAll('link[rel="apple-touch-icon"],link[rel~="icon"]').forEach(l => { l.href = AS().icon; });
+    const a = AS(), set = (rel, href) => {
+      if (!href) return;
+      let l = document.querySelector(`link[rel="${rel}"]`);
+      if (!l) { l = document.createElement('link'); l.rel = rel; document.head.appendChild(l); }
+      l.removeAttribute('type');
+      l.href = href;
+    };
+    set('apple-touch-icon', a.icon);
+    set('icon', a.fav || a.icon);
   }
   const ago = d => { if (!d) return '-'; const m = Math.round((Date.now() - new Date(d)) / 6e4); return m < 1 ? 'baru saja' : m < 60 ? m + ' mnt lalu' : m < 1440 ? Math.round(m / 60) + ' jam lalu' : Math.round(m / 1440) + ' hari lalu'; };
   const ghCfg = () => { try { return { branch: 'main', ...JSON.parse(localStorage.getItem('rl_gh')) }; } catch (e) { return { branch: 'main' }; } };
@@ -1521,8 +1529,9 @@
         <div class="row"><input id="gh-t" type="password" autocomplete="off" placeholder="${g.token ? 'Token tersimpan (isi untuk mengganti)' : 'Token GitHub'}"><button class="btn" onclick="ghSave()">${ic('save', 16)} Simpan</button></div>
       </div>
       <div class="card"><b>${ic('image', 17)} Tampilan Aplikasi</b>
-        <p class="note" style="text-align:left">Format png, jpg, svg, webp, gif, avif, atau ico. Maks 2 MB. Ikon aplikasi otomatis dibuat 192 dan 512 px (pasang ulang PWA agar berubah). Ikon beranda diperkecil otomatis (maks 512×512, transparansi png/webp dipertahankan); ukuran ideal 512×512. GIF diunggah apa adanya, jadi buat ≤512×512 dan <1 MB.</p>
-        ${row('Logo header', 'logo', 'logo', a.logo)}${row('Ikon beranda (tanpa lingkaran)', 'hero', 'hero', a.hero)}${row('Ikon aplikasi (widget/PWA)', 'icon', 'icon', a.icon)}
+        <p class="note" style="text-align:left">Format png, jpg, svg, webp, gif, avif, atau ico. Maks 2 MB. Ikon aplikasi otomatis dibuat 192 dan 512 px (pasang ulang PWA agar berubah). Favicon: ideal SVG, atau PNG persegi (otomatis 192×192, latar transparan); atau pilih gambar yang sudah ada di repo. Ikon beranda diperkecil otomatis (maks 512×512, transparansi png/webp dipertahankan); ukuran ideal 512×512. GIF diunggah apa adanya, jadi buat ≤512×512 dan <1 MB.</p>
+        ${row('Logo header', 'logo', 'logo', a.logo)}${row('Ikon beranda (tanpa lingkaran)', 'hero', 'hero', a.hero)}${row('Ikon aplikasi (widget/PWA)', 'icon', 'icon', a.icon)}${row('Favicon (tab browser)', 'fav', 'fav', a.fav)}
+        <div class="row"><button class="btn s" onclick="favList()">${ic('github', 15)} Pilih favicon dari gambar di GitHub</button>${S.ghImgs && S.ghImgs.length ? `<select id="fav-sel" style="max-width:220px">${S.ghImgs.map(p => `<option>${esc(p)}</option>`).join('')}</select><button class="btn" onclick="favUse()">${ic('check', 15)} Pakai</button>` : ''}</div>
       </div>
       <div class="card"><b>${ic('gamepad-2', 17)} Thumbnail Games</b>
         <p class="note" style="text-align:left">Otomatis dipotong dari tengah ke 1200×500 px dan dikompres. Svg dan gif diunggah apa adanya.</p>
@@ -1588,6 +1597,16 @@
         for (const r of await c.keys()) if (paths.some(p => new URL(r.url).pathname.endsWith('/' + p))) await c.delete(r);
       }
     } catch (e) {}
+  }
+  // Favicon: muat dalam kotak persegi n x n (tidak dipotong), latar transparan, PNG
+  async function squareImg(f, n) {
+    const img = new Image();
+    img.src = URL.createObjectURL(f);
+    await img.decode();
+    const w = img.naturalWidth || n, h = img.naturalHeight || n, k = Math.min(n / w, n / h), c = document.createElement('canvas');
+    c.width = c.height = n;
+    c.getContext('2d').drawImage(img, (n - w * k) / 2, (n - h * k) / 2, w * k, h * k);
+    return { b64: c.toDataURL('image/png').split(',')[1], ext: 'png' };
   }
   async function ghPut(path, content, note) {
     const g = ghCfg();
@@ -3782,8 +3801,8 @@
           } catch (e) {}
         } else {
           let b64, x = ext;
-          if (kind !== 'logo' && !/^(svg|gif)$/.test(ext)) try { const t = await (kind === 'thumb' ? thumbImg(f) : fitImg(f, 512)); b64 = t.b64; x = t.ext; } catch (_) {}
-          path = kind === 'logo' ? `assets/logo.${x}` : kind === 'hero' ? `assets/hero.${x}` : `assets/thumb-${key}.${x}`;
+          if (kind !== 'logo' && !/^(svg|gif)$/.test(ext)) try { const t = await (kind === 'thumb' ? thumbImg(f) : kind === 'fav' ? squareImg(f, 192) : fitImg(f, 512)); b64 = t.b64; x = t.ext; } catch (_) {}
+          path = kind === 'logo' ? `assets/logo.${x}` : kind === 'hero' ? `assets/hero.${x}` : kind === 'fav' ? `assets/favicon.${x}` : `assets/thumb-${key}.${x}`;
           chk = b64 || await fileB64(f);
           await ghPut(path, chk, 'Unggah ' + path);
           purge = [path];
@@ -3796,6 +3815,25 @@
         await saveAssets(a);
         msg((live ? 'Tersimpan dan sudah tampil.' : 'Tersimpan, tetapi deploy belum selesai. Muat ulang beberapa menit lagi.') + (kind === 'icon' ? (pwa ? ' Ikon PWA terpasang berubah setelah dicopot dan dipasang ulang.' : ' Manifest tidak bisa diperbarui otomatis.') : ''));
       } catch (e) { msg('Gagal: ' + (e.message || e)); }
+    },
+    async favList() {
+      const g = ghCfg();
+      if (!g.repo || !g.token) return msg('Isi koneksi GitHub dulu');
+      try {
+        const out = [];
+        for (const d of ['', 'assets']) {
+          const r = await fetch(`https://api.github.com/repos/${g.repo}/contents/${d}?ref=${encodeURIComponent(g.branch)}`, { headers: { Authorization: 'Bearer ' + g.token, Accept: 'application/vnd.github+json' }, cache: 'no-store' });
+          if (r.ok) (await r.json()).forEach(x => { if (x.type === 'file' && ASSET_EXT.test((x.name.split('.').pop() || '').toLowerCase())) out.push(x.path); });
+        }
+        S.ghImgs = out;
+        if (!out.length) msg('Tidak ada gambar di repo (folder utama dan assets/)');
+        render();
+      } catch (e) { msg('Gagal: ' + (e.message || e)); }
+    },
+    async favUse() {
+      const p = $('#fav-sel') && $('#fav-sel').value;
+      if (!p) return;
+      try { await saveAssets({ ...AS(), fav: p + '?v=' + Date.now() }); msg('Favicon diganti'); } catch (e) { msg('Gagal: ' + (e.message || e)); }
     },
     async assetClear(kind, key) {
       const a = { ...AS() };
