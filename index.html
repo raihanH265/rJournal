@@ -1566,6 +1566,29 @@
     if (!u.startsWith('data:image/webp')) { u = c.toDataURL('image/png'); ext = 'png'; }
     return { b64: u.split(',')[1], ext };
   }
+  // Tunggu sampai situs benar-benar menyajikan berkas baru (deploy Pages 1-3 menit). Tanpa ini alamat ?v= baru diminta
+  // sebelum deploy selesai, mendapat berkas lama/404, dan tersangkut di cache browser/service worker.
+  async function waitDeploy(path, b64) {
+    if (!/^https:/.test(location.protocol) || !crypto.subtle) return true;
+    const dig = async buf => [...new Uint8Array(await crypto.subtle.digest('SHA-256', buf))].map(x => x.toString(16).padStart(2, '0')).join('');
+    const want = await dig(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+    for (let i = 0; i < 30; i++) {
+      try {
+        const r = await fetch(path + '?probe=' + Date.now(), { cache: 'no-store' });
+        if (r.ok && await dig(await r.arrayBuffer()) === want) return true;
+      } catch (e) {}
+      await new Promise(ok => setTimeout(ok, 8000));
+    }
+    return false;
+  }
+  async function purgeCache(paths) {
+    try {
+      for (const k of await caches.keys()) {
+        const c = await caches.open(k);
+        for (const r of await c.keys()) if (paths.some(p => new URL(r.url).pathname.endsWith('/' + p))) await c.delete(r);
+      }
+    } catch (e) {}
+  }
   async function ghPut(path, content, note) {
     const g = ghCfg();
     if (!g.repo || !g.token) throw new Error('isi koneksi GitHub dulu');
@@ -3743,21 +3766,28 @@
       if (f.size > 2e6) return msg('Ukuran maksimal 2 MB');
       msg('Mengunggah ke GitHub…');
       try {
-        let path;
+        let path, chk, purge;
         if (kind === 'icon') {
-          await ghPut('icon-192.png', await iconPng(f, 192), 'Ikon aplikasi 192');
+          chk = await iconPng(f, 192);
+          await ghPut('icon-192.png', chk, 'Ikon aplikasi 192');
           await ghPut('icon-512.png', await iconPng(f, 512), 'Ikon aplikasi 512');
           path = 'icon-192.png';
+          purge = ['icon-192.png', 'icon-512.png'];
         } else {
           let b64, x = ext;
           if (kind !== 'logo' && !/^(svg|gif)$/.test(ext)) try { const t = await (kind === 'thumb' ? thumbImg(f) : fitImg(f, 512)); b64 = t.b64; x = t.ext; } catch (_) {}
           path = kind === 'logo' ? `assets/logo.${x}` : kind === 'hero' ? `assets/hero.${x}` : `assets/thumb-${key}.${x}`;
-          await ghPut(path, b64 || await fileB64(f), 'Unggah ' + path);
+          chk = b64 || await fileB64(f);
+          await ghPut(path, chk, 'Unggah ' + path);
+          purge = [path];
         }
+        msg('Terkirim ke GitHub. Menunggu deploy selesai (1–3 menit), jangan tutup halaman…');
+        const live = await waitDeploy(path, chk);
+        await purgeCache(purge);
         const a = { ...AS() }, v = path + '?v=' + Date.now();
         if (kind === 'thumb') a.thumbs = { ...a.thumbs, [key]: v }; else a[kind] = v;
         await saveAssets(a);
-        msg('Tersimpan di GitHub. Tampil setelah deploy selesai (1–2 menit).');
+        msg(live ? 'Tersimpan dan sudah tampil.' : 'Tersimpan, tetapi deploy belum selesai. Muat ulang beberapa menit lagi.');
       } catch (e) { msg('Gagal: ' + (e.message || e)); }
     },
     async assetClear(kind, key) {
