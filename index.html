@@ -104,6 +104,7 @@
     .ok{color:var(--ok)!important}
     .hero{text-align:center;padding:12px 0 8px}
     .orbh{width:116px;height:116px;margin:0 auto 18px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.95),rgba(217,208,250,.85) 55%,rgba(145,126,242,.9));border:1px solid rgba(255,255,255,.8);box-shadow:0 14px 40px rgba(79,63,201,.28),inset 0 -6px 16px rgba(79,63,201,.2);display:grid;place-items:center;color:var(--p)}
+    .hero-img{display:block;margin:0 auto 18px;max-width:200px;max-height:140px;width:auto;height:auto;object-fit:contain}
     .hero h2{font-size:36px;line-height:1.18;font-weight:800;color:var(--h);letter-spacing:-.025em}
     .hero h2 em{font-style:normal;color:var(--p)}
     .hero p{max-width:520px;margin:12px auto;color:var(--b);font-size:14.5px}
@@ -1020,7 +1021,7 @@
     const cd = computeCountdown();
     return `
       <div class="hero">
-        <div class="orbh">${ic('moon', 48)}</div>
+        ${AS().hero ? `<img class="hero-img" src="${esc(AS().hero)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display=''"><div class="orbh" style="display:none">${ic('moon', 48)}</div>` : `<div class="orbh">${ic('moon', 48)}</div>`}
         <h2>Selamat ${g}.<br>Siap jurnaling <em>Ramadhan</em>?</h2>
         <p>${st}</p>
       </div>
@@ -1520,10 +1521,11 @@
         <div class="row"><input id="gh-t" type="password" autocomplete="off" placeholder="${g.token ? 'Token tersimpan (isi untuk mengganti)' : 'Token GitHub'}"><button class="btn" onclick="ghSave()">${ic('save', 16)} Simpan</button></div>
       </div>
       <div class="card"><b>${ic('image', 17)} Tampilan Aplikasi</b>
-        <p class="note" style="text-align:left">Format png, jpg, svg, webp, gif, avif, atau ico. Maks 2 MB. Ikon aplikasi otomatis dibuat 192 dan 512 px (pasang ulang PWA agar berubah).</p>
-        ${row('Logo header', 'logo', 'logo', a.logo)}${row('Ikon aplikasi (widget/PWA)', 'icon', 'icon', a.icon)}
+        <p class="note" style="text-align:left">Format png, jpg, svg, webp, gif, avif, atau ico. Maks 2 MB. Ikon aplikasi otomatis dibuat 192 dan 512 px (pasang ulang PWA agar berubah). Ikon beranda diperkecil otomatis (maks 512×512, transparansi png/webp dipertahankan); ukuran ideal 512×512. GIF diunggah apa adanya, jadi buat ≤512×512 dan <1 MB.</p>
+        ${row('Logo header', 'logo', 'logo', a.logo)}${row('Ikon beranda (tanpa lingkaran)', 'hero', 'hero', a.hero)}${row('Ikon aplikasi (widget/PWA)', 'icon', 'icon', a.icon)}
       </div>
       <div class="card"><b>${ic('gamepad-2', 17)} Thumbnail Games</b>
+        <p class="note" style="text-align:left">Otomatis dipotong dari tengah ke 1200×500 px dan dikompres. Svg dan gif diunggah apa adanya.</p>
         ${Object.entries(GAMES).map(([k, gm]) => row(gm.name, 'thumb', k, (a.thumbs || {})[k])).join('')}
       </div>`;
   }
@@ -1537,6 +1539,32 @@
     c.width = c.height = n;
     c.getContext('2d').drawImage(img, (n - w * k) / 2, (n - h * k) / 2, w * k, h * k);
     return c.toDataURL('image/png').split(',')[1];
+  }
+  // Thumbnail: potong dari tengah ke 1200x500 (rasio 2,4:1) lalu kompres (webp, cadangan jpg)
+  async function thumbImg(f) {
+    const img = new Image();
+    img.src = URL.createObjectURL(f);
+    await img.decode();
+    const W = 1200, H = 500, w = img.naturalWidth, h = img.naturalHeight, k = Math.max(W / w, H / h), c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    c.getContext('2d').drawImage(img, (W - w * k) / 2, (H - h * k) / 2, w * k, h * k);
+    let u = c.toDataURL('image/webp', .85), ext = 'webp';
+    if (!u.startsWith('data:image/webp')) { u = c.toDataURL('image/jpeg', .85); ext = 'jpg'; }
+    return { b64: u.split(',')[1], ext };
+  }
+  // Ikon beranda: muat dalam 512x512 tanpa dipotong, transparansi dipertahankan (webp, cadangan png)
+  async function fitImg(f, max) {
+    const img = new Image();
+    img.src = URL.createObjectURL(f);
+    await img.decode();
+    const w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h)), c = document.createElement('canvas');
+    c.width = Math.round(w * k);
+    c.height = Math.round(h * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    let u = c.toDataURL('image/webp', .9), ext = 'webp';
+    if (!u.startsWith('data:image/webp')) { u = c.toDataURL('image/png'); ext = 'png'; }
+    return { b64: u.split(',')[1], ext };
   }
   async function ghPut(path, content, note) {
     const g = ghCfg();
@@ -3721,8 +3749,10 @@
           await ghPut('icon-512.png', await iconPng(f, 512), 'Ikon aplikasi 512');
           path = 'icon-192.png';
         } else {
-          path = kind === 'logo' ? `assets/logo.${ext}` : `assets/thumb-${key}.${ext}`;
-          await ghPut(path, await fileB64(f), 'Unggah ' + path);
+          let b64, x = ext;
+          if (kind !== 'logo' && !/^(svg|gif)$/.test(ext)) try { const t = await (kind === 'thumb' ? thumbImg(f) : fitImg(f, 512)); b64 = t.b64; x = t.ext; } catch (_) {}
+          path = kind === 'logo' ? `assets/logo.${x}` : kind === 'hero' ? `assets/hero.${x}` : `assets/thumb-${key}.${x}`;
+          await ghPut(path, b64 || await fileB64(f), 'Unggah ' + path);
         }
         const a = { ...AS() }, v = path + '?v=' + Date.now();
         if (kind === 'thumb') a.thumbs = { ...a.thumbs, [key]: v }; else a[kind] = v;
