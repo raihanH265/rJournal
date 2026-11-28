@@ -1,10 +1,10 @@
-// Membuat versi OFFLINE rjournal: teks Al-Qur'an & tata letak 604 halaman ditanam ke dalam HTML.
+// Membuat versi OFFLINE reload: teks Al-Qur'an & tata letak 604 halaman ditanam ke dalam HTML.
 // Jalankan di komputer Anda (butuh Node 18+ dan internet):
-//   node bundle-quran.mjs rjournal.html        -> menghasilkan rjournal.offline.html
+//   node bundle-quran.mjs reload.html        -> menghasilkan reload.offline.html
 // Hasilnya tidak lagi memanggil API saat berjalan, jadi tetap bisa dipakai di pratinjau/sandbox.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
-const src = process.argv[2] || 'rjournal.html';
+const src = process.argv[2] || 'reload.html';
 const out = src.replace(/\.html$/, '') + '.offline.html';
 const SURAH_VERSES = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const plain = s => s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '').replace(/\u0671/g, '\u0627');
@@ -75,7 +75,7 @@ const json = JSON.stringify({ v: 1, ay, nm, pg }).replace(/</g, '\\u003c');
 let html = readFileSync(src, 'utf8');
 html = html.replace(/<script id="quran-data">[\s\S]*?<\/script>\n?/, '');
 const re = /<script>(\s*)\(\(\) => \{/;
-if (!re.test(html)) throw new Error('Skrip utama (<script> lalu (() => {) tidak ditemukan di ' + src + '. Pastikan file adalah rjournal.html terbaru.');
+if (!re.test(html)) throw new Error('Skrip utama (<script> lalu (() => {) tidak ditemukan di ' + src + '. Pastikan file adalah reload.html terbaru.');
 html = html.replace(re, m => `<script id="quran-data">window.QURAN_DATA=${json};</script>\n` + m);
 writeFileSync(out, html);
 console.log(`Selesai: ${out} (${(html.length / 1048576).toFixed(1)} MB, ${total} ayat, 604 halaman)`);

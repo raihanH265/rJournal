@@ -1,4 +1,4 @@
-const C = 'rjournal-v2';
+const C = 'reload-v3';
 const API = /(^|\.)(quran\.com|alquran\.cloud)$/;
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(
