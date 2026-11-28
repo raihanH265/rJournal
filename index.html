@@ -1614,6 +1614,21 @@
     c.getContext('2d').drawImage(img, (n - w * k) / 2, (n - h * k) / 2, w * k, h * k);
     return { b64: c.toDataURL('image/png').split(',')[1], ext: 'png' };
   }
+  // ikon maskable: Android memotong tepi dengan topeng, jadi gambar dikecilkan (zona aman) di atas warna latar dari piksel pojok kiri atas
+  async function maskPng(f, n) {
+    const img = new Image();
+    img.src = URL.createObjectURL(f);
+    await img.decode();
+    const c = document.createElement('canvas'), t = document.createElement('canvas'), tx = t.getContext('2d'), x = c.getContext('2d');
+    c.width = c.height = n;
+    t.width = t.height = 1;
+    tx.drawImage(img, 0, 0, 1, 1, 0, 0, 1, 1);
+    const [r, g, b, a] = tx.getImageData(0, 0, 1, 1).data, w = img.naturalWidth || n, h = img.naturalHeight || n, k = n * .6 / Math.max(w, h);
+    x.fillStyle = a > 200 ? `rgb(${r},${g},${b})` : '#4F3FC9';
+    x.fillRect(0, 0, n, n);
+    x.drawImage(img, (n - w * k) / 2, (n - h * k) / 2, w * k, h * k);
+    return c.toDataURL('image/png').split(',')[1];
+  }
   async function ghPut(path, content, note) {
     const g = ghCfg();
     if (!g.repo || !g.token) throw new Error('isi koneksi GitHub dulu');
@@ -3794,12 +3809,14 @@
           chk = await iconPng(f, 192);
           await ghPut('icon-192.png', chk, 'Ikon aplikasi 192');
           await ghPut('icon-512.png', await iconPng(f, 512), 'Ikon aplikasi 512');
+          await ghPut('icon-maskable-192.png', await maskPng(f, 192), 'Ikon maskable 192');
+          await ghPut('icon-maskable-512.png', await maskPng(f, 512), 'Ikon maskable 512');
           path = 'icon-192.png';
-          purge = ['icon-192.png', 'icon-512.png', 'manifest.json'];
+          purge = ['icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png', 'manifest.json'];
           // Manifest statis: tanpa perubahan di berkasnya, browser tidak tahu ikon PWA berganti. Beri versi (?v=) pada alamat ikon.
           try {
             const m = await (await fetch('manifest.json?_=' + Date.now(), { cache: 'no-store' })).json(), st = Date.now();
-            (m.icons || []).forEach(i => { i.src = String(i.src).split('?')[0] + '?v=' + st; });
+            m.icons = [['icon-192.png', 192, 'any'], ['icon-512.png', 512, 'any'], ['icon-maskable-192.png', 192, 'maskable'], ['icon-maskable-512.png', 512, 'maskable']].map(([src, z, purpose]) => ({ src: `${src}?v=${st}`, sizes: `${z}x${z}`, type: 'image/png', purpose }));
             await ghPut('manifest.json', btoa(unescape(encodeURIComponent(JSON.stringify(m, null, 2)))), 'Versi ikon di manifest');
             pwa = true;
           } catch (e) {}
